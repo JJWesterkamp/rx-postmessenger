@@ -1,0 +1,20 @@
+{
+  "name": "@jjwesterkamp/rx-postmessage",
+  "version": "0.1.0",
+  "description": "Minimal RxJS wrapper around the window.postMessage interface for both passive (request-response) and active (notification) streams across frame windows.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "RxJS",
+    "Browser",
+    "iframe",
+    "postMessage",
+    "event",
+    "request",
+    "response"
+  ],
+  "author": "Jeffrey Westerkamp",
+  "license": "MIT"
+}
