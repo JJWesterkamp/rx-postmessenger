@@ -16,5 +16,8 @@
     "response"
   ],
   "author": "Jeffrey Westerkamp",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "rxjs": "^5.5.2"
+  }
 }
