@@ -1,13 +1,19 @@
 {
-  "name": "@jjwesterkamp/rx-postmessage",
-  "version": "0.1.0",
+  "name": "rx-postmessenger",
+  "version": "0.0.9",
   "description": "Minimal RxJS wrapper around the window.postMessage interface for both passive (request-response) and active (notification) streams across frame windows.",
   "main": "index.js",
   "scripts": {
-    "build": "webpack",
-    "build:prod": "webpack -p",
-    "build-w": "webpack --watch",
-    "lint": "tslint \"./src/**/*.ts\""
+    "lint": "tslint \"./src/**/*.ts\"",
+    "dev": "run-p \"build:** -- --watch\"",
+    "build": "run-p build:**",
+    "build:cjs": "tsc",
+    "build:esm": "tsc -m es6 --outDir esm",
+    "build:umd": "webpack",
+    "prepublish": "npm run build",
+    "npm-patch": "npm version patch && npm publish --access=public && git push",
+    "npm-minor": "npm version minor && npm publish --access=public && git push",
+    "npm-major": "npm version major && npm publish --access=public && git push"
   },
   "keywords": [
     "RxJS",
@@ -30,5 +36,8 @@
     "tslint": "^5.8.0",
     "typescript": "^2.6.1",
     "webpack": "^3.8.1"
+  },
+  "devDependencies": {
+    "npm-run-all": "^4.1.2"
   }
 }

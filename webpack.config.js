@@ -1,42 +1,44 @@
 var webpack = require('webpack');
 const { resolve } = require('path');
 
-
-
-module.exports = (env) => ({
-    entry: {
-        "rx-postmessenger": "./src/index.ts",
-        "rx-postmessenger.min": "./src/index.ts"
-    },
+module.exports = {
+    entry: "./src/index.ts",
     output: {
-        path: resolve(__dirname, `dist`),
-        filename: "[name].js",
-        libraryTarget: "umd",
-        publicPath: "/dist/",
-        library: "RxPostMessenger",
-        umdNamedDefine: true
+        path: resolve(__dirname, 'umd'),
+        filename: '[name].js',
+        library: 'RxPostmessenger',
+        libraryTarget: 'umd',
     },
 
     plugins: [
         new webpack.optimize.UglifyJsPlugin({
             include: /\.min\.js$/,
-            minimize: true
+            minimize: true,
+            sourceMap: true,
         })
     ],
 
     devtool: "source-map",
-
     resolve: {
         extensions: [".ts", ".js"]
     },
 
     module: {
+        loaders: [{
+            test: /\.tsx?$/,
+            loader: 'awesome-typescript-loader',
+            exclude: /node_modules/,
+            query: {
+                declaration: false,
+            }
+        }],
+
         rules: [
             {
                 test: /\.ts$/,
-                loaders: ["babel-loader", "awesome-typescript-loader"],
-                exclude: /node_modules\/(?!rxjs)/
+                loaders: ["awesome-typescript-loader"],
+                exclude: /node_modules/,
             }
         ],
     }
-});
+};
