@@ -1,6 +1,6 @@
 {
   "name": "rx-postmessenger",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Minimal RxJS wrapper around the window.postMessage interface for both passive (request-response) and active (notification) streams across frame windows.",
   "main": "./lib/index.js",
   "scripts": {
