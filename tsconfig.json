@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "moduleResolution": "node",
+        "target": "es2015",
+        "module":"es2015",
+        "noImplicitAny": true,
+        "preserveConstEnums": true,
+        "sourceMap": true
+    },
+    "include":[
+        "src/**/*.ts"
+    ],
+    "exclude": [
+        "dist"
+    ]
+}
