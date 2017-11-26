@@ -2,7 +2,10 @@ var webpack = require('webpack');
 const { resolve } = require('path');
 
 module.exports = {
-    entry: "./src/index.ts",
+    entry: {
+        "rx-postmessenger": "./src/index.ts",
+        "rx-postmessenger.min": "./src/index.ts",
+    },
     output: {
         path: resolve(__dirname, 'umd'),
         filename: '[name].js',
