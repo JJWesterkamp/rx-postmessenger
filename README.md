@@ -1,4 +1,4 @@
-_Under development. this is first and foremost a tryout of me to get started with developing NPM packages with typescript._
+_Under development_
 
 # rx-postmessenger
 
