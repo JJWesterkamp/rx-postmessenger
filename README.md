@@ -16,7 +16,7 @@ Minimal RxJS wrapper around the window.postMessage API for both passive (request
 
 ## In short
 
-An RxPostmessenger class instance establishes one end of a "connection" between 2 window objects, using the `window.postMessage` API. Each instance targets _one single_ `Window` object that's serving documents from _one single_ origin.
+An RxPostmessenger class instance establishes one end of a "connection" between 2 window objects, using the `window.postMessage` API. Each instance targets _one single_ `Window` object. It also only accepts incoming messages from that specific window object while it's serving documents from _one single_ origin.
 
 Both ends of the connection must implement this package, or otherwise know how to 'listen' for events sent from the other end of the line. One in a _parent_ project (that implements the iframe), and one in a _child_ project (that's being served by the iframe).
 
