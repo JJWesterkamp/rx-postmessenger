@@ -1,4 +1,6 @@
-_Under development_
+_Under development_ 
+
+[![npm version](https://badge.fury.io/js/rx-postmessenger.svg)](https://badge.fury.io/js/rx-postmessenger)
 
 # rx-postmessenger
 
