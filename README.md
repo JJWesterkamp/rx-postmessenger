@@ -57,9 +57,10 @@ const parentWindowMessenger = RxPostmessenger.connectWithChild(
 childWindowMessenger.notify('price-changed', { previous: 12, current: 10 }); // Price dropped
 
 // Listen:
-parentWindowMessenger.notificationStream('price-changed', ({ previous, current }) => {
-  processPriceChange(previous, current));
-}
+parentWindowMessenger.notificationStream('price-changed')
+  .filter(({ previous, current}) => current > previous)
+  .map(({ previous, current}) => current - previous)
+  .subscribe(increase) => processPriceIncrease(increase));
 
 // Request:
 childWindowMessenger.request('greeting', { language: 'en' }) // => Observable<Response>
