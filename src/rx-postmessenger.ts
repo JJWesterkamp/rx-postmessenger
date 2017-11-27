@@ -15,9 +15,19 @@ import 'rxjs/add/operator/take';
 
 import generateUUID from './uuid-generator';
 
+/**
+ * The relation of the other window to the window where a certain instance of this module's class belongs to.
+ */
 export type OtherWindowRelation = 'parent' | 'child';
+
+/**
+ *
+ */
 export type MessageType = 'request' | 'response' | 'notification';
 
+/**
+ *
+ */
 export interface Message<T extends MessageType> {
     id: string;
     type: T;
@@ -29,6 +39,10 @@ export type Notification = Message<'notification'>;
 export type Request = Message<'request'>;
 export type Response = Message<'response'>;
 
+
+/**
+ *
+ */
 export default class RxPostmessenger {
 
     /**
@@ -102,8 +116,8 @@ export default class RxPostmessenger {
     /**
      * Sends a response through given channel to the remote window, carrying given payload.
      */
-    public respond(requestId: string, channel: string, payload: any): void {
-        const responseData = this.createMessageObject('response', channel, payload);
+    public respond(requestId: string, payload: any): void {
+        const responseData = this.createMessageObject('response', null, payload, requestId);
         this.otherWindow.postMessage(responseData, this.origin);
     }
 
@@ -116,6 +130,19 @@ export default class RxPostmessenger {
     public notify(channel: string, payload: any): void {
         const notificationData = this.createMessageObject('notification', channel, payload);
         this.otherWindow.postMessage(notificationData, this.origin);
+    }
+
+    /**
+     * Returns an observable that emits the subset of inbound notification messages where their channel equals given
+     * channel name.
+     *
+     * @param {string} channel
+     * @returns {Observable<object>}
+     * @public
+     */
+    public requestStream<T extends Request>(channel: string): Observable<T> {
+        return this.requests$
+            .filter<Request, T>((request: Request): request is T => request.channel === channel);
     }
 
     /**
@@ -151,11 +178,12 @@ export default class RxPostmessenger {
      * @param {string} type
      * @param {string} channel
      * @param {*} payload
+     * @param {string} [id] - Responses should provide the request id here
      * @return {{ id: string, type: string, channel: string, payload: * }}
      * @private
      */
-    private createMessageObject<T extends MessageType>(type: T, channel: string, payload: any): Message<T> {
-        return { id: generateUUID(), type, channel, payload };
+    private createMessageObject<T extends MessageType>(type: T, channel: string, payload: any, id?: string): Message<T> {
+        return { id: id || generateUUID(), type, channel, payload };
     }
 
     /**
@@ -195,4 +223,3 @@ export default class RxPostmessenger {
             && message.source === this.otherWindow;
     }
 }
-
