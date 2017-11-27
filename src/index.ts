@@ -1,3 +1,1 @@
-import RxPostmessenger from "./rx-postmessenger";
-
-export default RxPostmessenger;
+export { default } from "./rx-postmessenger";

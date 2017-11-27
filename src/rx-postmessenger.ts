@@ -57,7 +57,7 @@ export default class RxPostmessenger {
     public inboundMessages$: Observable<Message<MessageType>>;
 
     /**
-     * @var {Observable<object>} notifications$
+     * @property {Observable<object>} notifications$
      */
     public notifications$: Observable<Notification>;
 
@@ -75,7 +75,7 @@ export default class RxPostmessenger {
      * @param {HTMLIFrameElement} frame - The frame object of the iframe to communicate with.
      * @param {string[]} allowedOrigins - List of allowed origins (URL) for given frame.
      */
-    constructor(protected otherWindow: Window, protected origin: string, public readonly otherWindowRelation: OtherWindowRelation) {
+    constructor(private otherWindow: Window, private origin: string, public readonly otherWindowRelation: OtherWindowRelation) {
 
         this.inboundMessages$ = Observable
             .fromEvent<MessageEvent>(window, 'message')
@@ -96,13 +96,44 @@ export default class RxPostmessenger {
     public request<T extends Response>(channel: string, payload: any = null): Observable<T> {
         const requestData = this.createMessageObject('request', channel, payload)
         this.otherWindow.postMessage(requestData, this.origin);
-        return this.createResponseObservable(requestData.id);
+        return this.createResponseObservable<T>(requestData.id);
     }
 
     /**
-     * Creates an observable that completes after a single emission of
-     * the MessageEvent response for request of given requestId. If no
-     * matching response is ever received, the observable never completes.
+     * Sends a response through given channel to the remote window, carrying given payload.
+     */
+    public respond(requestId: string, channel: string, payload: any): void {
+        const responseData = this.createMessageObject('response', channel, payload);
+        this.otherWindow.postMessage(responseData, this.origin);
+    }
+
+    /**
+     * Sends a notification through given channel to the remote window, carrying given payload.
+     *
+     * @param channel
+     * @param payload
+     */
+    public notify(channel: string, payload: any): void {
+        const notificationData = this.createMessageObject('notification', channel, payload);
+        this.otherWindow.postMessage(notificationData, this.origin);
+    }
+
+    /**
+     * Returns an observable that emits the subset of inbound notification messages where their channel equals given
+     * channel name.
+     *
+     * @param {string} channel
+     * @returns {Observable<object>}
+     * @public
+     */
+    public notificationStream<T extends Notification>(channel: string): Observable<T> {
+        return this.notifications$
+            .filter<Notification, T>((notification: Notification): notification is T => notification.channel === channel);
+    }
+
+    /**
+     * Creates an observable that completes after a single emission of the MessageEvent response for request of given
+     * requestId. If no matching response is ever received, the observable never completes.
      *
      * @param {string} requestId
      * @returns {Observable<module:postMessage.ResponseData>}
@@ -115,47 +146,20 @@ export default class RxPostmessenger {
     }
 
     /**
+     * Creates a message object to be used as payload of an outgoing message towards the remote window object.
      *
-     */
-    public respond(requestId: string, channel: string, payload: any): void {
-        const responseData = this.createMessageObject('response', channel, payload);
-        this.otherWindow.postMessage(responseData, this.origin);
-    }
-
-    /**
-     *
-     * @param channel
-     * @param payload
-     */
-    public notify(channel: string, payload: any): void {
-        const notificationData = this.createMessageObject('notification', channel, payload);
-        this.otherWindow.postMessage(notificationData, this.origin);
-    }
-
-    /**
      * @param {string} type
      * @param {string} channel
      * @param {*} payload
+     * @return {{ id: string, type: string, channel: string, payload: * }}
+     * @private
      */
     private createMessageObject<T extends MessageType>(type: T, channel: string, payload: any): Message<T> {
         return { id: generateUUID(), type, channel, payload };
     }
 
-
     /**
-     *
-     * @param {string} channel
-     * @returns {Observable<object>}
-     * @public
-     */
-    public notificationStream<T extends Notification>(channel: string): Observable<T> {
-        return this
-            .notifications$
-            .filter<Notification, T>((notification: Notification): notification is T => notification.channel === channel);
-    }
-
-    /**
-     * Returns an Observable emitting all inbound messages of given type.
+     * Returns an Observable emitting all inbound messages` of given type.
      *
      * Returns an Rx.Observable emitting a subset of MessageEvent objects emitted
      * by this.inboundMessages$, passing through all MessageEvent objects whose
@@ -163,7 +167,7 @@ export default class RxPostmessenger {
      *
      * @param {string} type
      */
-    protected messagesOfType<S extends MessageType, T extends Message<S>>(type: S): Observable<T> {
+    private messagesOfType<S extends MessageType, T extends Message<S>>(type: S): Observable<T> {
         return this.inboundMessages$
             .filter<Message<MessageType>, T>((message: Message<MessageType>): message is T => message.type === type);
     }
@@ -175,7 +179,7 @@ export default class RxPostmessenger {
      * @return {boolean}
      * @private
      */
-    protected isValidMessage(message: MessageEvent): boolean {
+    private isValidMessage(message: MessageEvent): boolean {
         return message instanceof MessageEvent
 
             // Chechs whether the origin location matches any allowed origins.
