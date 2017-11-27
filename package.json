@@ -1,8 +1,20 @@
 {
   "name": "rx-postmessenger",
   "version": "0.1.2",
+  "author": "Jeffrey Westerkamp",
   "description": "Minimal RxJS wrapper around the window.postMessage interface for both passive (request-response) and active (notification) streams across frame windows.",
+  "license": "MIT",
   "main": "./lib/index.js",
+  "module": "./esm/index.js",
+  "keywords": [
+    "RxJS",
+    "Browser",
+    "iframe",
+    "postMessage",
+    "event",
+    "request",
+    "response"
+  ],
   "scripts": {
     "lint": "tslint \"./src/**/*.ts\"",
     "dev": "run-p \"build:** -- --watch\"",
@@ -15,17 +27,6 @@
     "npm-minor": "npm version minor && npm publish --access=public && git push",
     "npm-major": "npm version major && npm publish --access=public && git push"
   },
-  "keywords": [
-    "RxJS",
-    "Browser",
-    "iframe",
-    "postMessage",
-    "event",
-    "request",
-    "response"
-  ],
-  "author": "Jeffrey Westerkamp",
-  "license": "MIT",
   "dependencies": {
     "awesome-typescript-loader": "^3.4.0",
     "babel-core": "^6.26.0",
