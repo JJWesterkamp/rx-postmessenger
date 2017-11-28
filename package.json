@@ -23,9 +23,9 @@
     "build:esm": "tsc -m es6 --outDir esm",
     "build:umd": "webpack",
     "prepublish": "npm run build",
-    "npm-patch": "npm version patch && npm publish --access=public && git push",
-    "npm-minor": "npm version minor && npm publish --access=public && git push",
-    "npm-major": "npm version major && npm publish --access=public && git push"
+    "publish-patch": "npm version patch && npm publish --access=public && git push",
+    "publish-minor": "npm version minor && npm publish --access=public && git push",
+    "publish-major": "npm version major && npm publish --access=public && git push"
   },
   "dependencies": {
     "rxjs": "^5.5.2"
