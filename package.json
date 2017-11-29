@@ -3,6 +3,7 @@
   "version": "0.1.4",
   "author": "Jeffrey Westerkamp",
   "description": "Minimal RxJS wrapper around the window.postMessage interface for both passive (request-response) and active (notification) streams across frame windows.",
+  "repository": "git+https://github.com/JJWesterkamp/rx-postmessenger.git",
   "license": "MIT",
   "main": "./lib/index.js",
   "module": "./esm/index.js",

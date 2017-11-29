@@ -1,24 +1,5 @@
-// This file imports and re-exports a subset of the ReactiveX library
-// to allow for a smaller bundle (saves about 1000 kb)
-
-// Class objects (Preserve import order due to cyclic dependencies)
-import { Observable } from 'rxjs/Observable';
-
-// Observable static methods (These patch the observable function object)
-import 'rxjs/add/observable/fromEvent';
-
-// Observable instance operators (these patch the observable prototype)
-import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/pluck';
-import 'rxjs/add/operator/take';
-
+import * as Rx from 'rxjs';
 import generateUUID from './uuid-generator';
-
-/**
- * The relation of the other window to the window where a certain instance of this module's class belongs to.
- */
-export type OtherWindowRelation = 'parent' | 'child';
 
 /**
  *
@@ -46,52 +27,54 @@ export type Response = Message<'response'>;
 export default class RxPostmessenger {
 
     /**
+     * Rx.Observable stream of all incoming messages that originate
+     * from otherWindow with an origin url matching this.origin.
+     *
+     * @member {Rx.Observable<object>} inboundMessages$
+     * @public
+     */
+    public inboundMessages$: Rx.Observable<Message<MessageType>>;
+
+    /**
+     * Filtered subset of inboundMessages$, emitting all messages of type 'notification'.
+     *
+     * @member {Rx.Observable<object>} notifications$
+     * @public
+     */
+    public notifications$: Rx.Observable<Notification>;
+
+    /**
+     * Filtered subset of inboundMessages$, emitting all messages of type 'request'.
+     *
+     * @member {Rx.Observable<object>} requests$
+     * @public
+     */
+    public requests$: Rx.Observable<Request>;
+
+    /**
+     * Filtered subset of inboundMessages$, emitting all messages of type 'response'.
+     *
+     * @member {Rx.Observable<object>} responses$
+     * @public
+     */
+    public responses$: Rx.Observable<Response>;
+
+    /**
      * @param {Window} otherWindow
      * @param {string} origin
      *
      * @return {RxPostmessenger}
      */
-    static connectWithParent(otherWindow: Window, origin: string): RxPostmessenger {
-        return new this(otherWindow, origin, 'parent');
+    public static connect(otherWindow: Window, origin: string): RxPostmessenger {
+        return new this(otherWindow, origin);
     }
 
     /**
-     * @param {Window} otherWindow
-     * @param {string} origin
-     *
-     * @return {RxPostmessenger}
+     * @param {Window} otherWindow - The window object to exchange messages with.
+     * @param {string} origin - The remote url to accept incoming messages from.
      */
-    static connectWithChild(otherWindow: Window, origin: string): RxPostmessenger {
-        return new this(otherWindow, origin, 'child');
-    }
-
-    /**
-     * @var {Observable<object>} inboundMessages$
-     */
-    public inboundMessages$: Observable<Message<MessageType>>;
-
-    /**
-     * @property {Observable<object>} notifications$
-     */
-    public notifications$: Observable<Notification>;
-
-    /**
-     * @var {Observable<object>} requests$
-     */
-    public requests$: Observable<Request>;
-
-    /**
-     * @var {Observable<object>} responses$
-     */
-    public responses$: Observable<Response>;
-
-    /**
-     * @param {HTMLIFrameElement} frame - The frame object of the iframe to communicate with.
-     * @param {string[]} allowedOrigins - List of allowed origins (URL) for given frame.
-     */
-    constructor(private otherWindow: Window, private origin: string, public readonly otherWindowRelation: OtherWindowRelation) {
-
-        this.inboundMessages$ = Observable
+    constructor(public readonly otherWindow: Window, public readonly origin: string) {
+        this.inboundMessages$ = Rx.Observable
             .fromEvent<MessageEvent>(window, 'message')
             .filter((message) => this.isValidMessage(message))
             .pluck('data');
@@ -105,9 +88,10 @@ export default class RxPostmessenger {
      * @param {string} channel
      * @param {*} payload
      *
-     * @return {Observable<object>}
+     * @return {Rx.Observable<object>}
+     * @public
      */
-    public request<T extends Response>(channel: string, payload: any = null): Observable<T> {
+    public request<T extends Response>(channel: string, payload: any = null): Rx.Observable<T> {
         const requestData = this.createMessageObject('request', channel, payload)
         this.otherWindow.postMessage(requestData, this.origin);
         return this.createResponseObservable<T>(requestData.id);
@@ -115,58 +99,69 @@ export default class RxPostmessenger {
 
     /**
      * Sends a response through given channel to the remote window, carrying given payload.
+     *
+     * @param {string} requestId
+     * @param {*} payload
+     * @return {RxPostmessenger}
+     * @public
      */
-    public respond(requestId: string, payload: any): void {
+    public respond(requestId: string, payload: any): this {
         const responseData = this.createMessageObject('response', null, payload, requestId);
         this.otherWindow.postMessage(responseData, this.origin);
+
+        return this;
     }
 
     /**
      * Sends a notification through given channel to the remote window, carrying given payload.
      *
-     * @param channel
-     * @param payload
+     * @param {string} channel
+     * @param {*} payload
+     * @return {RxPostmessenger}
+     * @public
      */
-    public notify(channel: string, payload: any): void {
+    public notify(channel: string, payload: any): this {
         const notificationData = this.createMessageObject('notification', channel, payload);
         this.otherWindow.postMessage(notificationData, this.origin);
+
+        return this;
     }
 
     /**
-     * Returns an observable that emits the subset of inbound notification messages where their channel equals given
+     * Returns an Rx.Observable that emits the subset of inbound notification messages where their channel equals given
      * channel name.
      *
      * @param {string} channel
-     * @returns {Observable<object>}
+     * @return {Rx.Observable<object>}
      * @public
      */
-    public requestStream<T extends Request>(channel: string): Observable<T> {
+    public requestStream<T extends Request>(channel: string): Rx.Observable<T> {
         return this.requests$
             .filter<Request, T>((request: Request): request is T => request.channel === channel);
     }
 
     /**
-     * Returns an observable that emits the subset of inbound notification messages where their channel equals given
+     * Returns an Rx.Observable that emits the subset of inbound notification messages where their channel equals given
      * channel name.
      *
      * @param {string} channel
-     * @returns {Observable<object>}
+     * @return {Rx.Observable<object>}
      * @public
      */
-    public notificationStream<T extends Notification>(channel: string): Observable<T> {
+    public notificationStream<T extends Notification>(channel: string): Rx.Observable<T> {
         return this.notifications$
             .filter<Notification, T>((notification: Notification): notification is T => notification.channel === channel);
     }
 
     /**
-     * Creates an observable that completes after a single emission of the MessageEvent response for request of given
-     * requestId. If no matching response is ever received, the observable never completes.
+     * Creates an Rx.Observable that completes after a single emission of the MessageEvent response for request of given
+     * requestId. If no matching response is ever received, the Rx.Observable never completes.
      *
      * @param {string} requestId
-     * @returns {Observable<module:postMessage.ResponseData>}
+     * @return {Rx.Observable<object>}
      * @private
      */
-    private createResponseObservable<T extends Response>(requestId: string): Observable<T> {
+    private createResponseObservable<T extends Response>(requestId: string): Rx.Observable<T> {
         return this.responses$
             .filter<Response, T>((response: Response): response is T => response.id === requestId)
             .take(1);
@@ -176,26 +171,33 @@ export default class RxPostmessenger {
      * Creates a message object to be used as payload of an outgoing message towards the remote window object.
      *
      * @param {string} type
-     * @param {string} channel
+     * @param {string|null} channel
      * @param {*} payload
      * @param {string} [id] - Responses should provide the request id here
      * @return {{ id: string, type: string, channel: string, payload: * }}
      * @private
      */
-    private createMessageObject<T extends MessageType>(type: T, channel: string, payload: any, id?: string): Message<T> {
+    private createMessageObject<T extends MessageType>(
+        type: T,
+        channel: string | null = null,
+        payload: any,
+        id: string | null = null
+    ): Message<T> {
         return { id: id || generateUUID(), type, channel, payload };
     }
 
     /**
-     * Returns an Observable emitting all inbound messages` of given type.
+     * Returns an Rx.Observable emitting all inbound messages` of given type.
      *
-     * Returns an Rx.Observable emitting a subset of MessageEvent objects emitted
+     * Returns an Rx.Rx.Observable emitting a subset of MessageEvent objects emitted
      * by this.inboundMessages$, passing through all MessageEvent objects whose
      * data.type property matches given type.
      *
      * @param {string} type
+     * @return {Rx.Observable<object>}
+     * @private
      */
-    private messagesOfType<S extends MessageType, T extends Message<S>>(type: S): Observable<T> {
+    private messagesOfType<S extends MessageType, T extends Message<S>>(type: S): Rx.Observable<T> {
         return this.inboundMessages$
             .filter<Message<MessageType>, T>((message: Message<MessageType>): message is T => message.type === type);
     }

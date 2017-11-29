@@ -1,4 +1,4 @@
-_Under development_ 
+_Under development_
 
 # rx-postmessenger
 
@@ -42,31 +42,25 @@ import RxPostmessenger from 'rx-postmessenger';
 // Create:
 
 // ~~ @ http://parent-project.com
-const childWindowMessenger = RxPostmessenger.connectWithChild(
-  someIframe.contentWindow,
-  'http://child-project.com'
-);
+const childWindowMessenger = RxPostmessenger.connect(someIframe.contentWindow, 'http://child-project.com');
 
 // ~~ @ http://child-project.com
-const parentWindowMessenger = RxPostmessenger.connectWithChild(
-  window.parent,
-  'http://parent-project.com'
-);
+const parentWindowMessenger = RxPostmessenger.connect(window.parent, 'http://parent-project.com');
 
 // Notify:
-childWindowMessenger.notify('price-changed', { previous: 12, current: 10 }); // Price dropped
+childWindowMessenger.notify('price-changed', { previous: 12, current: 14 }); // Price increased
 
 // Listen:
 parentWindowMessenger.notificationStream('price-changed')
   .filter(({ previous, current}) => current > previous)
   .map(({ previous, current}) => current - previous)
-  .subscribe(increase) => processPriceIncrease(increase));
+  .subscribe(increase) => console.log(`Price increased with $${increase}!`)); // > 'Price increased with $2!'
 
 // Request:
 childWindowMessenger.request('greeting', { language: 'en' }) // => Observable<Response>
 
   // Handle Response
-  .subscribe((niceGreeting) => console.log(niceGreeting)); // > Hi parent!
+  .subscribe((niceGreeting) => console.log(niceGreeting)); // > 'Hi parent!'
 
 
 // Listen to requests...
@@ -83,7 +77,7 @@ parentWindowMessenger.requestStream('greeting').subscribe(({ id, { language } })
 
 ## Documentation
 
-The `RxPostmessenger` class operates in 1 of 2 strategies because a child window has no access to `window.parent.origin`. Therefore `document.referrer` is used for determining a parent window's host. 
+The `RxPostmessenger` class operates in 1 of 2 strategies because a child window has no access to `window.parent.origin`. Therefore `document.referrer` is used for determining a parent window's host.
 
 **parent implementation** `@ http://parent-project.com`
 
@@ -97,7 +91,7 @@ iframe.src = otherWindowUrl;
 document.body.appendChild(iframe);
 
 // ...and then chats with it
-const postMessenger = RxPostmessenger.connectWithChild(iframe.contentWindow, otherWindowUrl);
+const postMessenger = RxPostmessenger.connect(iframe.contentWindow, otherWindowUrl);
 ```
 
 **child implementation** `@ http://child-project.com`
@@ -105,45 +99,39 @@ const postMessenger = RxPostmessenger.connectWithChild(iframe.contentWindow, oth
 ```javascript
 import RxPostmessenger from 'rx-postmessenger';
 
-// well, parent is already waiting, so just chat. Note the different method
-const postMessenger = RxPostmessenger.connectWithParent(window.parent, document.referrer);
+// well, parent is already waiting, so just chat.
+const postMessenger = RxPostmessenger.connect(window.parent, document.referrer);
 ```
 
 _Note: one restriction remains, and that is that both implementations must autonomously have knowledge of the available event channel names, and the format of their payload data. I.e. both projects must have a functional equivalent to `['price-changed', 'some-other-event']`_
 
 ## API
 
-### connectWithParent
-```typescript
-static connectWithParent(otherWindow: Window, origin: string): RxPostmessenger;`
-```
-
-
-
-
-
-
+### connect
 
 ```typescript
-static connectWithChild(otherWindow: Window, origin: string): RxPostmessenger;
+static connect(otherWindow: Window, origin: string): RxPostmessenger;
 ```
 
-
-```typescript
-static connectWithParent(otherWindow: Window, origin: string): RxPostmessenger;
-```
+### request
 
 ```typescript
 request<T extends Response>(channel: string, payload?: any): Observable<T>;
 ```
 
+### respond
+
 ```typescript
 respond(requestId: string, channel: string, payload: any): void;
 ```
 
+### notify
+
 ```typescript
 notify(channel: string, payload: any): void;
 ```
+
+### notificationStream
 
 ```typescript
 notificationStream<T extends Notification>(channel: string): Observable<T>;
