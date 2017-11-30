@@ -5,6 +5,9 @@
         "target": "es5",
         "module":"commonjs",
         "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "suppressImplicitAnyIndexErrors": true,
         "sourceMap": true,
         "declaration": true,
         "outDir": "lib"
