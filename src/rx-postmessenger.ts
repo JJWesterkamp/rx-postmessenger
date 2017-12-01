@@ -21,10 +21,15 @@ export type Request = Message<'request'>;
 export type Response = Message<'response'>;
 
 /**
- *
+ * @class RxPostmessenger
  */
 export default class RxPostmessenger {
 
+    /**
+     * The observable reference to use when creating new streams. By default a minimal implementation
+     * with only the operator requirements for this module.
+     *
+     */
     static Observable: typeof Observable = Observable;
 
     /**
