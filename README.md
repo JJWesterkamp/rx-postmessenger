@@ -64,11 +64,11 @@ childWindowMessenger.request('greeting', { language: 'en' }) // => Observable<Re
 
 
 // Listen to requests...
-parentWindowMessenger.requestStream('greeting').subscribe(({ id, { language } }) => {
+parentWindowMessenger.requestStream('greeting').subscribe((request) => {
 
   // ...and Respond
-  const payload = this.translateGreeting('Hi parent!', language);
-  parentWindowMessenger.respond(id, payload);
+  const responsePayload = this.translateGreeting('Hi parent!', request.payload.language);
+  parentWindowMessenger.respond(request.id, responsePayload);
 });
 ```
 
