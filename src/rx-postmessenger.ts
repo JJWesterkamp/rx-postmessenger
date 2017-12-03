@@ -1,34 +1,22 @@
 import { Observable } from './rx';
-import generateUUID from './uuid-generator';
+import { generateGUID, pushUsedGUID } from './guid-pool';
 
-/**
- *
- */
-export type MessageType = 'request' | 'response' | 'notification';
-
-/**
- *
- */
-export interface Message<T extends MessageType> {
-    id: string;
-    type: T;
-    channel: string;
-    payload: any;
-}
-
-export type Notification = Message<'notification'>;
-export type Request = Message<'request'>;
-export type Response = Message<'response'>;
+import {
+    ScalarMessage,
+    MessageType,
+    ScalarRequest,
+    ScalarResponse,
+    ScalarNotification
+} from './index';
 
 /**
  * @class RxPostmessenger
  */
-export default class RxPostmessenger {
+export class RxPostmessenger {
 
     /**
      * The observable reference to use when creating new streams. By default a minimal implementation
      * with only the operator requirements for this module.
-     *
      */
     static Observable: typeof Observable = Observable;
 
@@ -53,7 +41,7 @@ export default class RxPostmessenger {
      * @member {Observable<object>} inboundMessages$
      * @public
      */
-    public readonly inboundMessages$: Observable<Message<MessageType>>;
+    public readonly inboundMessages$: Observable<ScalarMessage<MessageType>>;
 
     /**
      * Filtered subset of inboundMessages$, emitting all messages of type 'notification'.
@@ -61,7 +49,7 @@ export default class RxPostmessenger {
      * @member {Observable<object>} notifications$
      * @public
      */
-    public readonly notifications$: Observable<Notification>;
+    public readonly notifications$: Observable<ScalarNotification>;
 
     /**
      * Filtered subset of inboundMessages$, emitting all messages of type 'request'.
@@ -69,7 +57,7 @@ export default class RxPostmessenger {
      * @member {Observable<object>} requests$
      * @public
      */
-    public readonly requests$: Observable<Request>;
+    public readonly requests$: Observable<ScalarRequest>;
 
     /**
      * Filtered subset of inboundMessages$, emitting all messages of type 'response'.
@@ -77,7 +65,7 @@ export default class RxPostmessenger {
      * @member {Observable<object>} responses$
      * @public
      */
-    public readonly responses$: Observable<Response>;
+    public readonly responses$: Observable<ScalarResponse>;
 
     /**
      * @param {Window} otherWindow
@@ -86,6 +74,13 @@ export default class RxPostmessenger {
      * @return {RxPostmessenger}
      */
     public static connect(otherWindow: Window, origin: string): RxPostmessenger {
+        if ('*' === origin) {
+            console.warn(
+                  `Usage of the "*" wildcard for allowed postMessage destination origin is insecure. `
+                + `Consider using a fixed URL instead.`
+            );
+        }
+
         return new this(otherWindow, origin);
     }
 
@@ -94,6 +89,8 @@ export default class RxPostmessenger {
      * @param {string} origin - The remote url to accept incoming messages from.
      */
     private constructor(public readonly otherWindow: Window, public readonly origin: string) {
+
+        // Initialize read-only properties
         this.inboundMessages$ = RxPostmessenger.Observable
             .fromEvent<MessageEvent>(window, 'message')
             .filter((message) => this.isValidMessage(message))
@@ -102,7 +99,14 @@ export default class RxPostmessenger {
         this.requests$      = this.messagesOfType('request');
         this.responses$     = this.messagesOfType('response');
         this.notifications$ = this.messagesOfType('notification');
+
+        // Other initializers
+        this.syncGUIIDs();
     }
+
+    // ------------------------------------------------------------------------------------------------
+    // API
+    // ------------------------------------------------------------------------------------------------
 
     /**
      * @param {string} channel
@@ -111,9 +115,9 @@ export default class RxPostmessenger {
      * @return {Observable<object>}
      * @public
      */
-    public request<T extends Response>(channel: string, payload: any = null): Observable<T> {
-        const requestData = this.createMessageObject('request', channel, payload)
-        this.otherWindow.postMessage(requestData, this.origin);
+    public request<T extends ScalarResponse>(channel: string, payload: any = null): Observable<T> {
+        const requestData: ScalarRequest = this.createMessageObject('request', channel, payload)
+        this.postMessage(requestData);
         return this.createResponseObservable<T>(requestData.id);
     }
 
@@ -126,8 +130,8 @@ export default class RxPostmessenger {
      * @public
      */
     public respond(requestId: string, payload: any): this {
-        const responseData = this.createMessageObject('response', null, payload, requestId);
-        this.otherWindow.postMessage(responseData, this.origin);
+        const responseData: ScalarResponse = this.createMessageObject('response', null, payload, requestId);
+        this.postMessage(responseData);
 
         return this;
     }
@@ -141,8 +145,8 @@ export default class RxPostmessenger {
      * @public
      */
     public notify(channel: string, payload: any): this {
-        const notificationData = this.createMessageObject('notification', channel, payload);
-        this.otherWindow.postMessage(notificationData, this.origin);
+        const notificationData: ScalarNotification = this.createMessageObject('notification', channel, payload);
+        this.postMessage(notificationData);
 
         return this;
     }
@@ -155,9 +159,9 @@ export default class RxPostmessenger {
      * @return {Observable<object>}
      * @public
      */
-    public requestStream<T extends Request>(channel: string): Observable<T> {
+    public requestStream<T extends ScalarRequest>(channel: string): Observable<T> {
         return this.requests$
-            .filter<Request, T>((request: Request): request is T => request.channel === channel);
+            .filter<ScalarRequest, T>((request): request is T => request.channel === channel);
     }
 
     /**
@@ -168,10 +172,47 @@ export default class RxPostmessenger {
      * @return {Observable<object>}
      * @public
      */
-    public notificationStream<T extends Notification>(channel: string): Observable<T> {
+    public notificationStream<T extends ScalarNotification>(channel: string): Observable<T> {
         return this.notifications$
-            .filter<Notification, T>((notification: Notification): notification is T => notification.channel === channel);
+            .filter<ScalarNotification, T>((notification): notification is T => notification.channel === channel);
     }
+
+    // ------------------------------------------------------------------------------------------------
+    // Init helpers
+    // ------------------------------------------------------------------------------------------------
+
+    /**
+     * Starts a GUID sync that intercepts incoming messages from other windows running this package,
+     * and pushes their ID values into a used IDs array. This way, every message should have a unique ID.
+     */
+    private syncGUIIDs(): this {
+
+        this.inboundMessages$
+            .filter(({ type }) => 'response' !== type)
+            .subscribe(({ id }) => pushUsedGUID(id));
+
+        return this;
+    }
+
+    /**
+     * Returns an Observable emitting all inbound messages` of given type.
+     *
+     * Returns an Observable emitting a subset of MessageEvent objects emitted
+     * by this.inboundMessages$, passing through all MessageEvent objects whose
+     * data.type property matches given type.
+     *
+     * @param {string} type
+     * @return {Observable<object>}
+     * @private
+     */
+    private messagesOfType<S extends MessageType>(type: S): Observable<ScalarMessage<S>> {
+        return this.inboundMessages$
+            .filter((message): message is ScalarMessage<S> => message.type === type);
+    }
+
+    // ------------------------------------------------------------------------------------------------
+    // Private runtime
+    // ------------------------------------------------------------------------------------------------
 
     /**
      * Creates an Observable that completes after a single emission of the MessageEvent response for request of given
@@ -181,9 +222,9 @@ export default class RxPostmessenger {
      * @return {Observable<object>}
      * @private
      */
-    private createResponseObservable<T extends Response>(requestId: string): Observable<T> {
+    private createResponseObservable<T extends ScalarResponse>(requestId: string): Observable<T> {
         return this.responses$
-            .filter<Response, T>((response: Response): response is T => response.id === requestId)
+            .filter<ScalarResponse, T>((response): response is T => response.id === requestId)
             .take(1);
     }
 
@@ -202,28 +243,22 @@ export default class RxPostmessenger {
         channel: string = null,
         payload: any,
         id: string = null
-    ): Message<T> {
-        return { id: id || generateUUID(), type, channel, payload };
-    }
-
-    /**
-     * Returns an Observable emitting all inbound messages` of given type.
-     *
-     * Returns an Observable emitting a subset of MessageEvent objects emitted
-     * by this.inboundMessages$, passing through all MessageEvent objects whose
-     * data.type property matches given type.
-     *
-     * @param {string} type
-     * @return {Observable<object>}
-     * @private
-     */
-    private messagesOfType<S extends MessageType, T extends Message<S>>(type: S): Observable<T> {
-        return this.inboundMessages$
-            .filter<Message<MessageType>, T>((message: Message<MessageType>): message is T => message.type === type);
+    ): ScalarMessage<T> {
+        return { id: id || generateGUID(), type, channel, payload };
     }
 
     /**
      * Tests whether given MessageEvent its origin matches the host URL for a SKIK configurator window.
+     *
+     * Chechs whether the origin location matches any allowed origins.
+     * Separate assertion of the origin allows for cross-domain navigation
+     * within this.frame, and still treating inbound messages from the
+     * frame as being equal.
+     *
+     * Checks whether the source Window object equals the remoteWindow object.
+     * This check allows for implementation of multiple iframes that share the
+     * same origin, and still being able to distinguish between messages from
+     * such frames.
      *
      * @param {MessageEvent} message
      * @return {boolean}
@@ -231,17 +266,17 @@ export default class RxPostmessenger {
      */
     private isValidMessage(message: MessageEvent): boolean {
         return message instanceof MessageEvent
-
-            // Chechs whether the origin location matches any allowed origins.
-            // Separate assertion of the origin allows for cross-domain navigation
-            // within this.frame, and still treating inbound messages from the
-            // frame as being equal.
             && message.origin === this.origin
-
-            // Checks whether the source Window object equals the remoteWindow object.
-            // This check allows for implementation of multiple iframes that share the
-            // same origin, and still being able to distinguish between messages from
-            // such frames.
             && message.source === this.otherWindow;
+    }
+
+    /**
+     * Performs a postMessage call with given data to this.otherWindow, provided that its
+     * location origin matches this.origin.
+     *
+     * @param {ScalarMessage} data
+     */
+    private postMessage<T extends ScalarMessage<MessageType>>(data: T): void {
+        this.otherWindow.postMessage(data, this.origin);
     }
 }

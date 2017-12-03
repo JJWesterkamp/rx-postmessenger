@@ -20,8 +20,14 @@ function guid(): string {
 /**
  * @returns {string}
  */
-export default function generateGUID(): string {
+export function generateGUID(): string {
     let id = guid();
     while (usedIds.indexOf(id) >= 0) id = guid();
     return id;
+}
+
+export function pushUsedGUID(id: string) {
+    if (typeof id === 'string') {
+        usedIds.push(id);
+    }
 }
