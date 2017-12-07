@@ -94,6 +94,8 @@ export class RxPostmessenger {
         this.inboundMessages$ = RxPostmessenger.Observable
             .fromEvent<MessageEvent>(window, 'message')
             .filter((message) => this.isValidMessage(message))
+            // Todo: add original event, but first identify as RxPostmessenger message
+            // .map((message) => mergeDeepRight(message.data, { originalEvent: message }))
             .pluck('data');
 
         this.requests$      = this.messagesOfType('request');
@@ -184,6 +186,9 @@ export class RxPostmessenger {
     /**
      * Starts a GUID sync that intercepts incoming messages from other windows running this package,
      * and pushes their ID values into a used IDs array. This way, every message should have a unique ID.
+     *
+     * @return {RxPostmessenger}
+     * @private
      */
     private syncGUIIDs(): this {
 
@@ -275,6 +280,7 @@ export class RxPostmessenger {
      * location origin matches this.origin.
      *
      * @param {ScalarMessage} data
+     * @private
      */
     private postMessage<T extends ScalarMessage<MessageType>>(data: T): void {
         this.otherWindow.postMessage(data, this.origin);
