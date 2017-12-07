@@ -28,7 +28,7 @@ import RxPostmessenger from 'rx-postmessenger';
 // ...or import named
 import { RxPostmessenger } from 'rx-postmessenger';
 ```
-### connect
+### 2 Windows connecting to one another
 ```typescript
 static connect(otherWindow: Window, origin: string): RxPostmessenger;
 ```
@@ -43,7 +43,7 @@ const parentWindowMessenger = RxPostmessenger.connect(window.parent, 'http://par
 ```
 
 
-### notify
+### Notify the other window
 ```typescript
 notify(channel: string, payload: any): void;
 ```
@@ -56,7 +56,7 @@ childWindowMessenger.notify('price-changed', { previous: 12, current: 14 }); // 
 
 The notify method is `void`: notifications are _send_ and forget. Use [`request()`](#request) instead if you require data back.
 
-### notificationStream
+### Listening for notifications
 ```typescript
 notificationStream<T extends Notification>(channel: string): Observable<T>;
 ```
@@ -72,9 +72,7 @@ parentWindowMessenger.notificationStream('price-changed')
   .subscribe((increase) => handlePriceIncrease(increase)); // > 'Price increased with €2!'
 ```
 
-------------------------------------------------------------------
-
-### request
+### Perform a request
 ```typescript
 request<T extends Response>(channel: string, payload?: any): Observable<T>;
 ```
@@ -97,7 +95,7 @@ greetingResponse$
   .subscribe((niceGreeting) => console.log(niceGreeting)); // > 'Hi parent!'
 ```
 
-### requestStream
+### Subscribing to incoming requests of a single type
 ```typescript
 requestStream<T extends Request>(channel: string): Observable<T>;
 ```
@@ -114,7 +112,16 @@ Parent window will let us know in what language the greeting is expected, so we'
 parentWindowMessenger.requestStream('greeting').subscribe((request) => handleGreetingRequest(request));
 ```
 
-### respond
+### Subscribing to all requests
+
+The possibility exists we might have to subscribe to all requests - instead of only to `'greeting'` requests - for a certain generic operation. This can be achieved by simply observing the `requests$` property:
+
+```javascript
+parentWindowMessenger.requests$.subscribe((request) => doSomethingWithAny(request));
+```
+
+
+### Sending request responses
 
 ```typescript
 respond(requestId: string, channel: string, payload: any): void;
