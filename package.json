@@ -6,6 +6,7 @@
   "repository": "git+https://github.com/JJWesterkamp/rx-postmessenger.git",
   "license": "MIT",
   "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "module": "./esm/index.js",
   "keywords": [
     "RxJS",
@@ -20,7 +21,7 @@
     "lint": "tslint \"./src/**/*.ts\"",
     "dev": "run-p \"build:** -- --watch\"",
     "build": "run-p build:**",
-    "build:cjs": "tsc",
+    "build:cjs": "tsc --declaration",
     "build:esm": "tsc -m es6 --outDir esm",
     "build:umd": "webpack",
     "prepublish": "npm run build",
