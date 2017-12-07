@@ -19,7 +19,7 @@ $ npm install rx-postmessenger --save
 
 ## Usage
 
-RxPostmessenger exposes both a `default export` and a named export:
+RxPostmessenger exposes both a default export and a named export:
 
 ```javascript
 // To personal preference, either import default...
@@ -28,7 +28,6 @@ import RxPostmessenger from 'rx-postmessenger';
 // ...or import named
 import { RxPostmessenger } from 'rx-postmessenger';
 ```
-
 ### connect
 ```typescript
 static connect(otherWindow: Window, origin: string): RxPostmessenger;
@@ -63,47 +62,55 @@ notificationStream<T extends Notification>(channel: string): Observable<T>;
 The child project can request an Observable stream for a certain notification channel. In this case we're interested in `'price-changed'` events, but only the ones where the price increased. The ability to use RxJS operators can help us out:
 
 ```javascript
-const handlePriceIncrease = (increase) => console.log(`Price increased with $${increase}!`);
+const handlePriceIncrease = (increase) => console.log(`Price increased with €${increase}!`);
 
 parentWindowMessenger.notificationStream('price-changed')
   .filter(({ previous, current}) => current > previous)
   .map(({ previous, current}) => current - previous)
-  .subscribe((increase) => handlePriceIncrease(increase)); // > 'Price increased with $2!'
+  .subscribe((increase) => handlePriceIncrease(increase)); // > 'Price increased with €2!'
 ```
-###
-### request
 
+------------------------------------------------------------------
+
+### request
 ```typescript
 request<T extends Response>(channel: string, payload?: any): Observable<T>;
 ```
 
+RxPostmessenger also supports request - response communication. At the requester side a request is initiated by calling the `request()` method with 1 or 2 arguments. The first is a request alias (actually just another channel) of our choice.
 
+_A notification-channel and a request-channel can both have the same channel name without any problem._
 
-
+An observable is returned that emits the response when arrived, and then completes. Let's request a greeting from our child window, and tell it we only understand `'en'`:
 
 ```javascript
-
-
-// Request:
-childWindowMessenger.request('greeting', { language: 'en' }) // => Observable<Response>
-
-  // Handle Response
-  .subscribe((niceGreeting) => console.log(niceGreeting)); // > 'Hi parent!'
-
-
-// Listen to requests...
-parentWindowMessenger.requestStream('greeting').subscribe((request) => {
-  
-  const { id: requestId, payload } = request;
-  
-  // Give payload.language to some translator:
-  const responsePayload = translateGreeting('Hi parent!', payload.language);
-  
-  parentWindowMessenger.respond(requestId, responsePayload);
-});
+const greetingResponse$ = childWindowMessenger.request('greeting', { language: 'en' }) // => Observable<T extends Response>
 ```
 
+We can then subscribe to the greeting response stream. Provided that the greeting says something nice, we'll log it for everyone to see:
 
+```javascript
+greetingResponse$
+  .filter((greeting) => isNiceGreeting(greeting))
+  .subscribe((niceGreeting) => console.log(niceGreeting)); // > 'Hi parent!'
+```
+
+### requestStream
+```typescript
+requestStream<T extends Request>(channel: string): Observable<T>;
+```
+
+Of course no nice greeting would ever be received when the child project does not listen for requests to handle and respond to. Let's not be rude and create a request stream for `'greeting'` requests:
+
+```javascript
+const greetingRequests$ = parentWindowMessenger.requestStream('greeting'); // => Observable<T extends Request>
+```
+
+Parent window will let us know in what language the greeting is expected, so we'll translate a greeting to given language before sending it as a response:
+
+```javascript
+parentWindowMessenger.requestStream('greeting').subscribe((request) => handleGreetingRequest(request));
+```
 
 ### respond
 
@@ -111,8 +118,21 @@ parentWindowMessenger.requestStream('greeting').subscribe((request) => {
 respond(requestId: string, channel: string, payload: any): void;
 ```
 
+A request can be responded to by any function that accepts the request object, and is able to obtain a reference to `parentWindowMessenger`. In our case `handleGreetingRequest` gets called from the request stream subscription handler:
 
+```javascript
+function handleGreetingRequest(request) {
+  const { id: requestId, payload: requestPayload } = request;
+  
+  const responsePayload = translateGreeting('Hi parent!', requestPayload.language);
+  
+  parentWindowMessenger.respond(requestId, responsePayload);
+}
+```
 
+The request id must for now be added to the response as first argument, so that the requester side knows what request a response corresponds to. Hence, the `{ id }` extraction out of the request object.
+
+I'm still working on a better API for this where the reference through closure to `parentWindowMessenger` is not a necessity. In the future the response interface will be proxied by a request wrapper object.
 
 
 
