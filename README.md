@@ -54,6 +54,8 @@ The messenger instances give you a way to send notifications to the other `Windo
 childWindowMessenger.notify('price-changed', { previous: 12, current: 14 }); // Price increased
 ```
 
+The notify method is `void`: notifications are _send_ and forget. Use [`request()`](#request) instead if you require data back.
+
 ### notificationStream
 ```typescript
 notificationStream<T extends Notification>(channel: string): Observable<T>;
