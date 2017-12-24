@@ -67,8 +67,8 @@ The child project can request an Observable stream for a certain notification ch
 const handlePriceIncrease = (increase) => console.log(`Price increased with €${increase}!`);
 
 parentWindowMessenger.notificationStream('price-changed')
-  .filter(({ previous, current}) => current > previous)
-  .map(({ previous, current}) => current - previous)
+  .filter(({ previous, current }) => current > previous)
+  .map(({ previous, current }) => current - previous)
   .subscribe((increase) => handlePriceIncrease(increase)); // > 'Price increased with €2!'
 ```
 
@@ -106,10 +106,10 @@ Of course no nice greeting would ever be received when the child project does no
 const greetingRequests$ = parentWindowMessenger.requestStream('greeting'); // => Observable<T extends Request>
 ```
 
-Parent window will let us know in what language the greeting is expected, so we'll translate a greeting to given language before sending it as a response:
+
 
 ```javascript
-parentWindowMessenger.requestStream('greeting').subscribe((request) => handleGreetingRequest(request));
+greetingRequests$.subscribe((request) => handleGreetingRequest(request));
 ```
 
 ### Subscribing to all requests
@@ -124,7 +124,7 @@ parentWindowMessenger.requests$.subscribe((request) => doSomethingWithAny(reques
 ### Sending request responses
 
 ```typescript
-respond(requestId: string, channel: string, payload: any): void;
+respond(requestId: string, payload: any): void;
 ```
 
 A request can be responded to by any function that accepts the request object, and is able to obtain a reference to `parentWindowMessenger`. In our case `handleGreetingRequest` gets called from the request stream subscription handler:
@@ -132,9 +132,9 @@ A request can be responded to by any function that accepts the request object, a
 ```javascript
 function handleGreetingRequest(request) {
   const { id: requestId, payload: requestPayload } = request;
-  
+
   const responsePayload = translateGreeting('Hi parent!', requestPayload.language);
-  
+
   parentWindowMessenger.respond(requestId, responsePayload);
 }
 ```
@@ -145,4 +145,53 @@ I'm still working on a better API for this where the reference through closure t
 
 
 
+## Usage with typescript
 
+When RxPostmessenger is consumed in a typescript environment, some additional features become available.
+
+### Event mapping
+
+It can become quite tedious to keep information about event names and the format of event payloads in sync between projects. Consider the below example:
+
+```typescript
+const messenger: RxPostMessenger = RxPostmessenger.connect(iframe.contentWindow, 'http://some-site.com');
+const myStream = messenger.notificationStream('some-non-existing-channel'); // This is fine by TS
+myStream.subscribe((someImplicitAnyType) => doSomethingWith(someImplicitAnyType)); // So is this
+```
+
+Event mapping allows for type checking event channel names and provides mapping functionality of the event names to their corresponding payload types. When event mapping is configured properly, the typescript compiler will throw errors if a non-existing event channel name is being used where an existing one is required.
+
+**Event map type signature**
+
+```typescript
+interface EventMap {
+  notifications: { [eventName: string]: any };
+  requests: { [eventName: string]: any };
+}
+```
+
+**Example usage**
+
+The event map is now our source of truth as to which events are supported, and what payloads we can expect inside our event handlers:
+
+```typescript
+// Create an interface that maps event names to payload types for notifications and requests.
+interface EventMap {
+  notifications: {
+
+    // Price changed notifications carry an object with the previous price and the new price.
+    // The price difference = current - previous
+    'price-changed': { previous: number, current: number };
+    // ...
+  },
+  requests: {
+    // ...
+  }
+}
+
+const messenger: RxPostMessenger<EventMap> = RxPostmessenger.connect(iframe.contentWindow, 'http://some-site.com');
+
+messenger
+  .notificationStream('price-changed'); // This is fine by TS
+  .subscribe(({ current }) => displayPrice(current)); // TS knows that 'type current = number'
+```

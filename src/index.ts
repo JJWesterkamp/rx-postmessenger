@@ -10,20 +10,21 @@ export type MessageType = 'request' | 'response' | 'notification';
 /**
  * The ScalarMessage interface defines the format for data property values of MessageEvent objects.
  */
-export interface ScalarMessage<T extends MessageType> {
+export interface ScalarMessage<T extends MessageType, CH extends string = string, PL = any> {
     id: string;
     type: T;
-    channel: string;
-    payload: any;
+    channel: CH;
+    payload: PL;
 }
 
-export interface ScalarRequest extends ScalarMessage<'request'> {
+export interface ScalarRequest<CH extends string = string, PL = any> extends ScalarMessage<'request', CH, PL> {
+
 }
 
-export interface ScalarResponse extends ScalarMessage<'response'> {
+export interface ScalarResponse<CH extends string = string, PL = any> extends ScalarMessage<'response', CH, PL> {
 }
 
-export interface ScalarNotification extends ScalarMessage<'notification'> {
+export interface ScalarNotification<CH extends string = string, PL = any> extends ScalarMessage<'notification', CH, PL> {
 }
 
 

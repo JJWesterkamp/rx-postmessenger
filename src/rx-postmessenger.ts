@@ -9,10 +9,16 @@ import {
     ScalarNotification
 } from './index';
 
+
+export interface RxPostmessengerEventMap {
+    requests: { [channel: string]: any; };
+    notifications: { [channel: string]: any; };
+}
+
 /**
  * @class RxPostmessenger
  */
-export class RxPostmessenger {
+export class RxPostmessenger<InstanceEventMap extends RxPostmessengerEventMap = any> {
 
     /**
      * The observable reference to use when creating new streams. By default a minimal implementation
@@ -73,7 +79,10 @@ export class RxPostmessenger {
      *
      * @return {RxPostmessenger}
      */
-    public static connect(otherWindow: Window, origin: string): RxPostmessenger {
+    public static connect<InstanceEventMap extends RxPostmessengerEventMap = any>(
+        otherWindow: Window,
+        origin: string
+    ): RxPostmessenger<InstanceEventMap> {
         if ('*' === origin) {
             console.warn(
                   `Usage of the "*" wildcard for allowed postMessage destination origin is insecure. `
@@ -146,7 +155,7 @@ export class RxPostmessenger {
      * @return {RxPostmessenger}
      * @public
      */
-    public notify(channel: string, payload: any): this {
+    public notify<EV extends keyof InstanceEventMap>(channel: EV, payload: InstanceEventMap[EV]): this {
         const notificationData: ScalarNotification = this.createMessageObject('notification', channel, payload);
         this.postMessage(notificationData);
 
@@ -161,9 +170,14 @@ export class RxPostmessenger {
      * @return {Observable<object>}
      * @public
      */
-    public requestStream<T extends ScalarRequest>(channel: string): Observable<T> {
-        return this.requests$
-            .filter<ScalarRequest, T>((request): request is T => request.channel === channel);
+    public requestStream<
+
+        EV extends keyof InstanceEventMap['requests'],
+        REQ extends ScalarRequest = ScalarRequest<EV, InstanceEventMap['requests'][EV]>
+
+    >(channel: EV): Observable<REQ> {
+
+        return this.requests$.filter((request): request is REQ => request.channel === channel);
     }
 
     /**
@@ -171,12 +185,19 @@ export class RxPostmessenger {
      * channel name.
      *
      * @param {string} channel
-     * @return {Observable<object>}
+     * @return {Observable<*>}
      * @public
      */
-    public notificationStream<T extends ScalarNotification>(channel: string): Observable<T> {
+    public notificationStream<
+
+        EV extends keyof InstanceEventMap['notifications'],
+        NTF extends ScalarNotification = ScalarNotification<EV, InstanceEventMap['notifications'][EV]>
+
+    >(channel: EV): Observable<NTF['payload']> {
+
         return this.notifications$
-            .filter<ScalarNotification, T>((notification): notification is T => notification.channel === channel);
+            .filter<ScalarNotification, NTF>((notification): notification is NTF => notification.channel === channel)
+            .pluck('payload');
     }
 
     // ------------------------------------------------------------------------------------------------
