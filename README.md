@@ -1,4 +1,4 @@
-_Under development_
+_This package is currently under heavy development. Expect breaking changes to the public API within minor releases until **v1.0.0-x** is released._
 
 # rx-postmessenger
 
