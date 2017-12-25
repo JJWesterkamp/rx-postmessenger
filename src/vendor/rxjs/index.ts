@@ -76,7 +76,7 @@ import 'rxjs/add/operator/filter';
 // import 'rxjs/add/operator/last';
 // import 'rxjs/add/operator/let';
 // import 'rxjs/add/operator/every';
-// import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/map';
 // import 'rxjs/add/operator/mapTo';
 // import 'rxjs/add/operator/materialize';
 // import 'rxjs/add/operator/max';

@@ -9,6 +9,8 @@
         "noImplicitThis": true,
         "suppressImplicitAnyIndexErrors": true,
         "sourceMap": true,
+        "strictNullChecks": true,
+        "strictFunctionTypes": true,
         "declaration": false,
         "outDir": "lib"
     },
