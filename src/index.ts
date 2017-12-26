@@ -1,5 +1,4 @@
 import { RxPostmessenger } from "./rx-postmessenger";
-import { RequestObject } from './private';
 import { Observable } from "./vendor/rxjs/index";
 
 // Public interface
@@ -12,15 +11,6 @@ import {
 } from '../rx-postmessenger';
 
 /**
- * @param {Window} otherWindow
- * @param {string} origin
- * @return {Messenger}
- */
-export function connect<MAP extends EventMapInterface = any>(otherWindow: Window, origin: string): Messenger<MAP> {
-    return new RxPostmessenger(otherWindow, origin);
-}
-
-/**
  * The observable implementation to use for creating the event streams of new messengers.
  */
 let _Observable: typeof Observable = Observable;
@@ -28,7 +18,7 @@ let _Observable: typeof Observable = Observable;
 /**
  * returns the active Rx.Observable implementation.
  */
-export function getObservable(): typeof Observable {
+function getObservable(): typeof Observable {
     return _Observable;
 }
 
@@ -38,8 +28,17 @@ export function getObservable(): typeof Observable {
  *
  * @param newImplementation
  */
-export function useObservable<T extends typeof Observable>(newImplementation: T): void {
+function useObservable<T extends typeof Observable>(newImplementation: T): void {
     _Observable = newImplementation;
+}
+
+/**
+ * @param {Window} otherWindow
+ * @param {string} origin
+ * @return {Messenger}
+ */
+function connect<MAP extends EventMapInterface = any>(otherWindow: Window, origin: string): Messenger<MAP> {
+    return new RxPostmessenger(otherWindow, origin);
 }
 
 // ---------------------------------------------------------------------------------------
@@ -86,7 +85,7 @@ export default defaultNamespace;
 
 export interface SomeEventMap extends EventMapInterface {
 
-    IN: {
+    In: {
 
         requests: {
             'configuration-hash': RequestContract<{ someData: string }, string>;

@@ -5,7 +5,6 @@ export = RxPostmessenger;
 export as namespace RxPostmessenger;
 
 /**
- *
  * Common type parameter names:
  *
  * - MAP        An event-map interface. Associates request/response and notification channels with payload types.
@@ -142,8 +141,8 @@ declare namespace RxPostmessenger {
      *          outgoing notifications.
      */
     interface EventMap {
-        IN: DirectionalEventMap;
-        OUT: DirectionalEventMap;
+        in: DirectionalEventMap;
+        out: DirectionalEventMap;
     }
 
     /**
@@ -198,7 +197,7 @@ declare namespace RxPostmessenger {
 
             namespace Request {
 
-                type All<MAP extends EventMap> = MAP['IN']['requests'];
+                type All<MAP extends EventMap> = MAP['in']['requests'];
                 type Channel<MAP extends EventMap> = keyof All<MAP>;
                 type Contract<MAP extends EventMap, CH extends Channel<MAP>> = All<MAP>[CH];
                 type RequestPayload<MAP extends EventMap, CH extends Channel<MAP>> = Contract<MAP, CH>['requestPayloadType'];
@@ -207,7 +206,7 @@ declare namespace RxPostmessenger {
 
             namespace Notification {
 
-                type All<MAP extends EventMap> = MAP['IN']['notifications'];
+                type All<MAP extends EventMap> = MAP['in']['notifications'];
                 type Channel<MAP extends EventMap> = keyof All<MAP>;
                 type Payload<MAP extends EventMap, CH extends Channel<MAP>> = All<MAP>[CH];
             }
@@ -217,7 +216,7 @@ declare namespace RxPostmessenger {
 
             namespace Request {
 
-                type All<MAP extends EventMap> = MAP['OUT']['requests'];
+                type All<MAP extends EventMap> = MAP['out']['requests'];
                 type Channel<MAP extends EventMap> = keyof All<MAP>;
                 type Contract<MAP extends EventMap, CH extends Channel<MAP>> = All<MAP>[CH];
                 type RequestPayload<MAP extends EventMap, CH extends Channel<MAP>> = Contract<MAP, CH>['requestPayloadType'];
@@ -226,7 +225,7 @@ declare namespace RxPostmessenger {
 
             namespace Notification {
 
-                type All<MAP extends EventMap> = MAP['OUT']['notifications'];
+                type All<MAP extends EventMap> = MAP['out']['notifications'];
                 type Channel<MAP extends EventMap> = keyof All<MAP>;
                 type Payload<MAP extends EventMap, CH extends Channel<MAP>> = All<MAP>[CH];
             }
