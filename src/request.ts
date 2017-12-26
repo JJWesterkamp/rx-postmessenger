@@ -22,12 +22,19 @@ import ResponsePayload = TypeLens.In.Request.ResponsePayload;
 /**
  *
  */
-export class RxPostmessengerRequest<CHN extends string = string, REQ = any, RES = any> implements RequestWrapperInterface {
+export class RxPostmessengerRequest<
+
+    MAP extends EventMapInterface = any,
+    CH extends RequestChannel<MAP> = string,
+    REQ extends RequestPayload<MAP, CH> = any,
+    RES extends ResponsePayload<MAP, CH> = any
+
+> implements RequestWrapperInterface {
 
     /**
      *
      */
-    public readonly channel: CHN;
+    public readonly channel: CH;
 
     /**
      *
@@ -49,7 +56,7 @@ export class RxPostmessengerRequest<CHN extends string = string, REQ = any, RES 
      * @param {string} channel
      * @param {*} payload
      */
-    constructor(id: string, channel: CHN, payload: REQ) {
+    constructor(id: string, channel: CH, payload: REQ) {
 
         Object.defineProperties(this, {
             channel: { value: channel },

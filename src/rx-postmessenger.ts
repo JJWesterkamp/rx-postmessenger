@@ -6,12 +6,15 @@ import { isObject, isString } from './vendor/lodash-es';
 
 // Private interface
 import {
-    ScalarMessage,
+    MessageObject,
     MessageType,
-    ScalarRequest,
-    ScalarResponse,
-    ScalarNotification,
-    IfElse
+    RequestObject,
+    ResponseObject,
+    NotificationObject,
+    IfElse,
+    AnyMessage,
+    MessageTypeMap,
+    MappedMessage,
 } from './private';
 
 // Public interface
@@ -24,6 +27,7 @@ import {
     Request as InboundRequestInterface,
 } from '../rx-postmessenger';
 
+import AnyChannel = TypeLens.AnyChannel;
 
 /**
  * @class RxPostmessenger
@@ -57,7 +61,7 @@ export class RxPostmessenger<MAP extends EventMapInterface = any> implements Mes
      * @member {Observable<object>} inboundMessages$
      * @public
      */
-    public readonly inboundMessages$: Observable<ScalarMessage<MessageType>>;
+    public readonly inboundMessages$: Observable<AnyMessage>;
 
     /**
      * Filtered subset of inboundMessages$, emitting all messages of type 'notification'.
@@ -65,7 +69,7 @@ export class RxPostmessenger<MAP extends EventMapInterface = any> implements Mes
      * @member {Observable<object>} notifications$
      * @public
      */
-    public readonly notifications$: Observable<ScalarNotification>;
+    public readonly notifications$: Observable<NotificationObject>;
 
     /**
      * Filtered subset of inboundMessages$, emitting all messages of type 'request'.
@@ -73,7 +77,7 @@ export class RxPostmessenger<MAP extends EventMapInterface = any> implements Mes
      * @member {Observable<object>} requests$
      * @public
      */
-    public readonly requests$: Observable<ScalarRequest>;
+    public readonly requests$: Observable<RequestObject>;
 
     /**
      * Filtered subset of inboundMessages$, emitting all messages of type 'response'.
@@ -81,33 +85,13 @@ export class RxPostmessenger<MAP extends EventMapInterface = any> implements Mes
      * @member {Observable<object>} responses$
      * @public
      */
-    public readonly responses$: Observable<ScalarResponse>;
-
-    /**
-     * @param {Window} otherWindow
-     * @param {string} origin
-     *
-     * @return {RxPostmessenger}
-     */
-    public static connect<InstanceEventMap extends EventMapInterface = any>(
-        otherWindow: Window,
-        origin: string
-    ): RxPostmessenger<InstanceEventMap> {
-        if ('*' === origin) {
-            console.warn(
-                  `Usage of the "*" wildcard for allowed postMessage destination origin is insecure. `
-                + `Consider using a fixed URL instead.`
-            );
-        }
-
-        return new this(otherWindow, origin);
-    }
+    public readonly responses$: Observable<ResponseObject>;
 
     /**
      * @param {Window} otherWindow - The window object to exchange messages with.
      * @param {string} origin - The remote url to accept incoming messages from.
      */
-    private constructor(public readonly otherWindow: Window, public readonly origin: string) {
+    public constructor(public readonly otherWindow: Window, public readonly origin: string) {
 
         // Initialize read-only properties
         this.inboundMessages$ = RxPostmessenger.Observable
@@ -144,7 +128,7 @@ export class RxPostmessenger<MAP extends EventMapInterface = any> implements Mes
 
     >(channel: CH, payload: REQ_PL | null = null): Observable<RES_PL> {
 
-        const requestData: ScalarRequest<CH, REQ_PL> = this.createMessageObject('request', channel, payload);
+        const requestData: RequestObject<CH, REQ_PL | null> = this.createMessageObject('request', channel, payload);
         const responseObservable: Observable<RES_PL> = this.createResponseObservable<RES_PL>(requestData.id);
         this.postMessage(requestData);
         return responseObservable;
@@ -159,7 +143,7 @@ export class RxPostmessenger<MAP extends EventMapInterface = any> implements Mes
      * @public
      */
     public respond(requestId: string, payload: any): this {
-        const responseData: ScalarResponse = this.createMessageObject('response', null, payload);
+        const responseData: ResponseObject = this.createMessageObject('response', null, payload);
         this.postMessage(responseData);
 
         return this;
@@ -179,7 +163,7 @@ export class RxPostmessenger<MAP extends EventMapInterface = any> implements Mes
         PL extends TypeLens.Out.Notification.Payload<MAP, CH>
 
     >(channel: CH, payload: PL): this {
-        const notificationData: ScalarNotification<CH, PL> = this.createMessageObject('notification', channel, payload);
+        const notificationData: NotificationObject<CH, PL> = this.createMessageObject('notification', channel, payload);
         this.postMessage(notificationData);
 
         return this;
@@ -199,13 +183,13 @@ export class RxPostmessenger<MAP extends EventMapInterface = any> implements Mes
         REQ_PL extends TypeLens.In.Request.RequestPayload<MAP, CH>,
         RES_PL extends TypeLens.In.Request.ResponsePayload<MAP, CH>
 
-    >(channel: CH): Observable<InboundRequestInterface<CH, REQ_PL, RES_PL>> {
+    >(channel: CH): Observable<InboundRequestInterface<MAP, CH>> {
 
-        type REQ = ScalarRequest<CH, REQ_PL>;
+        type REQ = RequestObject<CH, REQ_PL>;
 
         return this.requests$
-            .filter<ScalarRequest, REQ>((request): request is REQ => request.channel === channel)
-            .map((req) => new RxPostmessengerRequest(req.id, req.channel, req.payload));
+            .filter<RequestObject, REQ>((request): request is REQ => request.channel === channel)
+            .map((req) => new RxPostmessengerRequest<MAP, CH>(req.id, req.channel, req.payload));
     }
 
     /**
@@ -221,12 +205,12 @@ export class RxPostmessenger<MAP extends EventMapInterface = any> implements Mes
         CH extends TypeLens.In.Notification.Channel<MAP>,
         PL extends TypeLens.In.Notification.Payload<MAP, CH>
 
-    >(channel: CH, payload: PL): Observable<PL> {
+    >(channel: CH): Observable<PL> {
 
-        type Match = ScalarNotification<CH, PL>;
+        type Match = NotificationObject<CH, PL>;
 
         return this.notifications$
-            .filter<ScalarNotification, Match>((notification): notification is Match => notification.channel === channel)
+            .filter<NotificationObject, Match>((notification): notification is Match => notification.channel === channel)
             .pluck('payload');
     }
 
@@ -261,9 +245,9 @@ export class RxPostmessenger<MAP extends EventMapInterface = any> implements Mes
      * @return {Observable<object>}
      * @private
      */
-    private messagesOfType<S extends MessageType>(type: S): Observable<ScalarMessage<S>> {
+    private messagesOfType<T extends MessageType>(type: T): Observable<MappedMessage<T>> { // Todo: this is the place where the type should be decorated
         return this.inboundMessages$
-            .filter((message): message is ScalarMessage<S> => message.type === type);
+            .filter((message): message is MappedMessage<T> => message.type === type);
     }
 
     // ------------------------------------------------------------------------------------------------
@@ -278,9 +262,9 @@ export class RxPostmessenger<MAP extends EventMapInterface = any> implements Mes
      * @return {Observable<object>}
      * @private
      */
-    private createResponseObservable<T extends ScalarResponse>(requestId: string): Observable<T> {
+    private createResponseObservable<T extends ResponseObject>(requestId: string): Observable<T> {
         return this.responses$
-            .filter<ScalarResponse, T>((response): response is T => response.id === requestId)
+            .filter<ResponseObject, T>((response): response is T => response.id === requestId)
             .take(1);
     }
 
@@ -294,11 +278,11 @@ export class RxPostmessenger<MAP extends EventMapInterface = any> implements Mes
      * @return {{ id: string, type: string, channel: string, payload: * }}
      * @private
      */
-    private createMessageObject<T extends MessageType, CH extends string, PL>(
+    private createMessageObject<T extends MessageType, CH extends AnyChannel<MAP>, PL>(
         type: T,
         channel: CH,
         payload: PL,
-    ): ScalarMessage<T, CH, PL> {
+    ): MappedMessage<T> {
 
         return { id: generateGUID(), type, channel, payload };
     }
@@ -331,10 +315,10 @@ export class RxPostmessenger<MAP extends EventMapInterface = any> implements Mes
      * Tests whether the data sent through postMessage is a well-formed message
      * object. This serves as an additional check for
      *
-     * @param {ScalarMessage} message
+     * @param {MessageObject} message
      * @return {boolean}
      */
-    private isWellFormedMessage(message: ScalarMessage): boolean {
+    private isWellFormedMessage(message: MessageObject): boolean {
 
         const isValidType = flip(contains)(['request', 'response', 'notification']);
 
@@ -351,10 +335,10 @@ export class RxPostmessenger<MAP extends EventMapInterface = any> implements Mes
      * Performs a postMessage call with given data to this.otherWindow, provided that its
      * location origin matches this.origin.
      *
-     * @param {ScalarMessage} data
+     * @param {MessageObject} data
      * @private
      */
-    private postMessage<T extends ScalarMessage<MessageType>>(data: T): void {
+    private postMessage<T extends MessageObject<MessageType>>(data: T): void {
         this.otherWindow.postMessage(data, this.origin);
     }
 }
