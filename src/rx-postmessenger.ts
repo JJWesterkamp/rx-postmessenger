@@ -1,60 +1,33 @@
-import { Observable } from './vendor/rxjs';
-import { RxPostmessengerRequest } from './request';
-import { allPass, contains, flip, not, pipe, prop } from './vendor/ramda';
-import { generateGUID, pushUsedGUID } from './guid-pool';
-import { isObject, isString } from './vendor/lodash-es';
+import { generateGUID, pushUsedGUID } from "./guid-pool";
+import { getObservable } from "./index";
+import { RxPostmessengerRequest } from "./request";
+import { isObject, isString } from "./vendor/lodash-es";
+import { allPass, contains, equals, flip, not, pipe, prop } from "./vendor/ramda";
+import { Observable } from "./vendor/rxjs";
 
-// Private interface
 import {
-    MessageObject,
-    MessageType,
-    RequestObject,
-    ResponseObject,
-    NotificationObject,
-    IfElse,
     AnyMessage,
-    MessageTypeMap,
+    IMessageObject,
+    INotificationObject,
+    IRequestObject,
+    IResponseObject,
     MappedMessage,
-} from './private';
+    MessageType,
+} from "./private";
 
-// Public interface
 import {
-    EventMap as EventMapInterface,
-    Messenger as MessengerInterface,
-    NotificationContract as NotificationMapping,
-    RequestContract as RequestMapping,
+    EventMap as IEventMap,
+    Messenger as IMessenger,
+    Request as IRequestWrapper,
     TypeLens,
-    Request as RequestInterface,
-    EventMap,
-    Request,
-} from '../rx-postmessenger';
+} from "../rx-postmessenger";
 
 import AnyChannel = TypeLens.AnyChannel;
 
 /**
  * @class RxPostmessenger
  */
-export class RxPostmessenger<MAP extends EventMapInterface = any> implements MessengerInterface {
-
-    /**
-     * The observable reference to use when creating new streams. By default a minimal implementation
-     * with only the operator requirements for this module.
-     */
-    static Observable: typeof Observable = Observable;
-
-    /**
-     * Enables injection of a different Rx.Observable reference. This is useful when using
-     * the UMD bundle of this package, in which a minimal Rx build is included. Once provided,
-     * any RxPostmessenger instance that is created afterwards exposes Observable instances
-     * with all the operators enabled that were added to the given reference.
-     *
-     * @param {Class<Observable>} reference
-     * @return {Class<RxPostmessenger>}
-     */
-    static useObservable<T extends typeof Observable>(reference: T): typeof RxPostmessenger {
-        this.Observable = reference;
-        return this;
-    }
+export class RxPostmessenger<MAP extends IEventMap = any> implements IMessenger {
 
     /**
      * Observable stream of all incoming messages that originate
@@ -71,7 +44,7 @@ export class RxPostmessenger<MAP extends EventMapInterface = any> implements Mes
      * @member {Observable<object>} notifications$
      * @public
      */
-    public readonly notifications$: Observable<NotificationObject>;
+    public readonly notifications$: Observable<INotificationObject>;
 
     /**
      * Filtered subset of inboundMessages$, emitting all messages of type 'request'.
@@ -79,7 +52,7 @@ export class RxPostmessenger<MAP extends EventMapInterface = any> implements Mes
      * @member {Observable<object>} requests$
      * @public
      */
-    public readonly requests$: Observable<RequestObject>;
+    public readonly requests$: Observable<IRequestObject>;
 
     /**
      * Filtered subset of inboundMessages$, emitting all messages of type 'response'.
@@ -87,7 +60,7 @@ export class RxPostmessenger<MAP extends EventMapInterface = any> implements Mes
      * @member {Observable<object>} responses$
      * @public
      */
-    public readonly responses$: Observable<ResponseObject>;
+    public readonly responses$: Observable<IResponseObject>;
 
     /**
      * @param {Window} otherWindow - The window object to exchange messages with.
@@ -96,16 +69,16 @@ export class RxPostmessenger<MAP extends EventMapInterface = any> implements Mes
     public constructor(public readonly otherWindow: Window, public readonly origin: string) {
 
         // Initialize read-only properties
-        this.inboundMessages$ = RxPostmessenger.Observable
-            .fromEvent<MessageEvent>(window, 'message')
+        this.inboundMessages$ = getObservable()
+            .fromEvent<MessageEvent>(window, "message")
             .filter((message) => this.isValidMessage(message))
             // Todo: add original event, but first identify as RxPostmessenger message
             // .map((message) => mergeDeepRight(message.data, { originalEvent: message }))
-            .pluck('data');
+            .pluck("data");
 
-        this.requests$      = this.messagesOfType('request');
-        this.responses$     = this.messagesOfType('response');
-        this.notifications$ = this.messagesOfType('notification');
+        this.requests$      = this.messagesOfType("request");
+        this.responses$     = this.messagesOfType("response");
+        this.notifications$ = this.messagesOfType("notification");
 
         // Other initializers
         this.syncGUIIDs();
@@ -133,40 +106,14 @@ export class RxPostmessenger<MAP extends EventMapInterface = any> implements Mes
         const id = generateGUID();
         const responseObservable: Observable<RES_PL> = this.createResponseObservable<RES_PL>(id);
 
-        this.postMessage<RequestObject<CH, REQ_PL>>({
-            id,
-            type: 'request',
+        this.postMessage<IRequestObject<CH, REQ_PL>>({
             channel,
+            id,
             payload,
+            type: "request",
         });
 
         return responseObservable;
-    }
-
-    /**
-     * Sends a response through given channel to the remote window, carrying given payload.
-     *
-     * @param {string} requestId
-     * @param {*} payload
-     * @return {RxPostmessenger}
-     * @public
-     */
-    private respond<
-
-        CH extends TypeLens.In.Request.Channel<MAP>,
-        RES_PL extends TypeLens.In.Request.ResponsePayload<MAP, CH>
-
-    >(requestId: string, channel: CH, payload: RES_PL): this {
-
-        this.postMessage<ResponseObject<CH, RES_PL>>({
-            id: generateGUID(),
-            requestId,
-            channel,
-            payload,
-            type: 'response',
-        });
-
-        return this;
     }
 
     /**
@@ -184,11 +131,11 @@ export class RxPostmessenger<MAP extends EventMapInterface = any> implements Mes
 
     >(channel: CH, payload: PL): this {
 
-        this.postMessage<NotificationObject<CH, PL>>({
-            id: generateGUID(),
-            type: 'notification',
+        this.postMessage<INotificationObject<CH, PL>>({
             channel,
+            id: generateGUID(),
             payload,
+            type: "notification",
         });
 
         return this;
@@ -202,22 +149,23 @@ export class RxPostmessenger<MAP extends EventMapInterface = any> implements Mes
      * @return {Observable<object>}
      * @public
      */
-    public requests<
-
-        CH extends TypeLens.In.Request.Channel<MAP>,
-        REQ_PL extends TypeLens.In.Request.RequestPayload<MAP, CH>,
-        RES_PL extends TypeLens.In.Request.ResponsePayload<MAP, CH>
-
-    >(channel: CH): Observable<RequestInterface<MAP, CH>> {
+    public requests<CH extends TypeLens.In.Request.Channel<MAP>>(channel: CH): Observable<IRequestWrapper<MAP, CH>> {
 
         // Type REQ_PL is 'trusted' to be constant for RequestObject<CH> types.
-        // This is where the TS realm ends, and we must simply trust other
-        // windows to pass the required payload.
-        type REQ = RequestObject<CH, REQ_PL>;
+        // This is where the TS realm ends, and we must simply trust message
+        // senders to pass the required payload.
+        type REQ_PL = TypeLens.In.Request.RequestPayload<MAP, CH>;
+        type REQ = IRequestObject<CH, REQ_PL>;
+        type RES_PL = TypeLens.In.Request.ResponsePayload<MAP, CH>;
 
         return this.requests$
-            .filter<RequestObject, REQ>((request): request is REQ => request.channel === channel)
-            .map((req): RequestInterface<MAP, CH> => new RxPostmessengerRequest<MAP, CH>(req.id, req.channel, req.payload));
+            .filter<IRequestObject, REQ>((request): request is REQ => request.channel === channel)
+            .map((request): IRequestWrapper<MAP, CH> => new RxPostmessengerRequest<MAP, CH>(
+                request.id,
+                request.channel,
+                request.payload,
+                (payload: RES_PL) => this.respond<CH, RES_PL>(request.id, channel, payload),
+            ));
     }
 
     /**
@@ -228,59 +176,44 @@ export class RxPostmessenger<MAP extends EventMapInterface = any> implements Mes
      * @return {Observable<*>}
      * @public
      */
-    public notifications<
+    public notifications<CH extends TypeLens.In.Notification.Channel<MAP>>(channel: CH): Observable<TypeLens.In.Notification.Payload<MAP, CH>> {
 
-        CH extends TypeLens.In.Notification.Channel<MAP>,
-        PL extends TypeLens.In.Notification.Payload<MAP, CH>
-
-    >(channel: CH): Observable<PL> {
-
-        type Match = NotificationObject<CH, PL>;
+        type Match = INotificationObject<CH, TypeLens.In.Notification.Payload<MAP, CH>>;
 
         return this.notifications$
-            .filter<NotificationObject, Match>((notification): notification is Match => notification.channel === channel)
-            .pluck('payload');
-    }
-
-    // ------------------------------------------------------------------------------------------------
-    // Init helpers
-    // ------------------------------------------------------------------------------------------------
-
-    /**
-     * Starts a GUID sync that intercepts incoming messages from other windows running this package,
-     * and pushes their ID values into a used IDs array. This way, every message should have a unique ID.
-     *
-     * @return {RxPostmessenger}
-     * @private
-     */
-    private syncGUIIDs(): this {
-
-        this.inboundMessages$
-            .filter(({ type }) => 'response' !== type)
-            .subscribe(({ id }) => pushUsedGUID(id));
-
-        return this;
-    }
-
-    /**
-     * Returns an Observable emitting all inbound messages` of given type.
-     *
-     * Returns an Observable emitting a subset of MessageEvent objects emitted
-     * by this.inboundMessages$, passing through all MessageEvent objects whose
-     * data.type property matches given type.
-     *
-     * @param {string} type
-     * @return {Observable<object>}
-     * @private
-     */
-    private messagesOfType<T extends MessageType>(type: T): Observable<MappedMessage<T>> { // Todo: this is the place where the type should be decorated
-        return this.inboundMessages$
-            .filter((message): message is MappedMessage<T> => message.type === type);
+            .filter<INotificationObject, Match>((notification): notification is Match => notification.channel === channel)
+            .pluck("payload");
     }
 
     // ------------------------------------------------------------------------------------------------
     // Private runtime
     // ------------------------------------------------------------------------------------------------
+
+    /**
+     * Sends a response through given channel to the remote window, carrying given payload.
+     *
+     * @param {string} requestId
+     * @param {*} payload
+     * @return {RxPostmessenger}
+     * @private
+     */
+    private respond<
+
+        CH extends TypeLens.In.Request.Channel<MAP>,
+        RES_PL extends TypeLens.In.Request.ResponsePayload<MAP, CH>
+
+    >(requestId: string, channel: CH, payload: RES_PL): this {
+
+        this.postMessage<IResponseObject<CH, RES_PL>>({
+            channel,
+            id: generateGUID(),
+            payload,
+            requestId,
+            type: "response",
+        });
+
+        return this;
+    }
 
     /**
      * Creates an Observable that completes after a single emission of the MessageEvent response for request of given
@@ -290,9 +223,12 @@ export class RxPostmessenger<MAP extends EventMapInterface = any> implements Mes
      * @return {Observable<object>}
      * @private
      */
-    private createResponseObservable<T extends ResponseObject>(requestId: string): Observable<T> {
+    private createResponseObservable<CH extends TypeLens.Out.Request.Channel<MAP>>(requestId: string): Observable<TypeLens.Out.Request.ResponsePayload<MAP, CH>> {
+
+        type T = TypeLens.Out.Request.ResponsePayload<MAP, CH>;
+
         return this.responses$
-            .filter<ResponseObject, T>((response): response is T => response.id === requestId)
+            .filter<IResponseObject, T>((response): response is T => response.id === requestId)
             .take(1);
     }
 
@@ -324,16 +260,20 @@ export class RxPostmessenger<MAP extends EventMapInterface = any> implements Mes
      * Tests whether the data sent through postMessage is a well-formed message
      * object. This serves as an additional check for
      *
-     * @param {MessageObject} message
+     * @param {IMessageObject} message
      * @return {boolean}
      */
-    private isWellFormedMessage(message: MessageObject): boolean {
+    private isWellFormedMessage(message: IMessageObject): boolean {
 
         return allPass([
 
-            pipe(prop('id'), isString),
-            pipe(prop('type'), (type) => contains(type, ['request', 'response', 'notification'])),
-            pipe(prop('channel'), isString),
+            pipe(prop("id"), isString),
+            pipe(prop("type"), (type) => contains(type, ["request", "response", "notification"])),
+            pipe(prop("channel"), isString),
+
+            // The shadowing message variable resembles the exact same object:
+            // tslint:disable-next-line:no-shadowed-variable
+            (message) => not(equals(prop("type", message), "request")) || isString(prop("requestId", message)),
 
         ])(message);
     }
@@ -342,10 +282,42 @@ export class RxPostmessenger<MAP extends EventMapInterface = any> implements Mes
      * Performs a postMessage call with given data to this.otherWindow, provided that its
      * location origin matches this.origin.
      *
-     * @param {MessageObject} data
+     * @param {IMessageObject} data
      * @private
      */
     private postMessage<T extends AnyMessage>(data: T): void {
         this.otherWindow.postMessage(data, this.origin);
+    }
+
+    // ------------------------------------------------------------------------------------------------
+    // Init helpers
+    // ------------------------------------------------------------------------------------------------
+
+    /**
+     * Starts a GUID sync that intercepts incoming messages from other windows running this package,
+     * and pushes their ID values into a used IDs array. This way, every message should have a unique ID.
+     *
+     * @return {RxPostmessenger}
+     * @private
+     */
+    private syncGUIIDs(): this {
+        this.inboundMessages$.subscribe(({ id }) => pushUsedGUID(id));
+        return this;
+    }
+
+    /**
+     * Returns an Observable emitting all inbound messages` of given type.
+     *
+     * Returns an Observable emitting a subset of MessageEvent objects emitted
+     * by this.inboundMessages$, passing through all MessageEvent objects whose
+     * data.type property matches given type.
+     *
+     * @param {string} type
+     * @return {Observable<object>}
+     * @private
+     */
+    private messagesOfType<T extends MessageType>(type: T): Observable<MappedMessage<T>> {
+        return this.inboundMessages$
+            .filter((message): message is MappedMessage<T> => message.type === type);
     }
 }

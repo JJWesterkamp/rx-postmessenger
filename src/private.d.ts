@@ -1,16 +1,16 @@
 import {
     EventMap as EventMapInterface,
     TypeLens,
-} from '../rx-postmessenger';
+} from "../rx-postmessenger";
 
 // --------------------------------------------------------------------------------------------
 // Type switch helper
 // --------------------------------------------------------------------------------------------
 
-type False = 'False'
-type True = 'True'
-type Bool = False | True
-type IfElse<Cond extends Bool, Then, Else> = ({ 'True': Then; 'False': Else; })[Cond];
+type False = "False";
+type True = "True";
+type Bool = False | True;
+type IfElse<Cond extends Bool, Then, Else> = ({ "True": Then; "False": Else; })[Cond];
 
 // --------------------------------------------------------------------------------------------
 // Post-message data format
@@ -23,7 +23,7 @@ type IfElse<Cond extends Bool, Then, Else> = ({ 'True': Then; 'False': Else; })[
  * message. This interface should be private to the package implementation. Additional abstractions
  * are used to expose more expressive interfaces to the package consumer.
  */
-export interface MessageObject {
+export interface IMessageObject {
 
     // The id of this message. This is a UUID-like string tha is unique for the single JS lifecycle
     // wherein the message is created.
@@ -44,58 +44,36 @@ export interface MessageObject {
     readonly payload: any;
 }
 
-/**
- * The scalar request interface dictates the format for data sent as payload of any request message.
- */
-export interface RequestObject<CH extends string = string, PL = any> extends MessageObject {
+export interface IRequestObject<CH extends string = string, PL = any> extends IMessageObject {
     readonly id: string;
-    readonly type: 'request';
+    readonly type: "request";
     readonly channel: CH;
     readonly payload: PL;
 }
 
-/**
- *
- */
-export interface ResponseObject<CH extends string = string, PL = any> extends MessageObject {
+export interface IResponseObject<CH extends string = string, PL = any> extends IMessageObject {
     readonly requestId: string;
     readonly id: string;
-    readonly type: 'response';
+    readonly type: "response";
     readonly channel: CH;
     readonly payload: PL;
 }
 
-/**
- *
- */
-export interface NotificationObject<CH extends string = string, PL = any> extends MessageObject {
+export interface INotificationObject<CH extends string = string, PL = any> extends IMessageObject {
     readonly id: string;
-    readonly type: 'notification';
+    readonly type: "notification";
     readonly channel: CH;
     readonly payload: PL;
 }
 
-export type AnyMessage = RequestObject | ResponseObject | NotificationObject;
+export type AnyMessage = IRequestObject | IResponseObject | INotificationObject;
 
-export interface MessageTypeMap {
+export interface IMessageTypeMap {
     [key: string]: AnyMessage;
-    'request': RequestObject;
-    'response': ResponseObject;
-    'notification': NotificationObject;
+    "request": IRequestObject;
+    "response": IResponseObject;
+    "notification": INotificationObject;
 }
 
-/**
- * Valid string literals for the type property of a ScalarMessage object.
- */
-export type MessageType = keyof MessageTypeMap;
-
-export type MappedMessage<T extends MessageType> = MessageTypeMap[T];
-
-interface SendablePayloadMap<MAP extends EventMapInterface, CH extends string> {
-    [key: string]: any;
-    request: TypeLens.Out.Request.RequestPayload<MAP, CH>,
-    response: TypeLens.In.Request.ResponsePayload<MAP, CH>,
-    notification: TypeLens.Out.Notification.Payload<MAP, CH>
-}
-
-export type SendablePayloadType<MAP extends EventMapInterface, T extends MessageType, CH extends string> = SendablePayloadMap<MAP, CH>[T];
+export type MessageType = keyof IMessageTypeMap;
+export type MappedMessage<T extends MessageType> = IMessageTypeMap[T];

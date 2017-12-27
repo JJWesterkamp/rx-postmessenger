@@ -4,6 +4,9 @@ declare const RxPostmessenger: RxPostmessenger.Static;
 export = RxPostmessenger;
 export as namespace RxPostmessenger;
 
+// tslint:disable:interface-name
+// tslint:disable:no-shadowed-variable
+
 /**
  * Common type parameter names:
  *
@@ -12,7 +15,7 @@ export as namespace RxPostmessenger;
  * - REQ_PL     A request payload type. (These types are auto-lookups in most cases)
  * - RES_PL     A response payload type. (These types are auto-lookups in most cases)
  */
-declare namespace RxPostmessenger {
+declare namespace  RxPostmessenger {
 
     interface Static {
 
@@ -62,23 +65,12 @@ declare namespace RxPostmessenger {
         /**
          *
          */
-        requests<
-
-            CH extends TypeLens.In.Request.Channel<MAP>,
-            REQ_PL extends TypeLens.In.Request.RequestPayload<MAP, CH>,
-            RES_PL extends TypeLens.In.Request.ResponsePayload<MAP, CH>
-
-        >(channel: CH): Observable<RxPostmessenger.Request<MAP, CH>>
+        requests<CH extends TypeLens.In.Request.Channel<MAP>>(channel: CH): Observable<RxPostmessenger.Request<MAP, CH>>;
 
         /**
          *
          */
-        notifications<
-
-            CH extends TypeLens.In.Notification.Channel<MAP>,
-            PL extends TypeLens.In.Notification.Payload<MAP, CH>
-
-        >(channel: CH): Observable<PL>;
+        notifications<CH extends TypeLens.In.Notification.Channel<MAP>>(channel: CH): Observable<TypeLens.In.Notification.Payload<MAP, CH>>;
     }
 
     /**
@@ -86,10 +78,8 @@ declare namespace RxPostmessenger {
      */
     interface Request<
 
-        MAP extends EventMap = any,
-        CH extends TypeLens.In.Request.Channel<MAP> = string,
-        REQ extends TypeLens.In.Request.RequestPayload<MAP, CH> = any,
-        RES extends TypeLens.In.Request.ResponsePayload<MAP, CH> = any
+        MAP extends EventMap,
+        CH extends TypeLens.In.Request.Channel<MAP>,
 
     > {
 
@@ -106,12 +96,12 @@ declare namespace RxPostmessenger {
          * Attempts to mutate members of object-type payloads will
          * silently fail as well.
          */
-        readonly payload: REQ;
+        readonly payload: TypeLens.In.Request.RequestPayload<MAP, CH>;
 
         /**
          * Respond to the request with given data.
          */
-        respond(data: RES): void;
+        respond(data: TypeLens.In.Request.ResponsePayload<MAP, CH>): void;
     }
 
     // -----------------------------------------------------------------------
@@ -149,7 +139,9 @@ declare namespace RxPostmessenger {
         notifications: StringMap<NotificationContract>;
     }
 
-    type StringMap<T = any> = { [key: string]: T };
+    interface StringMap<T = any> {
+        [key: string]: T;
+    }
 
     /**
      * The format of a notification channel blueprint. Currently the format is
@@ -187,21 +179,20 @@ declare namespace RxPostmessenger {
             | Out.Request.Channel<MAP>
             | Out.Notification.Channel<MAP>;
 
-
         namespace In {
 
             namespace Request {
 
-                type All<MAP extends EventMap> = MAP['in']['requests'];
+                type All<MAP extends EventMap> = MAP["in"]["requests"];
                 type Channel<MAP extends EventMap> = keyof All<MAP>;
                 type Contract<MAP extends EventMap, CH extends Channel<MAP>> = All<MAP>[CH];
-                type RequestPayload<MAP extends EventMap, CH extends Channel<MAP>> = Contract<MAP, CH>['requestPayload'];
-                type ResponsePayload<MAP extends EventMap, CH extends Channel<MAP>> = Contract<MAP, CH>['responsePayload'];
+                type RequestPayload<MAP extends EventMap, CH extends Channel<MAP>> = Contract<MAP, CH>["requestPayload"];
+                type ResponsePayload<MAP extends EventMap, CH extends Channel<MAP>> = Contract<MAP, CH>["responsePayload"];
             }
 
             namespace Notification {
 
-                type All<MAP extends EventMap> = MAP['in']['notifications'];
+                type All<MAP extends EventMap> = MAP["in"]["notifications"];
                 type Channel<MAP extends EventMap> = keyof All<MAP>;
                 type Payload<MAP extends EventMap, CH extends Channel<MAP>> = All<MAP>[CH];
             }
@@ -211,16 +202,16 @@ declare namespace RxPostmessenger {
 
             namespace Request {
 
-                type All<MAP extends EventMap> = MAP['out']['requests'];
+                type All<MAP extends EventMap> = MAP["out"]["requests"];
                 type Channel<MAP extends EventMap> = keyof All<MAP>;
                 type Contract<MAP extends EventMap, CH extends Channel<MAP>> = All<MAP>[CH];
-                type RequestPayload<MAP extends EventMap, CH extends Channel<MAP>> = Contract<MAP, CH>['requestPayload'];
-                type ResponsePayload<MAP extends EventMap, CH extends Channel<MAP>> = Contract<MAP, CH>['responsePayload'];
+                type RequestPayload<MAP extends EventMap, CH extends Channel<MAP>> = Contract<MAP, CH>["requestPayload"];
+                type ResponsePayload<MAP extends EventMap, CH extends Channel<MAP>> = Contract<MAP, CH>["responsePayload"];
             }
 
             namespace Notification {
 
-                type All<MAP extends EventMap> = MAP['out']['notifications'];
+                type All<MAP extends EventMap> = MAP["out"]["notifications"];
                 type Channel<MAP extends EventMap> = keyof All<MAP>;
                 type Payload<MAP extends EventMap, CH extends Channel<MAP>> = All<MAP>[CH];
             }
