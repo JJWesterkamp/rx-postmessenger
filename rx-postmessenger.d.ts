@@ -15,7 +15,7 @@ export as namespace RxPostmessenger;
  * - REQ_PL     A request payload type. (These types are auto-lookups in most cases)
  * - RES_PL     A response payload type. (These types are auto-lookups in most cases)
  */
-declare namespace  RxPostmessenger {
+declare namespace RxPostmessenger {
 
     interface Static {
 
@@ -31,18 +31,16 @@ declare namespace  RxPostmessenger {
         useObservable<T extends typeof Observable>(implementation: T): void;
 
         /**
-         * Create a new messenger for given window object. The origin URL
+         * Create a new messenger for given window object. The origin UR is used both to give to window.postMessage
+         * calls on otherWindow, and to filter message events on the own window.
          */
         connect<MAP extends EventMap = any>(otherWindow: Window, origin: string): RxPostmessenger.Messenger<MAP>;
     }
 
-    /**
-     *
-     */
     interface Messenger<MAP extends EventMap = any> {
 
         /**
-         *
+         * Send a request over given channel with given payload. Returns an observable that will emit the response.
          */
         request<
 
@@ -53,7 +51,7 @@ declare namespace  RxPostmessenger {
         >(channel: CH, payload?: REQ_PL | null): Observable<RES_PL>;
 
         /**
-         *
+         * Send a notification over given channel with given payload.
          */
         notify<
 
@@ -63,12 +61,12 @@ declare namespace  RxPostmessenger {
         >(channel: CH, payload: PL | null): void;
 
         /**
-         *
+         * Returns an Observable that emits all incoming requests for given request-channel.
          */
         requests<CH extends TypeLens.In.Request.Channel<MAP>>(channel: CH): Observable<RxPostmessenger.Request<MAP, CH>>;
 
         /**
-         *
+         * Returns an Observable that emits all incoming notifications for given notification-channel.
          */
         notifications<CH extends TypeLens.In.Notification.Channel<MAP>>(channel: CH): Observable<TypeLens.In.Notification.Payload<MAP, CH>>;
     }
