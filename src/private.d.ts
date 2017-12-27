@@ -1,3 +1,12 @@
+import {
+    EventMap as EventMapInterface,
+    TypeLens,
+} from '../rx-postmessenger';
+
+// --------------------------------------------------------------------------------------------
+// Type switch helper
+// --------------------------------------------------------------------------------------------
+
 type False = 'False'
 type True = 'True'
 type Bool = False | True
@@ -81,3 +90,12 @@ export interface MessageTypeMap {
 export type MessageType = keyof MessageTypeMap;
 
 export type MappedMessage<T extends MessageType> = MessageTypeMap[T];
+
+interface SendablePayloadMap<MAP extends EventMapInterface, CH extends string> {
+    [key: string]: any;
+    request: TypeLens.Out.Request.RequestPayload<MAP, CH>,
+    response: TypeLens.In.Request.ResponsePayload<MAP, CH>,
+    notification: TypeLens.Out.Notification.Payload<MAP, CH>
+}
+
+export type SendablePayloadType<MAP extends EventMapInterface, T extends MessageType, CH extends string> = SendablePayloadMap<MAP, CH>[T];

@@ -24,7 +24,9 @@ import {
     NotificationContract as NotificationMapping,
     RequestContract as RequestMapping,
     TypeLens,
-    Request as InboundRequestInterface,
+    Request as RequestInterface,
+    EventMap,
+    Request,
 } from '../rx-postmessenger';
 
 import AnyChannel = TypeLens.AnyChannel;
@@ -126,11 +128,18 @@ export class RxPostmessenger<MAP extends EventMapInterface = any> implements Mes
         REQ_PL extends TypeLens.Out.Request.RequestPayload<MAP, CH>,
         RES_PL extends TypeLens.Out.Request.ResponsePayload<MAP, CH>
 
-    >(channel: CH, payload: REQ_PL | null = null): Observable<RES_PL> {
+    >(channel: CH, payload: REQ_PL): Observable<RES_PL> {
 
-        const requestData: RequestObject<CH, REQ_PL | null> = this.createMessageObject('request', channel, payload);
-        const responseObservable: Observable<RES_PL> = this.createResponseObservable<RES_PL>(requestData.id);
-        this.postMessage(requestData);
+        const id = generateGUID();
+        const responseObservable: Observable<RES_PL> = this.createResponseObservable<RES_PL>(id);
+
+        this.postMessage<RequestObject<CH, REQ_PL>>({
+            id,
+            type: 'request',
+            channel,
+            payload,
+        });
+
         return responseObservable;
     }
 
@@ -142,9 +151,20 @@ export class RxPostmessenger<MAP extends EventMapInterface = any> implements Mes
      * @return {RxPostmessenger}
      * @public
      */
-    public respond(requestId: string, payload: any): this {
-        const responseData: ResponseObject = this.createMessageObject('response', null, payload);
-        this.postMessage(responseData);
+    private respond<
+
+        CH extends TypeLens.In.Request.Channel<MAP>,
+        RES_PL extends TypeLens.In.Request.ResponsePayload<MAP, CH>
+
+    >(requestId: string, channel: CH, payload: RES_PL): this {
+
+        this.postMessage<ResponseObject<CH, RES_PL>>({
+            id: generateGUID(),
+            requestId,
+            channel,
+            payload,
+            type: 'response',
+        });
 
         return this;
     }
@@ -163,8 +183,13 @@ export class RxPostmessenger<MAP extends EventMapInterface = any> implements Mes
         PL extends TypeLens.Out.Notification.Payload<MAP, CH>
 
     >(channel: CH, payload: PL): this {
-        const notificationData: NotificationObject<CH, PL> = this.createMessageObject('notification', channel, payload);
-        this.postMessage(notificationData);
+
+        this.postMessage<NotificationObject<CH, PL>>({
+            id: generateGUID(),
+            type: 'notification',
+            channel,
+            payload,
+        });
 
         return this;
     }
@@ -183,13 +208,16 @@ export class RxPostmessenger<MAP extends EventMapInterface = any> implements Mes
         REQ_PL extends TypeLens.In.Request.RequestPayload<MAP, CH>,
         RES_PL extends TypeLens.In.Request.ResponsePayload<MAP, CH>
 
-    >(channel: CH): Observable<InboundRequestInterface<MAP, CH>> {
+    >(channel: CH): Observable<RequestInterface<MAP, CH>> {
 
+        // Type REQ_PL is 'trusted' to be constant for RequestObject<CH> types.
+        // This is where the TS realm ends, and we must simply trust other
+        // windows to pass the required payload.
         type REQ = RequestObject<CH, REQ_PL>;
 
         return this.requests$
             .filter<RequestObject, REQ>((request): request is REQ => request.channel === channel)
-            .map((req) => new RxPostmessengerRequest<MAP, CH>(req.id, req.channel, req.payload));
+            .map((req): RequestInterface<MAP, CH> => new RxPostmessengerRequest<MAP, CH>(req.id, req.channel, req.payload));
     }
 
     /**
@@ -269,25 +297,6 @@ export class RxPostmessenger<MAP extends EventMapInterface = any> implements Mes
     }
 
     /**
-     * Creates a message object to be used as payload of an outgoing message towards the remote window object.
-     *
-     * @param {string} type
-     * @param {string|null} channel
-     * @param {*} payload
-     * @param {string} [id] - Responses should provide the request id here
-     * @return {{ id: string, type: string, channel: string, payload: * }}
-     * @private
-     */
-    private createMessageObject<T extends MessageType, CH extends AnyChannel<MAP>, PL>(
-        type: T,
-        channel: CH,
-        payload: PL,
-    ): MappedMessage<T> {
-
-        return { id: generateGUID(), type, channel, payload };
-    }
-
-    /**
      * Tests whether given MessageEvent its origin matches the host URL for a SKIK configurator window.
      *
      * Chechs whether the origin location matches any allowed origins.
@@ -320,12 +329,10 @@ export class RxPostmessenger<MAP extends EventMapInterface = any> implements Mes
      */
     private isWellFormedMessage(message: MessageObject): boolean {
 
-        const isValidType = flip(contains)(['request', 'response', 'notification']);
-
         return allPass([
 
             pipe(prop('id'), isString),
-            pipe(prop('type'), isValidType),
+            pipe(prop('type'), (type) => contains(type, ['request', 'response', 'notification'])),
             pipe(prop('channel'), isString),
 
         ])(message);
@@ -338,7 +345,7 @@ export class RxPostmessenger<MAP extends EventMapInterface = any> implements Mes
      * @param {MessageObject} data
      * @private
      */
-    private postMessage<T extends MessageObject<MessageType>>(data: T): void {
+    private postMessage<T extends AnyMessage>(data: T): void {
         this.otherWindow.postMessage(data, this.origin);
     }
 }

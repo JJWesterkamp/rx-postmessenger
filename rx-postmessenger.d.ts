@@ -28,12 +28,7 @@ declare namespace RxPostmessenger {
         useObservable<T extends typeof Observable>(implementation: T): void;
 
         /**
-         *
-         */
-        getObservable(): typeof Observable;
-
-        /**
-         *
+         * Create a new messenger for given window object. The origin URL
          */
         connect<MAP extends EventMap = any>(otherWindow: Window, origin: string): RxPostmessenger.Messenger<MAP>;
     }
@@ -73,7 +68,7 @@ declare namespace RxPostmessenger {
             REQ_PL extends TypeLens.In.Request.RequestPayload<MAP, CH>,
             RES_PL extends TypeLens.In.Request.ResponsePayload<MAP, CH>
 
-        >(channel: CH): Observable<Request<MAP, CH>>
+        >(channel: CH): Observable<RxPostmessenger.Request<MAP, CH>>
 
         /**
          *
@@ -167,8 +162,8 @@ declare namespace RxPostmessenger {
      * Request mapping object.
      */
     interface RequestContract<RequestPayload = any, ResponsePayload = any> {
-        requestPayloadType: RequestPayload;
-        responsePayloadType: ResponsePayload;
+        requestPayload: RequestPayload;
+        responsePayload: ResponsePayload;
     }
 
     // -----------------------------------------------------------------------
@@ -200,8 +195,8 @@ declare namespace RxPostmessenger {
                 type All<MAP extends EventMap> = MAP['in']['requests'];
                 type Channel<MAP extends EventMap> = keyof All<MAP>;
                 type Contract<MAP extends EventMap, CH extends Channel<MAP>> = All<MAP>[CH];
-                type RequestPayload<MAP extends EventMap, CH extends Channel<MAP>> = Contract<MAP, CH>['requestPayloadType'];
-                type ResponsePayload<MAP extends EventMap, CH extends Channel<MAP>> = Contract<MAP, CH>['responsePayloadType'];
+                type RequestPayload<MAP extends EventMap, CH extends Channel<MAP>> = Contract<MAP, CH>['requestPayload'];
+                type ResponsePayload<MAP extends EventMap, CH extends Channel<MAP>> = Contract<MAP, CH>['responsePayload'];
             }
 
             namespace Notification {
@@ -219,8 +214,8 @@ declare namespace RxPostmessenger {
                 type All<MAP extends EventMap> = MAP['out']['requests'];
                 type Channel<MAP extends EventMap> = keyof All<MAP>;
                 type Contract<MAP extends EventMap, CH extends Channel<MAP>> = All<MAP>[CH];
-                type RequestPayload<MAP extends EventMap, CH extends Channel<MAP>> = Contract<MAP, CH>['requestPayloadType'];
-                type ResponsePayload<MAP extends EventMap, CH extends Channel<MAP>> = Contract<MAP, CH>['responsePayloadType'];
+                type RequestPayload<MAP extends EventMap, CH extends Channel<MAP>> = Contract<MAP, CH>['requestPayload'];
+                type ResponsePayload<MAP extends EventMap, CH extends Channel<MAP>> = Contract<MAP, CH>['responsePayload'];
             }
 
             namespace Notification {
