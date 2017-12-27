@@ -142,14 +142,14 @@ declare namespace RxPostmessenger {
     }
 
     /**
-     * The format of a notification channel blueprint. Currently the format is
-     * only the given payload type, and the wrapper type exists only for semantic
-     * reasons, and for consistence with RequestContract.
+     * The format of a notification channel blueprint.
      */
-    type NotificationContract<Payload = any> = Payload;
+    interface NotificationContract<Payload = any> {
+        payload: Payload;
+    }
 
     /**
-     * Request mapping object.
+     * The format of a request channel blueprint.
      */
     interface RequestContract<RequestPayload = any, ResponsePayload = any> {
         requestPayload: RequestPayload;
@@ -192,7 +192,7 @@ declare namespace RxPostmessenger {
 
                 type All<MAP extends EventMap> = MAP["in"]["notifications"];
                 type Channel<MAP extends EventMap> = keyof All<MAP>;
-                type Payload<MAP extends EventMap, CH extends Channel<MAP>> = All<MAP>[CH];
+                type Payload<MAP extends EventMap, CH extends Channel<MAP>> = All<MAP>[CH]["payload"];
             }
         }
 
@@ -211,7 +211,7 @@ declare namespace RxPostmessenger {
 
                 type All<MAP extends EventMap> = MAP["out"]["notifications"];
                 type Channel<MAP extends EventMap> = keyof All<MAP>;
-                type Payload<MAP extends EventMap, CH extends Channel<MAP>> = All<MAP>[CH];
+                type Payload<MAP extends EventMap, CH extends Channel<MAP>> = All<MAP>[CH]["payload"];
             }
         }
     }
