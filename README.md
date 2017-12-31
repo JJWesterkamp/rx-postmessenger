@@ -211,7 +211,6 @@ const nonExistingEvents$ = messenger.notifications('non-existing');
 priceChanges$.subscribe(({ current }) => displayPrice(current));
 ```
 
-
 #### Request contracts
 
 Request contracts define the types of the request-payload, and the type of the response-payload expected in return. Consider the greeting request again. As request payload we expect an options object with property `language` of type `string`. A response of type `string` is expected: the greeting text itself. The types can be given as type parameters for a `RequestContract` type declaration:
@@ -239,3 +238,5 @@ messenger.requests('greeting').subscribe((request) => {
   request.respond(1); // [ts] Type '1' is not assignable to type 'string'
 });
 ```
+
+![Type completion of mapped RxPostmessenger instances](https://i.imgur.com/q15ig5W.gif)
