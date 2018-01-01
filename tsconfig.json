@@ -12,13 +12,15 @@
         "strictNullChecks": true,
         "strictFunctionTypes": true,
         "declaration": false,
-        "outDir": "lib"
+        "outDir": "cjs"
     },
     "include":[
         "src/**/*.ts"
     ],
     "exclude": [
         "node_modules",
-        "dist"
-    ]
+        "cjs",
+        "umd",
+        "esm"
+    ],
 }

@@ -16,9 +16,9 @@
     "typescript"
   ],
   "license": "MIT",
-  "main": "./lib/index.js",
-  "types": "./rx-postmessenger.d.ts",
+  "main": "./cjs/index.js",
   "module": "./esm/index.js",
+  "types": "./rx-postmessenger.d.ts",
   "scripts": {
     "dev": "run-p \"build:** -- --watch\"",
     "build": "run-p build:**",
