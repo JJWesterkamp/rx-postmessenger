@@ -4,6 +4,7 @@
 // Therefore, lodash-es is used:
 
 export { default as get } from "lodash-es/get";
+export { default as includes } from "lodash-es/includes";
 export { default as isElement } from "lodash-es/isElement";
 export { default as isFunction } from "lodash-es/isFunction";
 export { default as isObject } from "lodash-es/isObject";

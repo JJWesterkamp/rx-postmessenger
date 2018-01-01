@@ -19,15 +19,10 @@ $ npm install rx-postmessenger --save
 
 ## Usage
 
-RxPostmessenger exposes both a default export and a named export:
-
 ```javascript
-// To personal preference, either import default...
 import RxPostmessenger from 'rx-postmessenger';
-
-// ...or import named
-import { RxPostmessenger } from 'rx-postmessenger';
 ```
+
 ### 2 Windows connecting to one another
 
 ```typescript

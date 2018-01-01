@@ -1,8 +1,7 @@
 import { generateGUID, pushUsedGUID } from "./guid-pool";
 import { getObservable } from "./index";
 import { RxPostmessengerRequest } from "./request";
-import { isObject, isString } from "./vendor/lodash-es";
-import { allPass, contains, equals, flip, not, pipe, prop } from "./vendor/ramda";
+import { includes, isObject, isString } from "./vendor/lodash-es";
 import { Observable } from "./vendor/rxjs";
 
 import {
@@ -15,14 +14,12 @@ import {
     MessageType,
 } from "./private";
 
-import {
-    EventMap as IEventMap,
-    Messenger as IMessenger,
-    Request as IRequestWrapper,
-    TypeLens,
-} from "../rx-postmessenger";
-
-import AnyChannel = TypeLens.AnyChannel;
+import PublicInterface from "../rx-postmessenger";
+import IEventMap = PublicInterface.EventMap;
+import IRequestWrapper = PublicInterface.Request;
+import AnyChannel = PublicInterface.TypeLens.AnyChannel;
+import IMessenger = PublicInterface.Messenger;
+import TypeLens = PublicInterface.TypeLens;
 
 /**
  * @class RxPostmessenger
@@ -228,7 +225,8 @@ export class RxPostmessenger<MAP extends IEventMap = any> implements IMessenger 
         type T = TypeLens.Out.Request.ResponsePayload<MAP, CH>;
 
         return this.responses$
-            .filter<IResponseObject, T>((response): response is T => response.id === requestId)
+            .filter<IResponseObject, T>((response): response is T => response.requestId === requestId)
+            .pluck("payload")
             .take(1);
     }
 
@@ -260,22 +258,15 @@ export class RxPostmessenger<MAP extends IEventMap = any> implements IMessenger 
      * Tests whether the data sent through postMessage is a well-formed message
      * object. This serves as an additional check for
      *
-     * @param {IMessageObject} message
+     * @param {AnyMessage} message
      * @return {boolean}
      */
-    private isWellFormedMessage(message: IMessageObject): boolean {
+    private isWellFormedMessage(message: AnyMessage): boolean {
 
-        return allPass([
-
-            pipe(prop("id"), isString),
-            pipe(prop("type"), (type) => contains(type, ["request", "response", "notification"])),
-            pipe(prop("channel"), isString),
-
-            // The shadowing message variable resembles the exact same object:
-            // tslint:disable-next-line:no-shadowed-variable
-            (message) => not(equals(prop("type", message), "request")) || isString(prop("requestId", message)),
-
-        ])(message);
+        return isString(message.id)
+            && includes(["request", "response", "notification"], message.type)
+            && isString(message.channel)
+            && (message.type !== "response" || isString(message.requestId));
     }
 
     /**

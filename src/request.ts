@@ -2,20 +2,20 @@
 // Public interface imports
 // -----------------------------------------------------------------------
 
-import {
-    EventMap as EventMapInterface,
-    Request as RequestWrapperInterface,
-    RequestContract,
-    TypeLens,
-} from "../rx-postmessenger";
+import PublicInterface from "../rx-postmessenger";
+
+import RequestWrapperInterface = PublicInterface.Request;
+import EventMapInterface = PublicInterface.EventMap;
+import RequestContract = PublicInterface.RequestContract;
+import RequestTypes = PublicInterface.TypeLens.In.Request;
 
 // -----------------------------------------------------------------------
 // Type mapping shortcuts
 // -----------------------------------------------------------------------
 
-import RequestChannel = TypeLens.In.Request.Channel;
-import RequestPayload = TypeLens.In.Request.RequestPayload;
-import ResponsePayload = TypeLens.In.Request.ResponsePayload;
+import RequestChannel = RequestTypes.Channel;
+import RequestPayload = RequestTypes.RequestPayload;
+import ResponsePayload = RequestTypes.ResponsePayload;
 
 /**
  *

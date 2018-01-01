@@ -1,7 +1,5 @@
-import {
-    EventMap as EventMapInterface,
-    TypeLens,
-} from "../rx-postmessenger";
+import Public from "../rx-postmessenger";
+import EventMapInterface = Public.EventMap;
 
 // --------------------------------------------------------------------------------------------
 // Type switch helper

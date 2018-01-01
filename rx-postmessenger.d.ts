@@ -1,7 +1,7 @@
 import { Observable } from "rxjs/Observable";
 
 declare const RxPostmessenger: RxPostmessenger.Static;
-export = RxPostmessenger;
+export default RxPostmessenger;
 export as namespace RxPostmessenger;
 
 // tslint:disable:interface-name
@@ -29,6 +29,7 @@ declare namespace RxPostmessenger {
          * NOTE: This should be done before you call RxPostmessenger.connect() for the first time.
          */
         useObservable<T extends typeof Observable>(implementation: T): void;
+        getObservable(): typeof Observable;
 
         /**
          * Create a new messenger for given window object. The origin UR is used both to give to window.postMessage
@@ -77,7 +78,7 @@ declare namespace RxPostmessenger {
     interface Request<
 
         MAP extends EventMap,
-        CH extends TypeLens.In.Request.Channel<MAP>,
+        CH extends TypeLens.In.Request.Channel<MAP>
 
     > {
 
@@ -168,7 +169,7 @@ declare namespace RxPostmessenger {
      * The usage of an EventMap interface combined with structural mapping using
      * the lenses below are at the core of how the package functions.
      */
-    namespace TypeLens {
+    export namespace TypeLens {
 
         type AnyChannel<MAP extends EventMap> =
 

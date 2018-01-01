@@ -1,13 +1,13 @@
 import { RxPostmessenger } from "./rx-postmessenger";
 import { Observable } from "./vendor/rxjs";
 
-import {
-    EventMap as IEventMap,
-    Messenger,
-    NotificationContract,
-    RequestContract,
-    Static,
-} from "../rx-postmessenger";
+import PublicInterface from "../rx-postmessenger";
+
+import IEventMap = PublicInterface.EventMap;
+import Messenger = PublicInterface.Messenger;
+import NotificationContract = PublicInterface.NotificationContract;
+import RequestContract = PublicInterface.RequestContract;
+import Static = PublicInterface.Static;
 
 // -------------------------------------------------------------------------------------
 // Private data / exports for internal wiring
@@ -38,7 +38,7 @@ export function getObservable(): typeof Observable {
  *
  * @param {Class<Observable>} newImplementation
  */
-function useObservable<T extends typeof Observable>(newImplementation: T): void {
+export function useObservable<T extends typeof Observable>(newImplementation: T): void {
     _Observable = newImplementation;
 }
 
@@ -47,7 +47,7 @@ function useObservable<T extends typeof Observable>(newImplementation: T): void 
  * @param {string} origin
  * @return {Messenger}
  */
-function connect<MAP extends IEventMap = any>(otherWindow: Window, origin: string): Messenger<MAP> {
+export function connect<MAP extends IEventMap = any>(otherWindow: Window, origin: string): Messenger<MAP> {
     return new RxPostmessenger(otherWindow, origin);
 }
 
@@ -55,6 +55,5 @@ function connect<MAP extends IEventMap = any>(otherWindow: Window, origin: strin
 // API Exports
 // ---------------------------------------------------------------------------------------
 
-const defaultNamespace: Static = { connect, useObservable };
-export { defaultNamespace as RxPostmessenger };
+const defaultNamespace: Static = { connect, useObservable, getObservable };
 export default defaultNamespace;
