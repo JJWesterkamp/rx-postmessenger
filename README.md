@@ -1,9 +1,8 @@
-_This package is currently under heavy development. Expect breaking changes to the public API within minor releases until **v1.0.0** is released._
-
 # rx-postmessenger
 
 [![npm version](https://badge.fury.io/js/rx-postmessenger.svg)](https://badge.fury.io/js/rx-postmessenger)
 **Module builds** (of otherwise ES5 code): ESM, CommonJS, UMD (bundled)
+
 
 Minimal RxJS wrapper around the window.postMessage API for both passive (request-response) and active (notification) streams across frame windows.
 
@@ -152,9 +151,15 @@ Event mapping allows for type checking event channel names and provides mapping 
 #### Example usage
 
 ```typescript
-import { EventMap, RequestContract, NotificationContract } from 'rx-postmessenger';
+import RxPostmessenger from "rx-postmessenger";
 
-interface MyEventMap extends EventMap {
+// Import TS interfaces from RxPostmessenger namespace:
+import IEventMap = RxPostmessenger.EventMap;
+import RequestContract = RxPostmessenger.RequestContract;
+import NotificationContract = RxPostmessenger.NotificationContract;
+
+// Create your event mappings:
+interface MyEventMap extends IEventMap {
 
   in: {
     notifications: {
