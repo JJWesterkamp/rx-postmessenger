@@ -28,10 +28,7 @@
     "lint": "run-p lint:**",
     "lint:source": "tslint -c tslint.json 'src/**/*.ts' --fix",
     "lint:declaration": "tslint -c tslint.json '*.d.ts' --fix",
-    "publish:pre": "npm-run-all lint build",
-    "publish:patch": "npm run publish:pre && npm version patch && npm publish --access=public && git push",
-    "publish:minor": "npm run publish:pre && npm version minor && npm publish --access=public && git push",
-    "publish:major": "npm run publish:pre && npm version major && npm publish --access=public && git push"
+    "prepublish": "npm-run-all lint build"
   },
   "dependencies": {
     "lodash-es": "^4.17.4",
