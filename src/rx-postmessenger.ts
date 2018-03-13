@@ -256,7 +256,8 @@ export class RxPostmessenger<MAP extends IEventMap = any> implements IMessenger 
 
     /**
      * Tests whether the data sent through postMessage is a well-formed message
-     * object. This serves as an additional check for
+     * object. This serves as runtime data format validation. If messages do not
+     * comply to the AnyMessage compound interface, the entire event is ignored.
      *
      * @param {AnyMessage} message
      * @return {boolean}
