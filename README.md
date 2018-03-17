@@ -21,14 +21,14 @@ $ npm install rx-postmessenger --save
 **Static methods**
 
 |Method|Description|
-|-|-|
+|:-|:-|
 |[`connect()`](#connecting-2-window-objects)|Connect `Window` objects by creating messenger instances.|
 |[`useObservable()`](#using-a-different-rxobservable-implementation)|Use a different `Rx.Observable` implementation (Primarily useful for UMD bundle consumers.)|
 
 **`Messenger` Instance methods**
 
 |Method|Description|
-|-|-|
+|:-|:-|
 |[`notify()`](#sending-notifications)|Send notifications to the connected window.|
 |[`notifications()`](#listening-for-inbound-notifications:)|Listen for inbound notifications.|
 |[`request()`](#sending-requests)|Send requests to the connected window.|
@@ -37,8 +37,10 @@ $ npm install rx-postmessenger --save
 **`Request` Instance methods**
 
 |Method|Description|
-|-|-|
+|:-|:-|
 |[`respond()`](#sending-request-responses)|Respond to the request with a certain payload.
+
+---
 
 ## Usage
 
@@ -90,6 +92,8 @@ Notes:
 
 - `useObservable` does not perform any type validation on the given argument at this point. Failing to provide an actual RxJS Observable implementation when calling `useObservable`will break any `Messenger` instance that is created afterwards.
 - Make sure to call `useObservable` before instantiating `Messenger` instances.
+
+---
 
 ### `Messenger` Instance methods
 
@@ -163,6 +167,8 @@ parentMessenger
   .requests('greeting')
   .subscribe((request) => handleGreetingRequest(request));
 ```
+
+---
 
 ### `Request` instance methods
 
