@@ -26,6 +26,7 @@ $ npm install rx-postmessenger --save
 |[`useObservable()`](#using-a-different-rxobservable-implementation)|Use a different `Rx.Observable` implementation (Primarily useful for UMD bundle consumers.)|
 
 **`Messenger` Instance methods**
+
 |Method|Description|
 |-|-|
 |[`notify()`](#sending-notifications)|Send notifications to the connected window.|
@@ -34,6 +35,7 @@ $ npm install rx-postmessenger --save
 |[`requests()`](#listening-for-inbound-requests)|Listen for inbound requests.|
 
 **`Request` Instance methods**
+
 |Method|Description|
 |-|-|
 |[`respond()`](#sending-request-responses)|Respond to the request with a certain payload.
