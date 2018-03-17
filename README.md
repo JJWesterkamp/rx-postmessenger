@@ -1,8 +1,4 @@
-# rx-postmessenger
-
-[![npm version](https://badge.fury.io/js/rx-postmessenger.svg)](https://badge.fury.io/js/rx-postmessenger)
-**Module builds** (of otherwise ES5 code): ESM, CommonJS, UMD (bundled)
-
+# rx-postmessenger [![npm version](https://badge.fury.io/js/rx-postmessenger.svg)](https://badge.fury.io/js/rx-postmessenger)
 
 Minimal RxJS wrapper around the window.postMessage API for both passive (request-response) and active (notification) streams across frame windows.
 
@@ -10,11 +6,37 @@ Minimal RxJS wrapper around the window.postMessage API for both passive (request
 
 An RxPostmessenger class instance establishes one end of a "connection" between 2 window objects, using the `window.postMessage` API. Each instance targets _one single_ `Window` object. It also only accepts incoming messages from that specific window object while it's serving documents from _one single_ origin.
 
+**Typescript users**
+
+_If you're consuming the package in Typescript, see the [Typescript usage guide](https://github.com/JJWesterkamp/rx-postmessenger/tree/master/docs/usage-with-typescript.md) for additional features._
+
 ## Installation
 
 ```bash
 $ npm install rx-postmessenger --save
 ```
+
+## Contents / API
+
+**Static methods**
+
+|Method|Description|
+|-|-|
+|[`connect()`](#connecting-2-window-objects)|Connect `Window` objects by creating messenger instances.|
+|[`useObservable()`](#using-a-different-rxobservable-implementation)|Use a different `Rx.Observable` implementation (Primarily useful for UMD bundle consumers.)|
+
+**`Messenger` Instance methods**
+|Method|Description|
+|-|-|
+|[`notify()`](#sending-notifications)|Send notifications to the connected window.|
+|[`notifications()`](#listening-for-inbound-notifications:)|Listen for inbound notifications.|
+|[`request()`](#sending-requests)|Send requests to the connected window.|
+|[`requests()`](#listening-for-inbound-requests)|Listen for inbound requests.|
+
+**`Request` Instance methods**
+|Method|Description|
+|-|-|
+|[`respond()`](#sending-request-responses)|Respond to the request with a certain payload.
 
 ## Usage
 
@@ -22,62 +44,90 @@ $ npm install rx-postmessenger --save
 import RxPostmessenger from 'rx-postmessenger';
 ```
 
-### 2 Windows connecting to one another
+### Static methods
 
-```typescript
-static connect(otherWindow: Window, origin: string): RxPostmessenger;
-```
-Both ends of the connection should implement this package for the best intercommunication. One in a _parent_ project (that implements the iframe), and one in a _child_ project (that's being served by the iframe). Creating a new messenger is straightforward:
+#### Connecting 2 Window objects
+
+> ```typescript
+> RxPostmessenger.connect(otherWindow: Window, origin: string): RxPostmessenger.Messenger
+> ```
+
+Both ends of the connection should implement this package. One in a _parent_ project (that implements the iframe), and one in a _child_ project (that's being served by the iframe). Creating a new messenger is straightforward:
 
 ```javascript
-// ~~ @ http://parent-project.com
-const childWindowMessenger = RxPostmessenger.connect(
+// At parent window. Origin: http://parent-project.com
+const childMessenger = RxPostmessenger.connect(
   someIframe.contentWindow,
   'http://child-project.com'
 );
 
-// ~~ @ http://child-project.com
-const parentWindowMessenger = RxPostmessenger.connect(
+// ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+
+// At child window. Origin: http://child-project.com
+const parentMessenger = RxPostmessenger.connect(
   window.parent,
   'http://parent-project.com'
 );
 ```
 
+#### Using a different `Rx.Observable` implementation
 
-### Notify the other window
-```typescript
-notify(channel: string, payload: any): void;
+> ```typescript
+> RxPostmessenger.useObservable(impl: typeof Rx.Observable): void
+> ```
+
+This package comes with a UMD bundle that packs a minimal RxJS build to create observable objects from. For UMD bundle consumers the static interface provides a method `useObservable` that accepts one argument of `typeof Rx.Observable`:
+
+```javascript
+RxPostmessenger.useObservable(MyObservable);
+const messenger = RxPostmessenger.connect( /* ... */ );
 ```
+Any messenger created afterwards will have observable object properties constructed from the given observable implementation. This allows you to use your own RxJS build, with your required subset of operators etc. The [RxJS imports file of this package][rxjs-imports] shows what subset of operators is included by default.
+
+Notes:
+
+- `useObservable` does not perform any type validation on the given argument at this point. Failing to provide an actual RxJS Observable implementation when calling `useObservable`will break any `Messenger` instance that is created afterwards.
+- Make sure to call `useObservable` before instantiating `Messenger` instances.
+
+### `Messenger` Instance methods
+
+#### Sending notifications
+> ```typescript
+> Messenger.notify(channel: string, payload: any): void;`
+> ```
 
 The messenger instances give you a way to send notifications to the other `Window` through the `notify()` method. Consider an example where we want to notify a child window of price changes:
 
 ```javascript
-childWindowMessenger.notify('price-changed', { previous: 12, current: 14 }); // Price increased
+childMessenger.notify('price-changed', {
+    oldPrice: 12.50,
+    newPrice: 14.50,
+});
 ```
 
-The notify method is `void`: notifications are _send_ and forget. Use [`request()`](#request) instead if you require data back.
+The notify method is `void`: notifications are _send_ and forget. Use [`request()`](#sending-requests) instead if you require data back.
 
-### Listening for notifications
-```typescript
-notifications(channel: string): Observable<any>;
-```
+#### Listening for inbound notifications
+> ```typescript
+> Messenger.notifications(channel: string): Observable<any>;
+> ```
 
 The child project can request an Observable stream for a certain notification channel. In this case we're interested in `'price-changed'` events, but only the ones where the price increased. The ability to use RxJS operators can help us out:
 
 ```javascript
 const handlePriceIncrease = (increase) => console.log(`Price increased with €${increase}!`);
 
-parentWindowMessenger.notifications('price-changed')
-  .filter(({ previous, current }) => current > previous)
-  .map(({ previous, current }) => current - previous)
+parentMessenger.notifications('price-changed')
+  .filter(({ oldPrice, newPrice }) => newPrice > oldPrice)
+  .map(({ oldPrice, newPrice }) => newPrice - oldPrice)
   .subscribe((increase) => handlePriceIncrease(increase)); // > 'Price increased with €2!'
 ```
 
-### Perform a request
+#### Sending requests
 
-```typescript
-request(channel: string, payload?: any): Observable<any>;
-```
+> ```typescript
+> Messenger.request(channel: string, payload?: any): Observable<any>;
+> ```
 
 RxPostmessenger also supports request - response communication. At the requester side a request is initiated by calling the `request()` method with 1 or 2 arguments. The first is a request alias (actually just another channel) of our choice.
 
@@ -86,7 +136,9 @@ _A notification-channel and a request-channel can both have the same channel nam
 An observable is returned that emits the response when arrived, and then completes. Let's request a greeting from our child window, and tell it we only understand `'en'`:
 
 ```javascript
-const greetingResponse$ = childWindowMessenger.request('greeting', { language: 'en' }) // => Observable<T extends Response>
+const greetingResponse$ = childMessenger.request('greeting', {
+    language: 'en',
+});
 ```
 
 We can then subscribe to the greeting response stream. Provided that the greeting says something nice, we'll log it for everyone to see:
@@ -97,146 +149,41 @@ greetingResponse$
   .subscribe((niceGreeting) => console.log(niceGreeting)); // > 'Hi parent!'
 ```
 
-### Subscribing to incoming requests of a single type
-```typescript
-requests(channel: string): Observable<RxPostmessenger.Request>;
-```
+#### Listening for inbound requests
+> ```typescript
+> Messenger.requests(channel: string): Observable<RxPostmessenger.Request>;
+> ```
 
-Of course no nice greeting would ever be received when the child project does not listen for requests to handle and respond to. Let's not be rude and create a request stream for `'greeting'` requests, and subscribing to it. We'll pass the `RxPostmessenger.Request` objects that the subscription receives into a function `handleGreetingRequest()`:
+No greeting would ever be received by `parentMessenger` when the child project does not listen for requests to handle and respond to. Let's not be rude and create a request stream for `'greeting'` requests, and subscribing to it. We'll pass the `RxPostmessenger.Request` objects that the subscription receives into a function `handleGreetingRequest()`:
 
 ```javascript
-parentWindowMessenger
+parentMessenger
   .requests('greeting')
   .subscribe((request) => handleGreetingRequest(request));
 ```
 
-### Sending request responses
+### `Request` instance methods
 
-```typescript
-RxPostmessenger.Request.respond(payload: any): void;
-```
+#### Sending request responses
 
+> ```typescript
+> RxPostmessenger.Request.respond(payload: any): void;
+> ```
 
-
+The `requests` method returns an observable of `RxPostmessenger.Request` objects. They provide a single method `respond` that accepts one argument: the response payload. Let's use the method on the requests we give to `handleGreetingRequest`:
 
 ```javascript
-function handleGreetingRequest(request) {
-  const { payload: requestPayload } = request;
-  const responsePayload = translateGreeting('Hi parent!', requestPayload.language);
-  request.respond(responsePayload);
-}
+const handleGreetingRequest = request => {
+  const requestPayload = request.payload;
+
+  // A hypothetical greeting translator:
+  const localizedGreeting = translateGreeting(
+      'Hi parent!',
+      requestPayload.language
+  );
+
+  request.respond(localizedGreeting);
+};
 ```
 
-
-
-## Usage with typescript
-
-When RxPostmessenger is consumed in a typescript environment, some additional features become available.
-
-### Event mapping
-
-It can become quite tedious to keep information about event names and the format of event payloads in sync between projects. Consider the example below:
-
-```typescript
-// [Bad] This is fine by TS, since the channel argument may be of any type:
-const myStream = messenger.notifications('some-non-existing-channel');
-
-// [Bad] Implementations should accept any type as arguments when these arguments
-// are message payloads:
-myStream.subscribe((someImplicitAnyType) => doSomethingWith(someImplicitAnyType));
-```
-
-Event mapping allows for type checking event channel names and provides mapping functionality of the event names to their corresponding payload types. When event mapping is configured properly, the typescript compiler will throw errors if a non-existing event channel name is being used where an existing one is required.
-
-#### Example usage
-
-```typescript
-import RxPostmessenger from "rx-postmessenger";
-
-// Import TS interfaces from RxPostmessenger namespace:
-import IEventMap = RxPostmessenger.EventMap;
-import RequestContract = RxPostmessenger.RequestContract;
-import NotificationContract = RxPostmessenger.NotificationContract;
-
-// Create your event mappings:
-interface MyEventMap extends IEventMap {
-
-  in: {
-    notifications: {
-      'price-changed': NotificationContract<{ previous: number, current: number }>;
-    };
-    requests: {
-      'greeting': RequestContract<{ language: string }, string>
-    };
-  };
-
-  out: {
-    notifications: {
-      // ...
-    };
-    requests: {
-      // ...
-    };
-  };
-}
-```
-The event map is now our source of truth as to which events are supported, and what payloads we can expect inside our event handlers. 3 interfaces are imported from the package to ease construction of the event map. The event map has 2 properties `in` and `out`, representing incoming messages and outgoing messages, respectively. Assinging a map to an `RxPostmessenger` instance is done by giving the map as a type parameter to the static `create` call:
-
-```typescript
-const messenger = RxPostmessenger.connect<MyEventMap>(iframe.contentWindow, 'http://some-site.com');
-```
-
-_Note: Usage of an `EventMap` interface is an all or nothing consideration. All requests and notifications you intend to use must be defined, for both the `in` and `out` event directions._
-
-
-#### Notification contracts
-
-Notification contracts define the payload that is expected to come with a certain notification message. With a `'price-changed'` event we expect the payload to be an object with 2 properties `previous` and `current`, both of type number, representing the prices before and after the change:
-
-```typescript
-type PriceChangeContract = NotificationContract<{ previous: number; current: number }>;
-```
-
-When assigned to a key `'price-changed'` within the `MyEventMap.in.notifications` interface object, handling notifications is fully type-completed:
-
-```typescript
-// For incoming notifications, channel names are validated against the
-// MyEventMap.in.notifications keys. 'price-changed' exists, so it's okay.
-const priceChanges$ = messenger.notifications('price-changed');
-
-const nonExistingEvents$ = messenger.notifications('non-existing');
-// > [ts] Type '"non-existing"' is not assignable to type '"price-changed" | "other-defined-channel"'
-
-// TS knows that property current exists, and that it's of type number.
-priceChanges$.subscribe(({ current }) => displayPrice(current));
-```
-
-#### Request contracts
-
-Request contracts define the types of the request-payload, and the type of the response-payload expected in return. Consider the greeting request again. As request payload we expect an options object with property `language` of type `string`. A response of type `string` is expected: the greeting text itself. The types can be given as type parameters for a `RequestContract` type declaration:
-
-```typescript
-type GreetingContract = RequestContract<{ language: string }, string>;
-```
-
-When assigned to a key `'greeting'` within the `MyEventMap.in.requests` interface object, the entire request-response flow is fully type-completed:
-
-```typescript
-messenger.requests('greeting').subscribe((request) => {
-
-  // Typescript now knows request.payload to have a property
-  // language of type string, as is defined by the first type parameter
-  // of the request contract.
-  const { language = 'en' } = request.payload; // OK
-  const { iDontExist } = request.payload; // [ts] Type '{ language: string; }' has no property 'iDontExist'
-
-  const response: string = translateGreeting('Hi there!', language);
-
-  // request.respond() only accepts a string, as is defined by the second
-  // type parameter of the request contract:
-  request.respond(response); // OK
-  request.respond(1); // [ts] Type '1' is not assignable to type 'string'
-});
-```
-
-![Type completion of mapped RxPostmessenger instances](https://i.imgur.com/q15ig5W.gif)
+[rxjs-imports]: https://github.com/JJWesterkamp/rx-postmessenger/tree/master/src/vendor/rxjs
