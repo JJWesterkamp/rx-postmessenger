@@ -30,7 +30,7 @@ $ npm install rx-postmessenger --save
 |Method|Description|
 |:-|:-|
 |[`notify()`](#sending-notifications)|Send notifications to the connected window.|
-|[`notifications()`](#listening-for-inbound-notifications:)|Listen for inbound notifications.|
+|[`notifications()`](#listening-for-inbound-notifications)|Listen for inbound notifications.|
 |[`request()`](#sending-requests)|Send requests to the connected window.|
 |[`requests()`](#listening-for-inbound-requests)|Listen for inbound requests.|
 
