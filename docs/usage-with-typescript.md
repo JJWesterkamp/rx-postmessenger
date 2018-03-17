@@ -50,7 +50,7 @@ interface MyEventMap extends IEventMap {
   };
 }
 ```
-The event map is now our source of truth as to which events are supported, and what payloads we can expect inside our event handlers. 3 interfaces are imported from the package to ease construction of the event map. The event map has 2 properties `in` and `out`, representing incoming messages and outgoing messages, respectively. Assinging a map to an `RxPostmessenger` instance is done by giving the map as a type parameter to the static `create` call:
+The event map is now our source of truth as to which events are supported, and what payloads we can expect inside our event handlers. 3 interfaces are imported from the package to ease construction of the event map. The event map has 2 properties `in` and `out`, representing incoming messages and outgoing messages, respectively. Assinging a map to an `RxPostmessenger` instance is done by giving the map as a type parameter to the static `connect()` call:
 
 ```typescript
 const messenger = RxPostmessenger.connect<MyEventMap>(
