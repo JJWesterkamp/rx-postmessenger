@@ -2,10 +2,10 @@
 // Public interface imports
 // -----------------------------------------------------------------------
 
-import PublicInterface from "../rx-postmessenger";
+import PublicInterface from "../rx-postmessenger.d";
 
-import RequestWrapperInterface = PublicInterface.Request;
-import EventMapInterface = PublicInterface.EventMap;
+import IRequest = PublicInterface.Request;
+import IEventMap = PublicInterface.EventMap;
 import RequestContract = PublicInterface.RequestContract;
 import RequestTypes = PublicInterface.TypeLens.In.Request;
 
@@ -22,10 +22,10 @@ import ResponsePayload = RequestTypes.ResponsePayload;
  */
 export class RxPostmessengerRequest<
 
-    MAP extends EventMapInterface,
+    MAP extends IEventMap,
     CH extends RequestChannel<MAP>
 
-> implements RequestWrapperInterface<MAP, CH> {
+> implements IRequest<MAP, CH> {
 
     /**
      * The name of the channel the request was sent through

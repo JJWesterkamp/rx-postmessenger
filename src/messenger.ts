@@ -12,9 +12,9 @@ import {
     IResponseObject,
     MappedMessage,
     MessageType,
-} from "./private";
+} from "./private-interface";
 
-import PublicInterface from "../rx-postmessenger";
+import PublicInterface from "../rx-postmessenger.d";
 import IEventMap = PublicInterface.EventMap;
 import IRequestWrapper = PublicInterface.Request;
 import AnyChannel = PublicInterface.TypeLens.AnyChannel;
@@ -24,7 +24,7 @@ import TypeLens = PublicInterface.TypeLens;
 /**
  * @class RxPostmessenger
  */
-export class RxPostmessenger<MAP extends IEventMap = any> implements IMessenger {
+export class Messenger<MAP extends IEventMap = any> implements IMessenger {
 
     /**
      * Observable stream of all incoming messages that originate
@@ -118,7 +118,7 @@ export class RxPostmessenger<MAP extends IEventMap = any> implements IMessenger 
      *
      * @param {string} channel
      * @param {*} payload
-     * @return {RxPostmessenger}
+     * @return {Messenger}
      * @public
      */
     public notify<
@@ -191,7 +191,7 @@ export class RxPostmessenger<MAP extends IEventMap = any> implements IMessenger 
      *
      * @param {string} requestId
      * @param {*} payload
-     * @return {RxPostmessenger}
+     * @return {Messenger}
      * @private
      */
     private respond<
@@ -289,7 +289,7 @@ export class RxPostmessenger<MAP extends IEventMap = any> implements IMessenger 
      * Starts a GUID sync that intercepts incoming messages from other windows running this package,
      * and pushes their ID values into a used IDs array. This way, every message should have a unique ID.
      *
-     * @return {RxPostmessenger}
+     * @return {Messenger}
      * @private
      */
     private syncGUIIDs(): this {
