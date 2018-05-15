@@ -1,10 +1,10 @@
 # rx-postmessenger [![npm version](https://badge.fury.io/js/rx-postmessenger.svg)](https://badge.fury.io/js/rx-postmessenger)
 
-Minimal [RxJS](https://github.com/ReactiveX/RxJS) wrapper around the window.postMessage API for both passive (request-response) and active (notification) streams across frame windows.
+Minimal [RxJS](https://github.com/ReactiveX/RxJS) wrapper around the [`Window # postMessage`](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage) API for both passive (request-response) and active (notification) streams across frame windows.
 
 ## In short
 
-An RxPostmessenger class instance establishes one end of a connection between 2 window objects, using the `window.postMessage` API. Each instance targets _one single_ `Window` object. It also only accepts incoming messages from that specific window object while it's serving documents from _one single_ origin.
+An RxPostmessenger class instance establishes one end of a connection between 2 window objects, using the `Window # postMessage` API. Each instance targets _one single_ `Window` object. It also only accepts incoming messages from that specific window object while it's serving documents from _one single_ origin.
 
 **Typescript users**
 
@@ -202,4 +202,4 @@ const handleGreetingRequest = (request) => {
 };
 ```
 
-[rxjs-imports]: https://github.com/JJWesterkamp/rx-postmessenger/tree/master/src/vendor/rxjs
+[rxjs-imports]: https://github.com/JJWesterkamp/rx-postmessenger/tree/master/src/vendor/rxjs/index.ts
