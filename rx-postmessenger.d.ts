@@ -165,9 +165,6 @@ declare namespace RxPostmessenger {
      * The TypeLens namespace serves as an adapter between the EventMap interface
      * and the Messenger interface. Interfaces are also a lot better readable /
      * undertandable this way.
-     *
-     * The usage of an EventMap interface combined with structural mapping using
-     * the lenses below are at the core of how the package functions.
      */
     export namespace TypeLens {
 

@@ -231,7 +231,7 @@ export class Messenger<MAP extends IEventMap = any> implements IMessenger {
     }
 
     /**
-     * Tests whether given MessageEvent its origin matches the host URL for a SKIK configurator window.
+     * Validates the identity of the message's sender and the format of the message's data.
      *
      * Chechs whether the origin location matches any allowed origins.
      * Separate assertion of the origin allows for cross-domain navigation
