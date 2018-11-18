@@ -3,14 +3,16 @@ import { IMessageIDGenerator } from "./interface/id-generator";
 
 export class MessageIDGenerator implements IMessageIDGenerator {
 
-    private readonly usedIDValues: string[] = [];
-    private readonly gen: Iterator<string> = GUIDGenerator();
+    protected readonly usedIDValues: string[] = [];
+    protected readonly gen: Iterator<string> = GUIDGenerator();
 
     public generateID(): string {
         let newID: string;
+
         do {
             newID = this.gen.next().value;
         } while (this.usedIDValues.indexOf(newID) >= 0);
+
         this.invalidateID(newID);
         return newID;
     }
