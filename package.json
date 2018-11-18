@@ -32,11 +32,9 @@
     "prepublish": "npm-run-all lint build"
   },
   "dependencies": {
-    "lodash-es": "^4.17.4",
     "rxjs": "^5.5.2"
   },
   "devDependencies": {
-    "@types/lodash-es": "^4.17.0",
     "awesome-typescript-loader": "^3.4.0",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
