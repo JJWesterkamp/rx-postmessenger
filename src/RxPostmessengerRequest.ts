@@ -20,7 +20,7 @@ import ResponsePayload = RequestTypes.ResponsePayload;
 export class RxPostmessengerRequest<MAP extends IEventMap, CH extends RequestChannel<MAP>> implements IRequest<MAP, CH> {
     public readonly channel: CH;
     public readonly payload: RequestPayload<MAP, CH>;
-    public readonly isComplete: boolean = false;
+    public readonly isHandled: boolean = false;
     private readonly id: string;
     private readonly _injectResponse: <T extends ResponsePayload<MAP, CH>>(data: T) => void;
 
@@ -39,8 +39,11 @@ export class RxPostmessengerRequest<MAP extends IEventMap, CH extends RequestCha
     }
 
     public respond(data: ResponsePayload<MAP, CH>): void {
-        if (this.isComplete) { return; }
+        if (this.isHandled) {
+            return;
+        }
+
         this._injectResponse(data);
-        Object.defineProperty(this, "isComlete", { value: true });
+        Object.defineProperty(this, "isHandled", { value: true });
     }
 }

@@ -98,6 +98,12 @@ declare namespace RxPostmessenger {
         readonly payload: TypeLens.In.Request.RequestPayload<MAP, CH>;
 
         /**
+         * Boolean indicating whether respond() has been called on the request
+         * previously.
+         */
+        readonly isHandled: boolean;
+
+        /**
          * Respond to the request with given data.
          */
         respond(data: TypeLens.In.Request.ResponsePayload<MAP, CH>): void;
