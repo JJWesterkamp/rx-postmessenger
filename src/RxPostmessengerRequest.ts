@@ -4,17 +4,17 @@
 
 import PublicInterface from "../rx-postmessenger.d";
 
-import IRequest = PublicInterface.Request;
-import IEventMap = PublicInterface.EventMap;
+import IRequest        = PublicInterface.Request;
+import IEventMap       = PublicInterface.EventMap;
 import RequestContract = PublicInterface.RequestContract;
-import RequestTypes = PublicInterface.TypeLens.In.Request;
+import RequestTypes    = PublicInterface.TypeLens.In.Request;
 
 // -----------------------------------------------------------------------
 // Type mapping shortcuts
 // -----------------------------------------------------------------------
 
-import RequestChannel = RequestTypes.Channel;
-import RequestPayload = RequestTypes.RequestPayload;
+import RequestChannel  = RequestTypes.Channel;
+import RequestPayload  = RequestTypes.RequestPayload;
 import ResponsePayload = RequestTypes.ResponsePayload;
 
 /**

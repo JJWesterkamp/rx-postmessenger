@@ -12,11 +12,11 @@ import { IMessageIDGenerator } from "./interface/id-generator";
 import { AnyMessage, IMessageObject, INotificationObject, IRequestObject, IResponseObject, MappedMessage, MessageType } from "./interface/message-objects";
 
 import PublicInterface from "../rx-postmessenger";
-import IEventMap       = PublicInterface.EventMap;
-import IRequestWrapper = PublicInterface.Request;
-import AnyChannel      = PublicInterface.TypeLens.AnyChannel;
-import IMessenger      = PublicInterface.Messenger;
-import TypeLens        = PublicInterface.TypeLens;
+import AnyChannel = PublicInterface.TypeLens.AnyChannel;
+import IEventMap  = PublicInterface.EventMap;
+import IMessenger = PublicInterface.Messenger;
+import IRequest   = PublicInterface.Request;
+import TypeLens   = PublicInterface.TypeLens;
 
 /**
  * @class RxPostmessenger
@@ -141,7 +141,7 @@ export class Messenger<MAP extends IEventMap = any> implements IMessenger {
      * @return {Observable<object>}
      * @public
      */
-    public requests<CH extends TypeLens.In.Request.Channel<MAP>>(channel: CH): Observable<IRequestWrapper<MAP, CH>> {
+    public requests<CH extends TypeLens.In.Request.Channel<MAP>>(channel: CH): Observable<IRequest<MAP, CH>> {
 
         // Type REQ_PL is 'trusted' to be constant for RequestObject<CH> types.
         // This is where the TS realm ends, and we must simply trust message
@@ -152,7 +152,7 @@ export class Messenger<MAP extends IEventMap = any> implements IMessenger {
 
         return this.requests$
             .filter<IRequestObject, REQ>((request): request is REQ => request.channel === channel)
-            .map((request): IRequestWrapper<MAP, CH> => new RxPostmessengerRequest<MAP, CH>(
+            .map((request): IRequest<MAP, CH> => new RxPostmessengerRequest<MAP, CH>(
                 request.id,
                 request.channel,
                 request.payload,
