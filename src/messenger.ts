@@ -1,24 +1,22 @@
+// -----------------------------------------------------------------------------
+// Concrete imports
+// -----------------------------------------------------------------------------
 import { getObservable } from "./index";
 import { RxPostmessengerRequest } from "./RxPostmessengerRequest";
 import { Observable } from "./vendor/rxjs";
 
-import {
-    AnyMessage,
-    IMessageIDGenerator,
-    IMessageObject,
-    INotificationObject,
-    IRequestObject,
-    IResponseObject,
-    MappedMessage,
-    MessageType,
-} from "./private-interface";
+// -----------------------------------------------------------------------------
+// Interface imports
+// -----------------------------------------------------------------------------
+import { IMessageIDGenerator } from "./interface/id-generator";
+import { AnyMessage, IMessageObject, INotificationObject, IRequestObject, IResponseObject, MappedMessage, MessageType } from "./interface/message-objects";
 
-import PublicInterface from "../rx-postmessenger.d";
-import IEventMap = PublicInterface.EventMap;
+import PublicInterface from "../rx-postmessenger";
+import IEventMap       = PublicInterface.EventMap;
 import IRequestWrapper = PublicInterface.Request;
-import AnyChannel = PublicInterface.TypeLens.AnyChannel;
-import IMessenger = PublicInterface.Messenger;
-import TypeLens = PublicInterface.TypeLens;
+import AnyChannel      = PublicInterface.TypeLens.AnyChannel;
+import IMessenger      = PublicInterface.Messenger;
+import TypeLens        = PublicInterface.TypeLens;
 
 /**
  * @class RxPostmessenger

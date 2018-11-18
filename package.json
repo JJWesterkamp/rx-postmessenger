@@ -25,10 +25,15 @@
     "build:cjs": "tsc",
     "build:esm": "tsc -m es6 --outDir esm",
     "build:umd": "webpack",
+    "clean:dist": "rm -rf esm cjs umd",
+    "copy:interface": "run-p copy:interface:*",
+    "copy:interface:cjs": "mkdir cjs/interface/ && cp -rf ./src/interface/*.d.ts cjs/interface/",
+    "copy:interface:esm": "mkdir esm/interface/ && cp -rf ./src/interface/*.d.ts esm/interface/",
     "lint": "run-p lint:**",
     "lint:source": "tslint -c tslint.json 'src/**/*.ts' --fix",
     "lint:declaration": "tslint -c tslint.json '*.d.ts' --fix",
-    "prebuild": "rm -rf esm cjs umd",
+    "postbuild": "npm run copy:interface",
+    "prebuild": "npm run clean:dist",
     "prepublish": "npm-run-all lint build"
   },
   "dependencies": {

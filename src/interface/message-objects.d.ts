@@ -2,12 +2,11 @@
  * The IMessageObject interface defines the format for data property values of MessageEvent objects.
  * This interface describes the actual format of data sent with postMessage that is required for
  * another RxPostmessenger on the other end of the line to be able to correctly interpret the
- * message. This interface should be private to the package implementation. Additional abstractions
- * are used to expose more expressive interfaces to the package consumer.
+ * message.
  */
 export interface IMessageObject {
 
-    // The id of this message. This is a UUID-like string tha is unique for the single JS lifecycle
+    // The id of the message. This is a UUID-like string that is unique for the single JS lifecycle
     // wherein the message is created.
     readonly id: string;
 
@@ -58,17 +57,3 @@ export interface IMessageTypeMap {
 
 export type MessageType = keyof IMessageTypeMap;
 export type MappedMessage<T extends MessageType> = IMessageTypeMap[T];
-
-export interface IMessageIDGenerator {
-
-    /**
-     * Get a new unique ID value for message objects.
-     */
-    generateID(): string;
-
-    /**
-     * Invalidates an ID value - marks it a used. This is a required
-     * feature for syncing the used ID values
-     */
-    invalidateID(id: string): void;
-}
