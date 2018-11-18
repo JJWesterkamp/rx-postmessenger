@@ -18,9 +18,11 @@ import RequestPayload  = RequestTypes.RequestPayload;
 import ResponsePayload = RequestTypes.ResponsePayload;
 
 export class RxPostmessengerRequest<MAP extends IEventMap, CH extends RequestChannel<MAP>> implements IRequest<MAP, CH> {
+
     public readonly channel: CH;
     public readonly payload: RequestPayload<MAP, CH>;
     public readonly isHandled: boolean = false;
+
     private readonly id: string;
     private readonly _injectResponse: <T extends ResponsePayload<MAP, CH>>(data: T) => void;
 
@@ -32,9 +34,9 @@ export class RxPostmessengerRequest<MAP extends IEventMap, CH extends RequestCha
     ) {
         Object.defineProperties(this, {
             _injectResponse: { value: responseInjector },
-            channel: { value: channel },
-            id: { value: id },
-            payload: { value: payload },
+            channel:         { value: channel },
+            id:              { value: id },
+            payload:         { value: payload },
         });
     }
 
