@@ -28,6 +28,7 @@
     "lint": "run-p lint:**",
     "lint:source": "tslint -c tslint.json 'src/**/*.ts' --fix",
     "lint:declaration": "tslint -c tslint.json '*.d.ts' --fix",
+    "prebuild": "rm -rf esm cjs umd",
     "prepublish": "npm-run-all lint build"
   },
   "dependencies": {
