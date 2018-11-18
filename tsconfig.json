@@ -11,7 +11,7 @@
         "sourceMap": true,
         "strictNullChecks": true,
         "strictFunctionTypes": true,
-        "declaration": false,
+        "declaration": true,
         "outDir": "cjs"
     },
     "include":[
