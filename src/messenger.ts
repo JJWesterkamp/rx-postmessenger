@@ -1,11 +1,10 @@
-import { generateGUID, pushUsedGUID } from "./guid-pool";
 import { getObservable } from "./index";
-import { RxPostmessengerRequest } from "./request";
-import { includes, isObject, isString } from "./vendor/lodash-es";
+import { RxPostmessengerRequest } from "./RxPostmessengerRequest";
 import { Observable } from "./vendor/rxjs";
 
 import {
     AnyMessage,
+    IMessageIDGenerator,
     IMessageObject,
     INotificationObject,
     IRequestObject,
@@ -63,22 +62,21 @@ export class Messenger<MAP extends IEventMap = any> implements IMessenger {
      * @param {Window} otherWindow - The window object to exchange messages with.
      * @param {string} origin - The remote url to accept incoming messages from.
      */
-    public constructor(public readonly otherWindow: Window, public readonly origin: string) {
-
-        // Initialize read-only properties
+    public constructor(
+        public readonly otherWindow: Window,
+        public readonly origin: string,
+        protected readonly IDGenerator: IMessageIDGenerator,
+    ) {
         this.inboundMessages$ = getObservable()
             .fromEvent<MessageEvent>(window, "message")
             .filter((message) => this.isValidMessage(message))
-            // Todo: add original event, but first identify as RxPostmessenger message
-            // .map((message) => mergeDeepRight(message.data, { originalEvent: message }))
             .pluck("data");
 
         this.requests$      = this.messagesOfType("request");
         this.responses$     = this.messagesOfType("response");
         this.notifications$ = this.messagesOfType("notification");
 
-        // Other initializers
-        this.syncGUIIDs();
+        this.inboundMessages$.subscribe(({ id }) => this.IDGenerator.invalidateID(id));
     }
 
     // ------------------------------------------------------------------------------------------------
@@ -99,8 +97,7 @@ export class Messenger<MAP extends IEventMap = any> implements IMessenger {
         RES_PL extends TypeLens.Out.Request.ResponsePayload<MAP, CH>
 
     >(channel: CH, payload: REQ_PL): Observable<RES_PL> {
-
-        const id = generateGUID();
+        const id = this.IDGenerator.generateID();
         const responseObservable: Observable<RES_PL> = this.createResponseObservable<RES_PL>(id);
 
         this.postMessage<IRequestObject<CH, REQ_PL>>({
@@ -130,7 +127,7 @@ export class Messenger<MAP extends IEventMap = any> implements IMessenger {
 
         this.postMessage<INotificationObject<CH, PL>>({
             channel,
-            id: generateGUID(),
+            id: this.IDGenerator.generateID(),
             payload,
             type: "notification",
         });
@@ -194,7 +191,7 @@ export class Messenger<MAP extends IEventMap = any> implements IMessenger {
      * @return {Messenger}
      * @private
      */
-    private respond<
+    protected respond<
 
         CH extends TypeLens.In.Request.Channel<MAP>,
         RES_PL extends TypeLens.In.Request.ResponsePayload<MAP, CH>
@@ -203,7 +200,7 @@ export class Messenger<MAP extends IEventMap = any> implements IMessenger {
 
         this.postMessage<IResponseObject<CH, RES_PL>>({
             channel,
-            id: generateGUID(),
+            id: this.IDGenerator.generateID(),
             payload,
             requestId,
             type: "response",
@@ -220,7 +217,7 @@ export class Messenger<MAP extends IEventMap = any> implements IMessenger {
      * @return {Observable<object>}
      * @private
      */
-    private createResponseObservable<CH extends TypeLens.Out.Request.Channel<MAP>>(requestId: string): Observable<TypeLens.Out.Request.ResponsePayload<MAP, CH>> {
+    protected createResponseObservable<CH extends TypeLens.Out.Request.Channel<MAP>>(requestId: string): Observable<TypeLens.Out.Request.ResponsePayload<MAP, CH>> {
 
         type T = TypeLens.Out.Request.ResponsePayload<MAP, CH>;
 
@@ -247,7 +244,7 @@ export class Messenger<MAP extends IEventMap = any> implements IMessenger {
      * @return {boolean}
      * @private
      */
-    private isValidMessage(message: MessageEvent): boolean {
+    protected isValidMessage(message: MessageEvent): boolean {
         return message instanceof MessageEvent
             && message.origin === this.origin
             && message.source === this.otherWindow
@@ -262,12 +259,12 @@ export class Messenger<MAP extends IEventMap = any> implements IMessenger {
      * @param {AnyMessage} message
      * @return {boolean}
      */
-    private isWellFormedMessage(message: AnyMessage): boolean {
+    protected isWellFormedMessage(message: AnyMessage): boolean {
 
-        return isString(message.id)
-            && includes(["request", "response", "notification"], message.type)
-            && isString(message.channel)
-            && (message.type !== "response" || isString(message.requestId));
+        return (typeof message.id === "string")
+            && (["request", "response", "notification"].indexOf(message.type) >= 0)
+            && (typeof message.channel === "string")
+            && (message.type !== "response" || (typeof message.requestId === "string"));
     }
 
     /**
@@ -277,24 +274,8 @@ export class Messenger<MAP extends IEventMap = any> implements IMessenger {
      * @param {IMessageObject} data
      * @private
      */
-    private postMessage<T extends AnyMessage>(data: T): void {
+    protected postMessage<T extends AnyMessage>(data: T): void {
         this.otherWindow.postMessage(data, this.origin);
-    }
-
-    // ------------------------------------------------------------------------------------------------
-    // Init helpers
-    // ------------------------------------------------------------------------------------------------
-
-    /**
-     * Starts a GUID sync that intercepts incoming messages from other windows running this package,
-     * and pushes their ID values into a used IDs array. This way, every message should have a unique ID.
-     *
-     * @return {Messenger}
-     * @private
-     */
-    private syncGUIIDs(): this {
-        this.inboundMessages$.subscribe(({ id }) => pushUsedGUID(id));
-        return this;
     }
 
     /**
@@ -308,7 +289,7 @@ export class Messenger<MAP extends IEventMap = any> implements IMessenger {
      * @return {Observable<object>}
      * @private
      */
-    private messagesOfType<T extends MessageType>(type: T): Observable<MappedMessage<T>> {
+    protected messagesOfType<T extends MessageType>(type: T): Observable<MappedMessage<T>> {
         return this.inboundMessages$
             .filter((message): message is MappedMessage<T> => message.type === type);
     }

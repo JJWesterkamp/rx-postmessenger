@@ -32,7 +32,7 @@ declare namespace RxPostmessenger {
         getObservable(): typeof Observable;
 
         /**
-         * Create a new messenger for given window object. The origin UR is used both to give to window.postMessage
+         * Create a new messenger for given window object. The origin URL is used both to give to window.postMessage
          * calls on otherWindow, and to filter message events on the own window.
          */
         connect<MAP extends EventMap = any>(otherWindow: Window, origin: string): RxPostmessenger.Messenger<MAP>;
@@ -107,51 +107,23 @@ declare namespace RxPostmessenger {
     // Mapping of event channel names to corresponding payload types
     // -----------------------------------------------------------------------
     // In typescript environments, an EventMap interface may be given as type
-    // parameter to calls to Static.create. Such a map serves a simple but
-    // important requirement, the mapping of event aliases to the data they
-    // carry with them.
-    // -----------------------------------------------------------------------
-    // NOTE: There is not any runtime validation based on the map. It only
-    // serves for type mapping in TS. Validation of data at runtime should
-    // be implemented outside the context of this package.
+    // argument to calls to Static.create. This
 
-    /**
-     * The outer object has 2 properties:
-     *
-     * - IN     A directional event map that defines incoming requests, and
-     *          incoming notifications.
-     *
-     * - OUT    A directional event map that defines outgoing requests, and
-     *          outgoing notifications.
-     */
     interface EventMap {
-        in: DirectionalEventMap;
-        out: DirectionalEventMap;
+        in: {
+            requests:      { [key: string]: RequestContract };
+            notifications: { [key: string]: NotificationContract };
+        };
+        out: {
+            requests:      { [key: string]: RequestContract };
+            notifications: { [key: string]: NotificationContract };
+        };
     }
 
-    /**
-     * A directional event map defines request and notification mappings for
-     * a single direction: IN | OUT
-     */
-    interface DirectionalEventMap {
-        requests: StringMap<RequestContract>;
-        notifications: StringMap<NotificationContract>;
-    }
-
-    interface StringMap<T = any> {
-        [key: string]: T;
-    }
-
-    /**
-     * The format of a notification channel blueprint.
-     */
     interface NotificationContract<Payload = any> {
         payload: Payload;
     }
 
-    /**
-     * The format of a request channel blueprint.
-     */
     interface RequestContract<RequestPayload = any, ResponsePayload = any> {
         requestPayload: RequestPayload;
         responsePayload: ResponsePayload;

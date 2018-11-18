@@ -1,3 +1,4 @@
+import { MessageIDGenerator } from "./MessageIDGenerator";
 import { Messenger } from "./messenger";
 import { Observable } from "./vendor/rxjs";
 
@@ -7,9 +8,9 @@ import { Observable } from "./vendor/rxjs";
 
 import PublicInterface from "../rx-postmessenger.d";
 
-import IEventMap = PublicInterface.EventMap;
+import IEventMap  = PublicInterface.EventMap;
 import IMessenger = PublicInterface.Messenger;
-import IStatic = PublicInterface.Static;
+import IStatic    = PublicInterface.Static;
 
 // -------------------------------------------------------------------------------------
 // Private data / exports for internal wiring
@@ -50,7 +51,7 @@ export function useObservable<T extends typeof Observable>(newImplementation: T)
  * @return {IMessenger}
  */
 export function connect<MAP extends IEventMap = any>(otherWindow: Window, origin: string): IMessenger<MAP> {
-    return new Messenger(otherWindow, origin);
+    return new Messenger(otherWindow, origin, new MessageIDGenerator());
 }
 
 // ---------------------------------------------------------------------------------------
