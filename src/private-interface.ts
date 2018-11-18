@@ -1,18 +1,5 @@
-// --------------------------------------------------------------------------------------------
-// Type switch helper
-// --------------------------------------------------------------------------------------------
-
-type False = "False";
-type True = "True";
-type Bool = False | True;
-type IfElse<Cond extends Bool, Then, Else> = ({ "True": Then; "False": Else; })[Cond];
-
-// --------------------------------------------------------------------------------------------
-// Post-message data format
-// --------------------------------------------------------------------------------------------
-
 /**
- * The ScalarMessage interface defines the format for data property values of MessageEvent objects.
+ * The IMessageObject interface defines the format for data property values of MessageEvent objects.
  * This interface describes the actual format of data sent with postMessage that is required for
  * another RxPostmessenger on the other end of the line to be able to correctly interpret the
  * message. This interface should be private to the package implementation. Additional abstractions
@@ -64,7 +51,6 @@ export interface INotificationObject<CH extends string = string, PL = any> exten
 export type AnyMessage = IRequestObject | IResponseObject | INotificationObject;
 
 export interface IMessageTypeMap {
-    [key: string]: AnyMessage;
     "request": IRequestObject;
     "response": IResponseObject;
     "notification": INotificationObject;
