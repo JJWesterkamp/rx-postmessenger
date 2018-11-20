@@ -117,12 +117,12 @@ declare namespace RxPostmessenger {
 
     interface EventMap {
         in: {
-            requests:      { [key: string]: RequestContract };
-            notifications: { [key: string]: NotificationContract };
+            requests:      { [channel: string]: RequestContract };
+            notifications: { [channel: string]: NotificationContract };
         };
         out: {
-            requests:      { [key: string]: RequestContract };
-            notifications: { [key: string]: NotificationContract };
+            requests:      { [channel: string]: RequestContract };
+            notifications: { [channel: string]: NotificationContract };
         };
     }
 
