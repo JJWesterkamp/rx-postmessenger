@@ -34,20 +34,37 @@
     "lint:declaration": "tslint -c tslint.json '*.d.ts' --fix",
     "postbuild": "npm run copy:interface",
     "prebuild": "npm run clean:dist",
-    "prepublish": "npm-run-all lint build"
+    "prepublish": "npm-run-all lint build",
+    "test": "karma start --single-run karma.conf.js"
   },
   "dependencies": {
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.5",
+    "@types/sinon": "^5.0.7",
     "rxjs": "^5.5.2"
   },
   "devDependencies": {
-    "awesome-typescript-loader": "^3.4.0",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-es2015": "^6.24.1",
+    "chai": "^4.2.0",
+    "karma": "^3.1.1",
+    "karma-chai": "^0.1.0",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-mocha": "^1.3.0",
+    "karma-mocha-reporter": "^2.2.5",
+    "karma-sinon": "^1.0.5",
+    "karma-sourcemap-loader": "^0.3.7",
+    "karma-webpack": "^3.0.5",
+    "mocha": "^5.2.0",
     "npm-run-all": "^4.1.2",
+    "sinon": "^7.1.1",
+    "ts-loader": "^5.3.0",
     "tslint": "^5.8.0",
-    "typescript": "^2.6.1",
-    "webpack": "^3.8.1"
+    "typescript": "^3.1.6",
+    "uglifyjs-webpack-plugin": "^2.0.1",
+    "webpack": "^4.26.0",
+    "webpack-cli": "^3.1.2"
   }
 }

@@ -1,7 +1,8 @@
-var webpack = require('webpack');
 const { resolve } = require('path');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
+    mode: "production",
     entry: {
         "rx-postmessenger": "./src/index.ts",
         "rx-postmessenger.min": "./src/index.ts",
@@ -12,14 +13,14 @@ module.exports = {
         library: 'RxPostmessenger',
         libraryTarget: 'umd',
     },
-
-    plugins: [
-        new webpack.optimize.UglifyJsPlugin({
-            include: /\.min\.js$/,
-            minimize: true,
-            sourceMap: true,
-        })
-    ],
+    optimization: {
+        minimizer: [
+            new UglifyJsPlugin({
+                test: /\.min\.js$/,
+                sourceMap: true,
+            }),
+        ],
+    },
 
     devtool: "source-map",
     resolve: {
@@ -30,7 +31,7 @@ module.exports = {
         rules: [
             {
                 test: /\.ts$/,
-                loaders: ["awesome-typescript-loader"],
+                loaders: ["ts-loader"],
                 exclude: /node_modules/,
             }
         ],

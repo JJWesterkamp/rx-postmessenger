@@ -59,6 +59,7 @@ export class Messenger<MAP extends IEventMap = any> implements IMessenger {
     /**
      * @param {Window} otherWindow - The window object to exchange messages with.
      * @param {string} origin - The remote url to accept incoming messages from.
+     * @param IDGenerator
      */
     public constructor(
         public readonly otherWindow: Window,
@@ -185,6 +186,7 @@ export class Messenger<MAP extends IEventMap = any> implements IMessenger {
      * Sends a response through given channel to the remote window, carrying given payload.
      *
      * @param {string} requestId
+     * @param channel
      * @param {*} payload
      * @return {Messenger}
      * @private

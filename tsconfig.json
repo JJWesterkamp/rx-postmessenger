@@ -12,7 +12,8 @@
         "strictNullChecks": true,
         "strictFunctionTypes": true,
         "declaration": true,
-        "outDir": "cjs"
+        "outDir": "cjs",
+        "keyofStringsOnly": true
     },
     "include":[
         "src/**/*.ts"
@@ -22,5 +23,5 @@
         "cjs",
         "umd",
         "esm"
-    ],
+    ]
 }

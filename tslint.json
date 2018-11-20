@@ -7,7 +7,8 @@
     "rules": {
         "max-line-length": false,
         "no-namespace": [true, "allow-declarations"],
-        "variable-name": false
+        "variable-name": false,
+        "typedef-whitespace": false
     },
     "rulesDirectory": []
 }

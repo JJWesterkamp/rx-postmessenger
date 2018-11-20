@@ -12,8 +12,8 @@ export as namespace RxPostmessenger;
  *
  * - MAP        An event-map interface. Associates request/response and notification channels with payload types.
  * - CH         A channel name for a certain request or notification.
- * - REQ_PL     A request payload type. (These types are auto-lookups in most cases)
- * - RES_PL     A response payload type. (These types are auto-lookups in most cases)
+ * - REQ_PL     A request payload type. (These types are auto-lookup in most cases)
+ * - RES_PL     A response payload type. (These types are auto-lookup in most cases)
  */
 declare namespace RxPostmessenger {
 
