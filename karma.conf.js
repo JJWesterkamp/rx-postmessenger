@@ -14,6 +14,8 @@ module.exports = function(config) {
             resolve: webpackConfig.resolve
         },
         reporters: ["progress", "mocha"],
-        browsers: ["Chrome"]
+        browsers: ["ChromeHeadless"],
+        singleRun: true,
+
     });
 };
