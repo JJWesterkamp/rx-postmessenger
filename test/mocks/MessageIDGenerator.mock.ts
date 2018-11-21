@@ -2,16 +2,21 @@ import { IMessageIDGenerator } from "../../src/interface/id-generator";
 
 export class MessageIDGeneratorMock implements IMessageIDGenerator {
 
-    private usedIDValues = [];
+    private usedIDValues: string[] = [];
     private nextValue = 1;
 
     public generateID(): string {
-        let next;
-        do {
-            next = this.nextValue++;
-        } while (this.usedIDValues.indexOf(next) >= 0);
 
-        return next;
+        let nextNumber;
+        let nextString;
+
+        do {
+            nextNumber = this.nextValue++;
+            nextString = nextNumber.toString();
+        } while (this.usedIDValues.indexOf(nextString) >= 0);
+
+        this.invalidateID(nextString);
+        return nextString;
     }
 
     public invalidateID(id: string): void {

@@ -4,7 +4,8 @@ import { IMessageIDGenerator } from "./interface/id-generator";
 export class MessageIDGenerator implements IMessageIDGenerator {
 
     protected readonly usedIDValues: string[] = [];
-    protected readonly gen: Iterator<string> = GUIDGenerator();
+
+    constructor(protected readonly gen: Iterator<string> = GUIDGenerator()) {}
 
     public generateID(): string {
         let newID: string;
