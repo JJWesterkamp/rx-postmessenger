@@ -1,7 +1,9 @@
 const webpackConfig = require("./webpack.config");
 
 module.exports = function(config) {
-    config.set({
+
+
+    const options = {
         frameworks: ["mocha", "chai", "sinon"],
         files: [
             'test/**/*.spec.ts'
@@ -13,9 +15,18 @@ module.exports = function(config) {
             module: webpackConfig.module,
             resolve: webpackConfig.resolve
         },
-        reporters: ["progress", "mocha"],
+        reporters: ["mocha"],
         browsers: ["ChromeHeadless"],
-        singleRun: true,
+        autoWatch: true,
+        singleRun: false,
+    };
 
-    });
+    if (process.env.TRAVIS) {
+        options.autoWatch = false;
+        options.singleRun = true;
+        options.concurrency = 1;
+        options.reporters = ["mocha"];
+    }
+
+    config.set(options);
 };

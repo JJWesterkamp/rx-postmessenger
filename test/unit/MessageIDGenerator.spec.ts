@@ -28,7 +28,6 @@ describe("[Unit] MessageIDGenerator", () => {
             generator.invalidateID("8");
             generator.invalidateID("9");
             assert.equal(generator.generateID(), "10");
-            // Etc...
         });
     });
 });
