@@ -10,13 +10,22 @@ module.exports = function(config) {
         ],
         preprocessors: {
             "test/**/*.spec.ts": ["webpack"],
+            "src/**/*.ts": ["coverage"],
         },
         webpack: {
+            mode: webpackConfig.mode,
             module: webpackConfig.module,
             resolve: webpackConfig.resolve
         },
-        reporters: ["mocha"],
+
+        reporters: ["mocha", "coverage"],
         browsers: ["ChromeHeadless"],
+
+        // optionally, configure the reporter
+        coverageReporter: {
+            type : 'html',
+            dir : 'coverage/'
+        },
         autoWatch: true,
         singleRun: false,
     };
