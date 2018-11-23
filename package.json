@@ -33,7 +33,7 @@
     "prebuild": "npm run clean:dist",
     "prepublish": "npm-run-all lint build",
     "test": "karma start karma.conf.js",
-    "test:ci": "karma start --single-run --no-auto-watch --reporters mocha karma.conf.js"
+    "test:ci": "karma start --single-run --no-auto-watch karma.conf.js"
   },
   "dependencies": {
     "@types/chai": "^4.1.7",

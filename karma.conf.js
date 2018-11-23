@@ -70,14 +70,12 @@ module.exports = function(config) {
         coverageReporter: {
             type: 'in-memory',
         },
-        remapIstanbulReporter: {
-            reports: {
-                'text-summary': null,
-                lcovonly: './coverage/lcov.info',
-                html: './coverage/html',
-                cobertura: './coverage/cobertura.xml',
-                json: './coverage/coverage.json'
-            }
+        remapCoverageReporter: {
+            'text-summary': null,
+            lcovonly: './coverage/lcov.info',
+            html: './coverage/html',
+            cobertura: './coverage/cobertura.xml',
+            json: './coverage/coverage.json'
         },
         autoWatch: true,
         singleRun: false,
