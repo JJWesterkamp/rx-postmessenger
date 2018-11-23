@@ -16,7 +16,7 @@ describe("[Unit] MessageIDGenerator", () => {
             }
         });
 
-        it("Should not generate invalidated values", () => {
+        it("Should not provide previously invalidated values", () => {
             const generator = new MessageIDGenerator(GUIDGeneratorMock());
             assert.equal(generator.generateID(), "1");
             assert.equal(generator.generateID(), "2");

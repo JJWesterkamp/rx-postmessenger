@@ -6,7 +6,7 @@ import { Observable } from "../../src/vendor/rxjs";
 describe("[UNIT] Entrypoint", () => {
 
     describe("#getObservable()", () => {
-        it("Should return the default observable implementation if not set", () => {
+        it("Should return the default observable implementation if not overridden", () => {
             expect(RxPostMessenger.getObservable()).to.equal(Observable);
         });
     });

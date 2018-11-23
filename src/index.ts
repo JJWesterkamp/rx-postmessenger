@@ -6,7 +6,6 @@ import { Observable } from "./vendor/rxjs";
 // Public interface imports
 // -------------------------------------------------------------------------------------
 
-
 import PublicInterface from "../rx-postmessenger.d";
 
 import IEventMap  = PublicInterface.EventMap;
