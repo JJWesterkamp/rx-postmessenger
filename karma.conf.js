@@ -63,7 +63,6 @@ module.exports = function(config) {
         reporters: [
             'remap-coverage',
             'coverage',
-            'coveralls',
             'mocha',
         ],
         browsers: ['ChromeHeadless'],
@@ -89,7 +88,7 @@ module.exports = function(config) {
         options.autoWatch = false;
         options.singleRun = true;
         options.concurrency = 1;
-        options.reporters = ['mocha'];
+        options.reporters.push('coveralls');
     }
 
     config.set(options);
