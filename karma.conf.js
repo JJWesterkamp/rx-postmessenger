@@ -26,7 +26,6 @@ module.exports = function(config) {
         },
         preprocessors: {
             [__dirname + '/test/karma-test-shim.spec.ts']: ['webpack', 'sourcemap'],
-            [__dirname + '/src/**/!(*.d)+(.ts)']: ['coverage'],
             [__dirname + '/src/**/*.ts']: ['coverage'],
         },
 
@@ -54,7 +53,7 @@ module.exports = function(config) {
                         enforce: 'post',
                         test: /\.ts$/,
                         loader: 'istanbul-instrumenter-loader?embedSource=true&noAutoWrap=true',
-                        exclude: /(\.(e2e|spec)\.ts|node_modules)$/,
+                        exclude: /(\.(e2e|spec|mock)\.ts|node_modules)$/,
                     }
                 ],
             }
