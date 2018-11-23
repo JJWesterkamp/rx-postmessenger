@@ -64,7 +64,7 @@ module.exports = function(config) {
             'coverage',
             'mocha',
         ],
-        browsers: ['Chrome'],
+        browsers: ['ChromeHeadless'],
 
         coverageReporter: {
             type: 'in-memory',
