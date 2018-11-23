@@ -1,10 +1,11 @@
 import { MessageIDGenerator } from "./MessageIDGenerator";
-import { Messenger } from "./messenger";
+import { Messenger } from "./Messenger";
 import { Observable } from "./vendor/rxjs";
 
 // -------------------------------------------------------------------------------------
 // Public interface imports
 // -------------------------------------------------------------------------------------
+
 
 import PublicInterface from "../rx-postmessenger.d";
 
