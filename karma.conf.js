@@ -4,6 +4,7 @@ module.exports = function(config) {
         require('karma-chai'),
         require('karma-chrome-launcher'),
         require('karma-coverage'),
+        require('karma-coveralls'),
         require('karma-mocha'),
         require('karma-mocha-reporter'),
         require('karma-remap-coverage'),
@@ -62,6 +63,7 @@ module.exports = function(config) {
         reporters: [
             'remap-coverage',
             'coverage',
+            'coveralls',
             'mocha',
         ],
         browsers: ['ChromeHeadless'],
