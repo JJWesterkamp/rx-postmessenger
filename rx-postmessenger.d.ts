@@ -32,10 +32,10 @@ declare namespace RxPostmessenger {
         getObservable(): typeof Observable;
 
         /**
-         * Create a new messenger for given window object. The origin URL is used both to give to window.postMessage
-         * calls on otherWindow, and to filter message events on the own window.
+         * Create a new messenger for given window object. The remoteOrigin URL is used both to give to window.postMessage
+         * calls on remoteWindow, and to filter inbound-message-events on the local window object.
          */
-        connect<MAP extends EventMap = any>(otherWindow: Window, origin: string): RxPostmessenger.Messenger<MAP>;
+        connect<MAP extends EventMap = any>(remoteWindow: Window, remoteOrigin: string): RxPostmessenger.Messenger<MAP>;
     }
 
     interface Messenger<MAP extends EventMap = any> {

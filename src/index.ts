@@ -50,8 +50,13 @@ export function useObservable<T extends typeof Observable>(newImplementation: T)
  * @param {string} origin
  * @return {IMessenger}
  */
-export function connect<MAP extends IEventMap = any>(otherWindow: Window, origin: string): IMessenger<MAP> {
-    return new Messenger(otherWindow, origin, new MessageIDGenerator());
+export function connect<MAP extends IEventMap = any>(remoteWindow: Window, remoteOrigin: string): IMessenger<MAP> {
+
+    return new Messenger(
+        remoteWindow,
+        remoteOrigin,
+        new MessageIDGenerator(),
+    );
 }
 
 // ---------------------------------------------------------------------------------------

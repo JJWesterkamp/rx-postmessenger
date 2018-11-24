@@ -25,7 +25,7 @@ export class Messenger<MAP extends IEventMap = any> implements IMessenger {
 
     /**
      * Observable stream of all incoming messages that originate
-     * from otherWindow with an origin url matching this.origin.
+     * from remoteWindow with an remoteOrigin url matching this.remoteOrigin.
      *
      * @member {Observable<object>} inboundMessages$
      * @public
@@ -57,13 +57,13 @@ export class Messenger<MAP extends IEventMap = any> implements IMessenger {
     public readonly responses$: Observable<IResponseObject>;
 
     /**
-     * @param {Window} otherWindow - The window object to exchange messages with.
-     * @param {string} origin - The remote url to accept incoming messages from.
+     * @param {Window} remoteWindow - The window object to exchange messages with.
+     * @param {string} remoteOrigin - The remote url to accept incoming messages from.
      * @param IDGenerator
      */
     public constructor(
-        public readonly otherWindow: Window,
-        public readonly origin: string,
+        public readonly remoteWindow: Window,
+        public readonly remoteOrigin: string,
         protected readonly IDGenerator: IMessageIDGenerator,
     ) {
         this.inboundMessages$ = getObservable()
@@ -268,14 +268,14 @@ export class Messenger<MAP extends IEventMap = any> implements IMessenger {
     }
 
     /**
-     * Performs a postMessage call with given data to this.otherWindow, provided that its
-     * location origin matches this.origin.
+     * Performs a postMessage call with given data to this.remoteWindow, provided that its
+     * location remoteOrigin matches this.remoteOrigin.
      *
      * @param {IMessageObject} data
      * @private
      */
     protected postMessage<T extends AnyMessage>(data: T): void {
-        this.otherWindow.postMessage(data, this.origin);
+        this.remoteWindow.postMessage(data, this.remoteOrigin);
     }
 
     /**
