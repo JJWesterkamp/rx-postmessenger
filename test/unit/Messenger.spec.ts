@@ -1,9 +1,8 @@
+import { expect } from "chai";
+import { Observable } from "rxjs";
+import { MessageValidator } from "../../src/MessageValidator";
 import { Messenger } from "../../src/Messenger";
 import { MessageIDGeneratorMock } from "../mocks/MessageIDGenerator.mock";
-import { Observable } from "rxjs";
-import { expect } from "chai";
-import { MessageValidator } from "../../src/MessageValidator";
-
 
 describe("[UNIT] Messenger", () => {
 
