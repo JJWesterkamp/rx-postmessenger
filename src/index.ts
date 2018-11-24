@@ -25,8 +25,6 @@ let _Observable: typeof Observable = Observable;
 /**
  * returns the active Rx.Observable implementation. Used by the messenger class to
  * obtain an Observable constructor reference at runtime.
- *
- * @return {Class<Observable>}
  */
 export function getObservable(): typeof Observable {
     return _Observable;
@@ -39,18 +37,11 @@ export function getObservable(): typeof Observable {
 /**
  * Sets given Rx.Observable implementation as the active implementation for new messengers.
  * Any messenger created hereafter will use this implementation.
- *
- * @param {Class<Observable>} newImplementation
  */
 export function useObservable<T extends typeof Observable>(newImplementation: T): void {
     _Observable = newImplementation;
 }
 
-/**
- * @param {Window} otherWindow
- * @param {string} origin
- * @return {IMessenger}
- */
 export function connect<MAP extends IEventMap = any>(remoteWindow: Window, remoteOrigin: string): IMessenger<MAP> {
 
     return new Messenger(
