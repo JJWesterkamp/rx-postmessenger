@@ -11,6 +11,7 @@ import PublicInterface from "../rx-postmessenger.d";
 import IEventMap  = PublicInterface.EventMap;
 import IMessenger = PublicInterface.Messenger;
 import IStatic    = PublicInterface.Static;
+import { MessageValidator } from "./MessageValidator";
 
 // -------------------------------------------------------------------------------------
 // Private data / exports for internal wiring
@@ -56,6 +57,7 @@ export function connect<MAP extends IEventMap = any>(remoteWindow: Window, remot
         remoteWindow,
         remoteOrigin,
         new MessageIDGenerator(),
+        new MessageValidator(remoteWindow, remoteOrigin),
     );
 }
 

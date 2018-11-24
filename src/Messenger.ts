@@ -17,6 +17,7 @@ import IEventMap  = PublicInterface.EventMap;
 import IMessenger = PublicInterface.Messenger;
 import IRequest   = PublicInterface.Request;
 import TypeLens   = PublicInterface.TypeLens;
+import { IMessageValidator } from "./interface/message-validator";
 
 /**
  * @class RxPostmessenger
@@ -60,15 +61,17 @@ export class Messenger<MAP extends IEventMap = any> implements IMessenger {
      * @param {Window} remoteWindow - The window object to exchange messages with.
      * @param {string} remoteOrigin - The remote url to accept incoming messages from.
      * @param IDGenerator
+     * @param messageValidator
      */
     public constructor(
         public readonly remoteWindow: Window,
         public readonly remoteOrigin: string,
         protected readonly IDGenerator: IMessageIDGenerator,
+        protected readonly messageValidator: IMessageValidator,
     ) {
         this.inboundMessages$ = getObservable()
             .fromEvent<MessageEvent>(window, "message")
-            .filter((message) => this.isValidMessage(message))
+            .filter((message) => this.messageValidator.validate(message))
             .pluck("data");
 
         this.requests$      = this.messagesOfType("request");
@@ -225,46 +228,6 @@ export class Messenger<MAP extends IEventMap = any> implements IMessenger {
             .filter<IResponseObject, T>((response): response is T => response.requestId === requestId)
             .pluck("payload")
             .take(1);
-    }
-
-    /**
-     * Validates the identity of the message's sender and the format of the message's data.
-     *
-     * Chechs whether the origin location matches any allowed origins.
-     * Separate assertion of the origin allows for cross-domain navigation
-     * within this.frame, and still treating inbound messages from the
-     * frame as being equal.
-     *
-     * Checks whether the source Window object equals the remoteWindow object.
-     * This check allows for implementation of multiple iframes that share the
-     * same origin, and still being able to distinguish between messages from
-     * such frames.
-     *
-     * @param {MessageEvent} message
-     * @return {boolean}
-     * @private
-     */
-    protected isValidMessage(message: MessageEvent): boolean {
-        return message instanceof MessageEvent
-            && message.origin === this.origin
-            && message.source === this.otherWindow
-            && this.isWellFormedMessage(message.data);
-    }
-
-    /**
-     * Tests whether the data sent through postMessage is a well-formed message
-     * object. This serves as runtime data format validation. If messages do not
-     * comply to the AnyMessage compound interface, the entire event is ignored.
-     *
-     * @param {AnyMessage} message
-     * @return {boolean}
-     */
-    protected isWellFormedMessage(message: AnyMessage): boolean {
-
-        return (typeof message.id === "string")
-            && (["request", "response", "notification"].indexOf(message.type) >= 0)
-            && (typeof message.channel === "string")
-            && (message.type !== "response" || (typeof message.requestId === "string"));
     }
 
     /**

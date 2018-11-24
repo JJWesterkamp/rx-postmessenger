@@ -2,9 +2,8 @@ import { Messenger } from "../../src/Messenger";
 import { MessageIDGeneratorMock } from "../mocks/MessageIDGenerator.mock";
 import { Observable } from "rxjs";
 import { expect } from "chai";
+import { MessageValidator } from "../../src/MessageValidator";
 
-// noinspection TsLint
-const WindowMock: typeof Window = require("window-mock").default;
 
 describe("[UNIT] Messenger", () => {
 
@@ -15,8 +14,12 @@ describe("[UNIT] Messenger", () => {
     let otherWindow: Window;
 
     beforeEach(() => {
-        messenger = new Messenger(window, otherURL, new MessageIDGeneratorMock());
-        otherWindow = new WindowMock();
+        messenger = new Messenger(
+            window,
+            otherURL,
+            new MessageIDGeneratorMock(),
+            new MessageValidator(window, otherURL),
+        );
     });
 
     describe("Observable properties", () => {
