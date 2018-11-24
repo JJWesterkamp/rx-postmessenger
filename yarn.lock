@@ -4787,10 +4787,6 @@ wide-align@^1.1.0:
   dependencies:
     string-width "^1.0.2 || 2"
 
-window-mock@^0.0.13:
-  version "0.0.13"
-  resolved "https://registry.yarnpkg.com/window-mock/-/window-mock-0.0.13.tgz#d1f42ac7edff3b03a4bff3a18c74b97b1712cf7c"
-
 wordwrap@^1.0.0, wordwrap@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/wordwrap/-/wordwrap-1.0.0.tgz#27584810891456a4171c8d0226441ade90cbcaeb"
