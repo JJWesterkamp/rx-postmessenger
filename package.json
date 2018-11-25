@@ -29,6 +29,7 @@
     "clean:coverage": "rm -rf coverage",
     "lint": "run-p lint:**",
     "lint:source": "tslint -c tslint.json 'src/**/*.ts' --fix",
+    "lint:test": "tslint -c tslint.json 'test/**/*.ts' --fix",
     "lint:declaration": "tslint -c tslint.json '*.d.ts' --fix",
     "prebuild": "npm run clean:dist",
     "prepublish": "npm-run-all lint test:ci build",

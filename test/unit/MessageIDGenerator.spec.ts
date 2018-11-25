@@ -1,12 +1,12 @@
-import { assert } from "chai";
-import { MessageIDGenerator } from "../../src/MessageIDGenerator";
-import { GUIDGeneratorMock } from "../mocks/functions/GUIDGenerator.mock";
+import { assert } from 'chai';
+import { MessageIDGenerator } from '../../src/MessageIDGenerator';
+import { GUIDGeneratorMock } from '../mocks/functions/GUIDGenerator.mock';
 
-describe("[Unit] MessageIDGenerator", () => {
+describe('[Unit] MessageIDGenerator', () => {
 
-    describe("#generateID()", () => {
+    describe('#generateID()', () => {
 
-        it("Should generate unique values each time when running on default generator", () => {
+        it('Should generate unique values each time when running on default generator', () => {
             const generator = new MessageIDGenerator();
             const values = [];
 
@@ -17,20 +17,20 @@ describe("[Unit] MessageIDGenerator", () => {
             }
         });
 
-        it("Should not provide previously invalidated values", () => {
+        it('Should not provide previously invalidated values', () => {
             const generator = new MessageIDGenerator(GUIDGeneratorMock());
-            assert.equal(generator.generateID(), "1");
-            assert.equal(generator.generateID(), "2");
-            generator.invalidateID("3");
-            assert.equal(generator.generateID(), "4");
-            generator.invalidateID("6");
-            assert.equal(generator.generateID(), "5");
-            assert.equal(generator.generateID(), "7");
-            generator.invalidateID("8");
-            generator.invalidateID("9");
-            generator.invalidateID("11");
-            assert.equal(generator.generateID(), "10");
-            assert.equal(generator.generateID(), "12");
+            assert.equal(generator.generateID(), '1');
+            assert.equal(generator.generateID(), '2');
+            generator.invalidateID('3');
+            assert.equal(generator.generateID(), '4');
+            generator.invalidateID('6');
+            assert.equal(generator.generateID(), '5');
+            assert.equal(generator.generateID(), '7');
+            generator.invalidateID('8');
+            generator.invalidateID('9');
+            generator.invalidateID('11');
+            assert.equal(generator.generateID(), '10');
+            assert.equal(generator.generateID(), '12');
         });
     });
 });

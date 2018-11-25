@@ -1,4 +1,4 @@
-import { IMessageIDGenerator } from "../../src/interface/id-generator";
+import { IMessageIDGenerator } from '../../src/interface/id-generator';
 
 export class MessageIDGeneratorMock implements IMessageIDGenerator {
 

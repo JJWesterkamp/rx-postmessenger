@@ -63,5 +63,6 @@ export function connect<MAP extends IEventMap = any>(remoteWindow: Window, remot
 // API Exports
 // ---------------------------------------------------------------------------------------
 
+// noinspection JSUnusedGlobalSymbols
 const defaultNamespace: IStatic = { connect, useObservable, getObservable };
 export default defaultNamespace;
