@@ -3,17 +3,17 @@
 // -----------------------------------------------------------------------------
 import { getObservable } from './index';
 import { RxPostmessengerRequest } from './RxPostmessengerRequest';
+// noinspection TypeScriptPreferShortImport
 import { Observable } from './vendor/rxjs';
 
 // -----------------------------------------------------------------------------
 // Interface imports
 // -----------------------------------------------------------------------------
-import { IMessageIDGenerator } from './interface/id-generator';
 import { AnyMessage, IMessageObject, INotificationObject, IRequestObject, IResponseObject, MappedMessage, MessageType } from './interface/message-objects';
 
+// noinspection ES6UnusedImports
 import PublicInterface from '../rx-postmessenger';
 import { IMessageFactory } from './interface/message-factory';
-import AnyChannel = PublicInterface.TypeLens.AnyChannel;
 import IEventMap  = PublicInterface.EventMap;
 import IMessenger = PublicInterface.Messenger;
 import IRequest   = PublicInterface.Request;

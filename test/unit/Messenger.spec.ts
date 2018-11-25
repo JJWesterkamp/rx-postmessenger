@@ -1,15 +1,13 @@
-import { expect } from 'chai';
+import { assert, expect } from 'chai';
 import { Observable } from 'rxjs';
 import { MessageFactory } from '../../src/MessageFactory';
 import { MessageValidator } from '../../src/MessageValidator';
 import { Messenger } from '../../src/Messenger';
 import { createIFrame } from '../helpers/iframe.spec-helper';
-import { makeValidNotification } from '../helpers/message-objects.spec-helper';
+import { DEFAULT_TEST_PAYLOAD } from '../helpers/message-objects.spec-helper';
 import { MessageIDGeneratorMock } from '../mocks/MessageIDGenerator.mock';
 
 describe('[UNIT] Messenger', () => {
-
-    const remoteOrigin = 'about:blank';
 
     let iframe: HTMLIFrameElement;
     let remoteWindow: Window;
@@ -17,14 +15,14 @@ describe('[UNIT] Messenger', () => {
 
     beforeEach(() => {
 
-        iframe = createIFrame(remoteOrigin);
+        iframe = createIFrame();
         remoteWindow = iframe.contentWindow as Window;
 
         messenger = new Messenger(
             remoteWindow,
-            remoteOrigin,
+            '*',
             new MessageFactory(new MessageIDGeneratorMock()),
-            new MessageValidator(remoteWindow, remoteOrigin),
+            new MessageValidator(window, '*'),
         );
     });
 
@@ -48,25 +46,70 @@ describe('[UNIT] Messenger', () => {
         });
     });
 
+    // ------------------------------------------------------------------------------
+    //      notify()
+    // ------------------------------------------------------------------------------
+
     describe('#notify()', () => {
 
-        it('Should dispatch the event', () => {
-            const notification = makeValidNotification();
+        const channel = 'test-notification-channel';
+
+        it('Should send notifications to the remote window', (done) => {
+            remoteWindow.addEventListener('message', (message) => {
+                expect(message.data.type).to.equal('notification');
+                expect(message.data.id).to.equal('1');
+                expect(message.data.channel).to.equal(channel);
+                expect(message.data.payload).to.equal(DEFAULT_TEST_PAYLOAD);
+                done();
+            });
+
+            messenger.notify(channel, DEFAULT_TEST_PAYLOAD);
         });
-        // console.log("MESSENGER WINDOW:", messenger.remoteWindow);
-        // messenger.notify("test-notification-channel", notification);
     });
+
+    // ------------------------------------------------------------------------------
+    //      request()
+    // ------------------------------------------------------------------------------
 
     describe('#request()', () => {
-        const request = makeValidNotification();
-        // messenger.request("test-request-channel", request);
+
+        const channel = 'test-request-channel';
+
+        it('Should send requests to the remote window', (done) => {
+            remoteWindow.addEventListener('message', (message) => {
+                expect(message.data.type).to.equal('request');
+                expect(message.data.id).to.equal('1');
+                expect(message.data.channel).to.equal(channel);
+                expect(message.data.payload).to.equal(DEFAULT_TEST_PAYLOAD);
+                done();
+            });
+
+            messenger.request(channel, DEFAULT_TEST_PAYLOAD);
+        });
     });
+
+    // ------------------------------------------------------------------------------
+    //      requests()
+    // ------------------------------------------------------------------------------
 
     describe('#requests()', () => {
-        // const requests$ = messenger.requests("test-request-channel");
+
+        it('Should emit request payloads', () => {
+            // ...
+        });
+
+        it('Should not emit notifications', () => {
+            // ...
+        });
     });
 
+    // ------------------------------------------------------------------------------
+    //      notifications()
+    // ------------------------------------------------------------------------------
+
     describe('#notifications()', () => {
-        // const requests$ = messenger.notifications("test-notification-channel");
+        it('Should ', () => {
+            // ...
+        });
     });
 });
