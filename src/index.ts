@@ -1,18 +1,18 @@
-import { MessageIDGenerator } from "./MessageIDGenerator";
-import { Messenger } from "./Messenger";
-import { Observable } from "./vendor/rxjs";
+import { MessageIDGenerator } from './MessageIDGenerator';
+import { Messenger } from './Messenger';
+import { Observable } from './vendor/rxjs';
 
 // -------------------------------------------------------------------------------------
 // Public interface imports
 // -------------------------------------------------------------------------------------
 
-import PublicInterface from "../rx-postmessenger.d";
+import PublicInterface from '../rx-postmessenger.d';
 
 import IEventMap  = PublicInterface.EventMap;
 import IMessenger = PublicInterface.Messenger;
 import IStatic    = PublicInterface.Static;
-import { MessageValidator } from "./MessageValidator";
-import { MessageFactory } from "./MessageFactory";
+import { MessageFactory } from './MessageFactory';
+import { MessageValidator } from './MessageValidator';
 
 // -------------------------------------------------------------------------------------
 // Private data / exports for internal wiring
@@ -44,6 +44,11 @@ export function useObservable<T extends typeof Observable>(newImplementation: T)
 }
 
 export function connect<MAP extends IEventMap = any>(remoteWindow: Window, remoteOrigin: string): IMessenger<MAP> {
+
+    if (window === remoteWindow) {
+        throw new Error('Remote window can not be the same as the local window environment');
+    }
+
     return new Messenger(
         remoteWindow,
         remoteOrigin,

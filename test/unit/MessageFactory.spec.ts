@@ -36,6 +36,10 @@ describe("[UNIT] MessageFactory", () => {
             expect(request.channel).to.equal(channel, "Channel value mismatch");
             expect(request.payload).to.equal(payload, "Payload value mismatch");
         });
+
+        it("should mark the returned object as request", () => {
+            expect(request.type).to.equal("request");
+        });
     });
 
     describe("#makeResponse()", () => {
@@ -59,6 +63,10 @@ describe("[UNIT] MessageFactory", () => {
             expect(response.channel).to.equal(channel, "Channel value mismatch");
             expect(response.payload).to.equal(payload, "Payload value mismatch");
         });
+
+        it("should mark the returned object as response", () => {
+            expect(response.type).to.equal("response");
+        });
     });
 
     describe("#makeNotification()", () => {
@@ -66,16 +74,20 @@ describe("[UNIT] MessageFactory", () => {
 
         beforeEach(() => notification = factory.makeNotification(channel, payload));
 
-        it("Should implement all required properties", () => {
+        it("Should implement all required properties on the returned object", () => {
             expect(notification).to.have.property("id");
             expect(notification).to.have.property("type");
             expect(notification).to.have.property("channel");
             expect(notification).to.have.property("payload");
         });
 
-        it("Should implement given arguments on the object", () => {
+        it("Should implement given arguments on the returned object", () => {
             expect(notification.channel).to.equal(channel, "Channel value mismatch");
             expect(notification.payload).to.equal(payload, "Payload value mismatch");
+        });
+
+        it("should mark the returned object as notification", () => {
+            expect(notification.type).to.equal("notification");
         });
     });
 });

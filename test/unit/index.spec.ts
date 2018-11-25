@@ -1,8 +1,9 @@
 import { assert, expect } from "chai";
 import RxPostMessenger from "../../src";
+import { Messenger } from "../../src/Messenger";
 // noinspection TypeScriptPreferShortImport
 import { Observable } from "../../src/vendor/rxjs";
-import { Messenger } from "../../src/Messenger";
+import { createIFrame } from "../helpers/iframe.spec-helper";
 
 describe("[UNIT] Entrypoint", () => {
 
@@ -41,7 +42,7 @@ describe("[UNIT] Entrypoint", () => {
 
     describe("#connect()", () => {
 
-        const remoteWindow = window;
+        const remoteWindow = createIFrame().contentWindow as Window;
         const remoteOrigin = "https://test-remote.test";
 
         let messenger: Messenger;
@@ -52,6 +53,11 @@ describe("[UNIT] Entrypoint", () => {
             expect(messenger).to.be.instanceOf(Messenger);
             expect(messenger.remoteWindow).to.equal(remoteWindow);
             expect(messenger.remoteOrigin).to.equal(remoteOrigin);
+        });
+
+        it("Should throw an error if given remote window equals the local window", () => {
+            const fn = RxPostMessenger.connect.bind(RxPostMessenger, window, remoteOrigin);
+            expect(fn).to.throw(Error);
         });
     });
 });
