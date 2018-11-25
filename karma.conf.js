@@ -53,7 +53,7 @@ module.exports = function(config) {
                         enforce: 'post',
                         test: /\.ts$/,
                         loader: 'istanbul-instrumenter-loader?embedSource=true&noAutoWrap=true',
-                        exclude: /(\.(e2e|spec|mock)\.ts|node_modules)$/,
+                        exclude: /(\.(e2e|spec|mock|spec-helper)\.ts|node_modules)$/,
                     }
                 ],
             }

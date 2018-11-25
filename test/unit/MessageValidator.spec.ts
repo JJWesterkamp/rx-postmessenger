@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { MessageValidator } from "../../src/MessageValidator";
-import { makeValidNotification, makeValidRequest, makeValidResponse } from "../helpers/message-objects";
+import { makeValidNotification, makeValidRequest, makeValidResponse } from "../helpers/message-objects.spec-helper";
 
 describe("[UNIT] MessageValidator", () => {
 
