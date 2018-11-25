@@ -2,6 +2,7 @@ import { assert, expect } from "chai";
 import RxPostMessenger from "../../src";
 // noinspection TypeScriptPreferShortImport
 import { Observable } from "../../src/vendor/rxjs";
+import { Messenger } from "../../src/Messenger";
 
 describe("[UNIT] Entrypoint", () => {
 
@@ -22,7 +23,7 @@ describe("[UNIT] Entrypoint", () => {
             0,
             {},
             [],
-            () => void(0),
+            () => void (0),
         ];
 
         it("Should accept any type of argument", () => {
@@ -40,6 +41,17 @@ describe("[UNIT] Entrypoint", () => {
 
     describe("#connect()", () => {
 
-        // it('Should ')
+        const remoteWindow = window;
+        const remoteOrigin = "https://test-remote.test";
+
+        let messenger: Messenger;
+
+        beforeEach(() => messenger = RxPostMessenger.connect(remoteWindow, remoteOrigin) as Messenger);
+
+        it("Should construct a messenger from given arguments when valid", () => {
+            expect(messenger).to.be.instanceOf(Messenger);
+            expect(messenger.remoteWindow).to.equal(remoteWindow);
+            expect(messenger.remoteOrigin).to.equal(remoteOrigin);
+        });
     });
 });

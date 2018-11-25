@@ -9,7 +9,8 @@ describe("[Unit] MessageIDGenerator", () => {
         it("Should generate unique values each time when running on default generator", () => {
             const generator = new MessageIDGenerator();
             const values = [];
-            for (let i = 0; i < 100; i++) {
+
+            for (let i = 0; i < 10000; i++) {
                 const newValue = generator.generateID();
                 assert.notInclude(values, newValue);
                 values.push(newValue);
@@ -27,7 +28,9 @@ describe("[Unit] MessageIDGenerator", () => {
             assert.equal(generator.generateID(), "7");
             generator.invalidateID("8");
             generator.invalidateID("9");
+            generator.invalidateID("11");
             assert.equal(generator.generateID(), "10");
+            assert.equal(generator.generateID(), "12");
         });
     });
 });
