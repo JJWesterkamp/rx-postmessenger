@@ -1,24 +1,24 @@
 // -----------------------------------------------------------------------------
 // Concrete imports
 // -----------------------------------------------------------------------------
-import { getObservable } from "./index";
-import { RxPostmessengerRequest } from "./RxPostmessengerRequest";
-import { Observable } from "./vendor/rxjs";
+import { getObservable } from './index';
+import { RxPostmessengerRequest } from './RxPostmessengerRequest';
+import { Observable } from './vendor/rxjs';
 
 // -----------------------------------------------------------------------------
 // Interface imports
 // -----------------------------------------------------------------------------
-import { IMessageIDGenerator } from "./interface/id-generator";
-import { AnyMessage, IMessageObject, INotificationObject, IRequestObject, IResponseObject, MappedMessage, MessageType } from "./interface/message-objects";
+import { IMessageIDGenerator } from './interface/id-generator';
+import { AnyMessage, IMessageObject, INotificationObject, IRequestObject, IResponseObject, MappedMessage, MessageType } from './interface/message-objects';
 
-import PublicInterface from "../rx-postmessenger";
-import { IMessageFactory } from "./interface/message-factory";
+import PublicInterface from '../rx-postmessenger';
+import { IMessageFactory } from './interface/message-factory';
 import AnyChannel = PublicInterface.TypeLens.AnyChannel;
 import IEventMap  = PublicInterface.EventMap;
 import IMessenger = PublicInterface.Messenger;
 import IRequest   = PublicInterface.Request;
 import TypeLens   = PublicInterface.TypeLens;
-import { IMessageValidator } from "./interface/message-validator";
+import { IMessageValidator } from './interface/message-validator';
 
 /**
  * @class RxPostmessenger
@@ -47,13 +47,13 @@ export class Messenger<MAP extends IEventMap = any> implements IMessenger {
         protected readonly messageValidator: IMessageValidator,
     ) {
         this.inboundMessages$ = getObservable()
-            .fromEvent<MessageEvent>(window, "message")
+            .fromEvent<MessageEvent>(window, 'message')
             .filter((message) => this.messageValidator.validate(message))
-            .pluck("data");
+            .pluck('data');
 
-        this.requests$      = this.messagesOfType("request");
-        this.responses$     = this.messagesOfType("response");
-        this.notifications$ = this.messagesOfType("notification");
+        this.requests$      = this.messagesOfType('request');
+        this.responses$     = this.messagesOfType('response');
+        this.notifications$ = this.messagesOfType('notification');
 
         this.inboundMessages$.subscribe(({ id }) => this.messageFactory.invalidateID(id));
     }
@@ -145,7 +145,7 @@ export class Messenger<MAP extends IEventMap = any> implements IMessenger {
 
         return this.notifications$
             .filter<INotificationObject, Match>((notification): notification is Match => notification.channel === channel)
-            .pluck("payload");
+            .pluck('payload');
     }
 
     // ------------------------------------------------------------------------------------------------
@@ -181,7 +181,7 @@ export class Messenger<MAP extends IEventMap = any> implements IMessenger {
     protected createResponseObservable<T>(requestId: string): Observable<T> {
         return this.responses$
             .filter((response): response is IResponseObject<T> => response.requestId === requestId)
-            .pluck<IResponseObject<T>, T>("payload")
+            .pluck<IResponseObject<T>, T>('payload')
             .take(1);
     }
 

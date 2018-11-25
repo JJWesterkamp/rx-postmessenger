@@ -1,4 +1,4 @@
-import { Observable } from "rxjs/Observable";
+import { Observable } from 'rxjs/Observable';
 
 declare const RxPostmessenger: RxPostmessenger.Static;
 export default RxPostmessenger;
@@ -157,18 +157,18 @@ declare namespace RxPostmessenger {
 
             namespace Request {
 
-                type All<MAP extends EventMap> = MAP["in"]["requests"];
+                type All<MAP extends EventMap> = MAP['in']['requests'];
                 type Channel<MAP extends EventMap> = keyof All<MAP>;
                 type Contract<MAP extends EventMap, CH extends Channel<MAP>> = All<MAP>[CH];
-                type RequestPayload<MAP extends EventMap, CH extends Channel<MAP>> = Contract<MAP, CH>["requestPayload"];
-                type ResponsePayload<MAP extends EventMap, CH extends Channel<MAP>> = Contract<MAP, CH>["responsePayload"];
+                type RequestPayload<MAP extends EventMap, CH extends Channel<MAP>> = Contract<MAP, CH>['requestPayload'];
+                type ResponsePayload<MAP extends EventMap, CH extends Channel<MAP>> = Contract<MAP, CH>['responsePayload'];
             }
 
             namespace Notification {
 
-                type All<MAP extends EventMap> = MAP["in"]["notifications"];
+                type All<MAP extends EventMap> = MAP['in']['notifications'];
                 type Channel<MAP extends EventMap> = keyof All<MAP>;
-                type Payload<MAP extends EventMap, CH extends Channel<MAP>> = All<MAP>[CH]["payload"];
+                type Payload<MAP extends EventMap, CH extends Channel<MAP>> = All<MAP>[CH]['payload'];
             }
         }
 
@@ -176,18 +176,18 @@ declare namespace RxPostmessenger {
 
             namespace Request {
 
-                type All<MAP extends EventMap> = MAP["out"]["requests"];
+                type All<MAP extends EventMap> = MAP['out']['requests'];
                 type Channel<MAP extends EventMap> = keyof All<MAP>;
                 type Contract<MAP extends EventMap, CH extends Channel<MAP>> = All<MAP>[CH];
-                type RequestPayload<MAP extends EventMap, CH extends Channel<MAP>> = Contract<MAP, CH>["requestPayload"];
-                type ResponsePayload<MAP extends EventMap, CH extends Channel<MAP>> = Contract<MAP, CH>["responsePayload"];
+                type RequestPayload<MAP extends EventMap, CH extends Channel<MAP>> = Contract<MAP, CH>['requestPayload'];
+                type ResponsePayload<MAP extends EventMap, CH extends Channel<MAP>> = Contract<MAP, CH>['responsePayload'];
             }
 
             namespace Notification {
 
-                type All<MAP extends EventMap> = MAP["out"]["notifications"];
+                type All<MAP extends EventMap> = MAP['out']['notifications'];
                 type Channel<MAP extends EventMap> = keyof All<MAP>;
-                type Payload<MAP extends EventMap, CH extends Channel<MAP>> = All<MAP>[CH]["payload"];
+                type Payload<MAP extends EventMap, CH extends Channel<MAP>> = All<MAP>[CH]['payload'];
             }
         }
     }

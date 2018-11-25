@@ -2,7 +2,7 @@
 // Public interface imports
 // -----------------------------------------------------------------------
 
-import PublicInterface from "../rx-postmessenger.d";
+import PublicInterface from '../rx-postmessenger.d';
 
 import IRequest        = PublicInterface.Request;
 import IEventMap       = PublicInterface.EventMap;
@@ -46,6 +46,6 @@ export class RxPostmessengerRequest<MAP extends IEventMap, CH extends RequestCha
         }
 
         this._injectResponse(data);
-        Object.defineProperty(this, "isHandled", { value: true });
+        Object.defineProperty(this, 'isHandled', { value: true });
     }
 }

@@ -1,4 +1,4 @@
-import { AnyMessage } from "./message-objects";
+import { AnyMessage } from './message-objects';
 
 export interface IOwnMessageEvent<T> extends MessageEvent {
     readonly data: T;

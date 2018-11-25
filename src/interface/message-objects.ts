@@ -26,16 +26,16 @@ export interface IMessageObject<T = any> {
 }
 
 export interface IRequestObject<T = any> extends IMessageObject<T> {
-    readonly type: "request";
+    readonly type: 'request';
 }
 
 export interface IResponseObject<T = any> extends IMessageObject<T> {
     readonly requestId: string;
-    readonly type: "response";
+    readonly type: 'response';
 }
 
 export interface INotificationObject<T = any> extends IMessageObject<T> {
-    readonly type: "notification";
+    readonly type: 'notification';
 }
 
 export type AnyMessage = IRequestObject | IResponseObject | INotificationObject;

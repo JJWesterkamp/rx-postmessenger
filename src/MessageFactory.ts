@@ -1,6 +1,6 @@
-import { IMessageIDGenerator } from "./interface/id-generator";
-import { IMessageFactory } from "./interface/message-factory";
-import { INotificationObject, IRequestObject, IResponseObject } from "./interface/message-objects";
+import { IMessageIDGenerator } from './interface/id-generator';
+import { IMessageFactory } from './interface/message-factory';
+import { INotificationObject, IRequestObject, IResponseObject } from './interface/message-objects';
 
 export class MessageFactory implements IMessageFactory {
 
@@ -11,7 +11,7 @@ export class MessageFactory implements IMessageFactory {
             channel,
             id: this.IDGenerator.generateID(),
             payload,
-            type: "notification",
+            type: 'notification',
         };
     }
 
@@ -20,7 +20,7 @@ export class MessageFactory implements IMessageFactory {
             channel,
             id: this.IDGenerator.generateID(),
             payload,
-            type: "request",
+            type: 'request',
         };
     }
 
@@ -30,7 +30,7 @@ export class MessageFactory implements IMessageFactory {
             id: this.IDGenerator.generateID(),
             payload,
             requestId,
-            type: "response",
+            type: 'response',
         };
     }
 

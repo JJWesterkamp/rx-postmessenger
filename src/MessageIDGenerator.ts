@@ -1,5 +1,5 @@
-import { GUIDGenerator } from "./functions/GUIDGenerator";
-import { IMessageIDGenerator } from "./interface/id-generator";
+import { GUIDGenerator } from './functions/GUIDGenerator';
+import { IMessageIDGenerator } from './interface/id-generator';
 
 export class MessageIDGenerator implements IMessageIDGenerator {
 

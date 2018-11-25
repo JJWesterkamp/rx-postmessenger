@@ -1,4 +1,4 @@
-import { INotificationObject, IRequestObject, IResponseObject } from "./message-objects";
+import { INotificationObject, IRequestObject, IResponseObject } from './message-objects';
 
 export interface IMessageFactory {
     invalidateID(id: string): void;

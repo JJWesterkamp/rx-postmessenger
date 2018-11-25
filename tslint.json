@@ -5,6 +5,7 @@
     ],
     "jsRules": {},
     "rules": {
+        "quotemark": [true, "single"],
         "max-line-length": false,
         "no-namespace": [true, "allow-declarations"],
         "variable-name": false,

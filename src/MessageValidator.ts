@@ -1,5 +1,5 @@
-import { AnyMessage } from "./interface/message-objects";
-import { IMessageValidator, IOwnMessageEvent } from "./interface/message-validator";
+import { AnyMessage } from './interface/message-objects';
+import { IMessageValidator, IOwnMessageEvent } from './interface/message-validator';
 
 export class MessageValidator implements IMessageValidator {
 
@@ -35,9 +35,9 @@ export class MessageValidator implements IMessageValidator {
      * @return {boolean}
      */
     public isWellFormedMessage(message: any): message is AnyMessage {
-        return (typeof message.id === "string")
-            && (["request", "response", "notification"].indexOf(message.type) >= 0)
-            && (typeof message.channel === "string")
-            && (message.type !== "response" || (typeof message.requestId === "string"));
+        return (typeof message.id === 'string')
+            && (['request', 'response', 'notification'].indexOf(message.type) >= 0)
+            && (typeof message.channel === 'string')
+            && (message.type !== 'response' || (typeof message.requestId === 'string'));
     }
 }
