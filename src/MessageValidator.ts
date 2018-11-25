@@ -1,5 +1,5 @@
 import { AnyMessage } from "./interface/message-objects";
-import { IMessageValidator } from "./interface/message-validator";
+import { IMessageValidator, IOwnMessageEvent } from "./interface/message-validator";
 
 export class MessageValidator implements IMessageValidator {
 
@@ -17,12 +17,8 @@ export class MessageValidator implements IMessageValidator {
      * This check allows for implementation of multiple i-frames that share the
      * same remoteOrigin, and still being able to distinguish between messages from
      * such frames.
-     *
-     * @param {MessageEvent} message
-     * @return {boolean}
-     * @private
      */
-    public validate(message: MessageEvent): boolean {
+    public validate(message: MessageEvent): message is IOwnMessageEvent<AnyMessage> {
         return message instanceof MessageEvent
             && message.origin === this.acceptedOrigin
             && message.source === this.acceptedSource
@@ -39,7 +35,6 @@ export class MessageValidator implements IMessageValidator {
      * @return {boolean}
      */
     public isWellFormedMessage(message: any): message is AnyMessage {
-
         return (typeof message.id === "string")
             && (["request", "response", "notification"].indexOf(message.type) >= 0)
             && (typeof message.channel === "string")
