@@ -4,7 +4,7 @@
  * another RxPostmessenger on the other end of the line to be able to correctly interpret the
  * message.
  */
-export interface IMessageObject {
+export interface IMessageObject<T = any> {
 
     // The id of the message. This is a UUID-like string that is unique for the single JS lifecycle
     // wherein the message is created.
@@ -22,37 +22,28 @@ export interface IMessageObject {
     // The message payload. This can be any type, and is determined by the package consumer. The
     // type of a given value for a certain message action will be inferred, and remembered throughout
     // the entire code path within this package that the data treads.
-    readonly payload: any;
+    readonly payload: T;
 }
 
-export interface IRequestObject<CH extends string = string, PL = any> extends IMessageObject {
-    readonly id: string;
+export interface IRequestObject<T = any> extends IMessageObject<T> {
     readonly type: "request";
-    readonly channel: CH;
-    readonly payload: PL;
 }
 
-export interface IResponseObject<CH extends string = string, PL = any> extends IMessageObject {
+export interface IResponseObject<T = any> extends IMessageObject<T> {
     readonly requestId: string;
-    readonly id: string;
     readonly type: "response";
-    readonly channel: CH;
-    readonly payload: PL;
 }
 
-export interface INotificationObject<CH extends string = string, PL = any> extends IMessageObject {
-    readonly id: string;
+export interface INotificationObject<T = any> extends IMessageObject<T> {
     readonly type: "notification";
-    readonly channel: CH;
-    readonly payload: PL;
 }
 
 export type AnyMessage = IRequestObject | IResponseObject | INotificationObject;
 
-export interface IMessageTypeMap {
-    "request": IRequestObject;
-    "response": IResponseObject;
-    "notification": INotificationObject;
+export interface IMessageTypeMap<T = any> {
+    request: IRequestObject;
+    response: IResponseObject;
+    notification: INotificationObject;
 }
 
 export type MessageType = keyof IMessageTypeMap;

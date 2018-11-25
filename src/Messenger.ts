@@ -12,6 +12,7 @@ import { IMessageIDGenerator } from "./interface/id-generator";
 import { AnyMessage, IMessageObject, INotificationObject, IRequestObject, IResponseObject, MappedMessage, MessageType } from "./interface/message-objects";
 
 import PublicInterface from "../rx-postmessenger";
+import { IMessageFactory } from "./interface/message-factory";
 import AnyChannel = PublicInterface.TypeLens.AnyChannel;
 import IEventMap  = PublicInterface.EventMap;
 import IMessenger = PublicInterface.Messenger;
@@ -25,48 +26,24 @@ import { IMessageValidator } from "./interface/message-validator";
 export class Messenger<MAP extends IEventMap = any> implements IMessenger {
 
     /**
-     * Observable stream of all incoming messages that originate
-     * from remoteWindow with an remoteOrigin url matching this.remoteOrigin.
-     *
-     * @member {Observable<object>} inboundMessages$
-     * @public
+     * Observable stream of all incoming messages that originate from remoteWindow with a
+     * remoteOrigin url matching this.remoteOrigin.
      */
     public readonly inboundMessages$: Observable<AnyMessage>;
 
-    /**
-     * Filtered subset of inboundMessages$, emitting all messages of type 'notification'.
-     *
-     * @member {Observable<object>} notifications$
-     * @public
-     */
+    /** Filtered subset of inboundMessages$, emitting all messages of type 'notification' */
     public readonly notifications$: Observable<INotificationObject>;
 
-    /**
-     * Filtered subset of inboundMessages$, emitting all messages of type 'request'.
-     *
-     * @member {Observable<object>} requests$
-     * @public
-     */
+    /** Filtered subset of inboundMessages$, emitting all messages of type 'request' */
     public readonly requests$: Observable<IRequestObject>;
 
-    /**
-     * Filtered subset of inboundMessages$, emitting all messages of type 'response'.
-     *
-     * @member {Observable<object>} responses$
-     * @public
-     */
+    /** Filtered subset of inboundMessages$, emitting all messages of type 'response' */
     public readonly responses$: Observable<IResponseObject>;
 
-    /**
-     * @param {Window} remoteWindow - The window object to exchange messages with.
-     * @param {string} remoteOrigin - The remote url to accept incoming messages from.
-     * @param IDGenerator
-     * @param messageValidator
-     */
     public constructor(
         public readonly remoteWindow: Window,
         public readonly remoteOrigin: string,
-        protected readonly IDGenerator: IMessageIDGenerator,
+        protected readonly messageFactory: IMessageFactory,
         protected readonly messageValidator: IMessageValidator,
     ) {
         this.inboundMessages$ = getObservable()
@@ -78,7 +55,7 @@ export class Messenger<MAP extends IEventMap = any> implements IMessenger {
         this.responses$     = this.messagesOfType("response");
         this.notifications$ = this.messagesOfType("notification");
 
-        this.inboundMessages$.subscribe(({ id }) => this.IDGenerator.invalidateID(id));
+        this.inboundMessages$.subscribe(({ id }) => this.messageFactory.invalidateID(id));
     }
 
     // ------------------------------------------------------------------------------------------------
@@ -99,16 +76,9 @@ export class Messenger<MAP extends IEventMap = any> implements IMessenger {
         RES_PL extends TypeLens.Out.Request.ResponsePayload<MAP, CH>
 
     >(channel: CH, payload: REQ_PL): Observable<RES_PL> {
-        const id = this.IDGenerator.generateID();
-        const responseObservable: Observable<RES_PL> = this.createResponseObservable<RES_PL>(id);
-
-        this.postMessage<IRequestObject<CH, REQ_PL>>({
-            channel,
-            id,
-            payload,
-            type: "request",
-        });
-
+        const request: IRequestObject<REQ_PL> = this.messageFactory.makeRequest(channel, payload);
+        const responseObservable: Observable<RES_PL> = this.createResponseObservable(request.id);
+        this.postMessage<IRequestObject<REQ_PL>>(request);
         return responseObservable;
     }
 
@@ -127,12 +97,9 @@ export class Messenger<MAP extends IEventMap = any> implements IMessenger {
 
     >(channel: CH, payload: PL): this {
 
-        this.postMessage<INotificationObject<CH, PL>>({
-            channel,
-            id: this.IDGenerator.generateID(),
-            payload,
-            type: "notification",
-        });
+        this.postMessage<INotificationObject<PL>>(
+            this.messageFactory.makeNotification(channel, payload),
+        );
 
         return this;
     }
@@ -151,16 +118,16 @@ export class Messenger<MAP extends IEventMap = any> implements IMessenger {
         // This is where the TS realm ends, and we must simply trust message
         // senders to pass the required payload.
         type REQ_PL = TypeLens.In.Request.RequestPayload<MAP, CH>;
-        type REQ = IRequestObject<CH, REQ_PL>;
+        type REQ = IRequestObject<REQ_PL>;
         type RES_PL = TypeLens.In.Request.ResponsePayload<MAP, CH>;
 
         return this.requests$
             .filter<IRequestObject, REQ>((request): request is REQ => request.channel === channel)
             .map((request): IRequest<MAP, CH> => new RxPostmessengerRequest<MAP, CH>(
                 request.id,
-                request.channel,
+                request.channel as CH,
                 request.payload,
-                (payload: RES_PL) => this.respond<CH, RES_PL>(request.id, channel, payload),
+                (payload: RES_PL) => this.respond<RES_PL>(request.id, channel, payload),
             ));
     }
 
@@ -174,7 +141,7 @@ export class Messenger<MAP extends IEventMap = any> implements IMessenger {
      */
     public notifications<CH extends TypeLens.In.Notification.Channel<MAP>>(channel: CH): Observable<TypeLens.In.Notification.Payload<MAP, CH>> {
 
-        type Match = INotificationObject<CH, TypeLens.In.Notification.Payload<MAP, CH>>;
+        type Match = INotificationObject<TypeLens.In.Notification.Payload<MAP, CH>>;
 
         return this.notifications$
             .filter<INotificationObject, Match>((notification): notification is Match => notification.channel === channel)
@@ -194,20 +161,11 @@ export class Messenger<MAP extends IEventMap = any> implements IMessenger {
      * @return {Messenger}
      * @private
      */
-    protected respond<
+    protected respond<T>(requestId: string, channel: string, payload: T): this {
 
-        CH extends TypeLens.In.Request.Channel<MAP>,
-        RES_PL extends TypeLens.In.Request.ResponsePayload<MAP, CH>
-
-    >(requestId: string, channel: CH, payload: RES_PL): this {
-
-        this.postMessage<IResponseObject<CH, RES_PL>>({
-            channel,
-            id: this.IDGenerator.generateID(),
-            payload,
-            requestId,
-            type: "response",
-        });
+        this.postMessage<IResponseObject<T>>(
+            this.messageFactory.makeResponse(requestId, channel, payload),
+        );
 
         return this;
     }
@@ -220,13 +178,10 @@ export class Messenger<MAP extends IEventMap = any> implements IMessenger {
      * @return {Observable<object>}
      * @private
      */
-    protected createResponseObservable<CH extends TypeLens.Out.Request.Channel<MAP>>(requestId: string): Observable<TypeLens.Out.Request.ResponsePayload<MAP, CH>> {
-
-        type T = TypeLens.Out.Request.ResponsePayload<MAP, CH>;
-
+    protected createResponseObservable<T>(requestId: string): Observable<T> {
         return this.responses$
-            .filter<IResponseObject, T>((response): response is T => response.requestId === requestId)
-            .pluck("payload")
+            .filter((response): response is IResponseObject<T> => response.requestId === requestId)
+            .pluck<IResponseObject<T>, T>("payload")
             .take(1);
     }
 

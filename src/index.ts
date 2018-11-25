@@ -12,6 +12,7 @@ import IEventMap  = PublicInterface.EventMap;
 import IMessenger = PublicInterface.Messenger;
 import IStatic    = PublicInterface.Static;
 import { MessageValidator } from "./MessageValidator";
+import { MessageFactory } from "./MessageFactory";
 
 // -------------------------------------------------------------------------------------
 // Private data / exports for internal wiring
@@ -43,11 +44,12 @@ export function useObservable<T extends typeof Observable>(newImplementation: T)
 }
 
 export function connect<MAP extends IEventMap = any>(remoteWindow: Window, remoteOrigin: string): IMessenger<MAP> {
-
     return new Messenger(
         remoteWindow,
         remoteOrigin,
-        new MessageIDGenerator(),
+        new MessageFactory(
+            new MessageIDGenerator(),
+        ),
         new MessageValidator(remoteWindow, remoteOrigin),
     );
 }

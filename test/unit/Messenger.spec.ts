@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import { Observable } from "rxjs";
+import { MessageFactory } from "../../src/MessageFactory";
 import { MessageValidator } from "../../src/MessageValidator";
 import { Messenger } from "../../src/Messenger";
 import { MessageIDGeneratorMock } from "../mocks/MessageIDGenerator.mock";
@@ -16,7 +17,8 @@ describe("[UNIT] Messenger", () => {
         messenger = new Messenger(
             window,
             otherURL,
-            new MessageIDGeneratorMock(),
+            // Todo: mock factory?
+            new MessageFactory(new MessageIDGeneratorMock()),
             new MessageValidator(window, otherURL),
         );
     });
