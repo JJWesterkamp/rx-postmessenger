@@ -22,8 +22,8 @@ export class RxPostmessengerRequest<MAP extends IEventMap, CH extends RequestCha
     public readonly channel: CH;
     public readonly payload: RequestPayload<MAP, CH>;
     public readonly isHandled: boolean = false;
+    public readonly id: string;
 
-    private readonly id: string;
     private readonly _injectResponse: <T extends ResponsePayload<MAP, CH>>(data: T) => void;
 
     constructor(
