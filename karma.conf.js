@@ -24,6 +24,10 @@ module.exports = function(config) {
         client: {
             clearContext: false // leave Spec Runner output visible in browser
         },
+        autoWatch: true,
+        singleRun: false,
+        plugins: karmaPlugins,
+
         preprocessors: {
             [__dirname + '/test/karma-test-shim.spec.ts']: ['webpack', 'sourcemap'],
             [__dirname + '/src/**/*.ts']: ['coverage'],
@@ -64,11 +68,17 @@ module.exports = function(config) {
             'coverage',
             'mocha',
         ],
+
         browsers: ['ChromeHeadless'],
+
+        mochaReporter: {
+            showDiff: true,
+        },
 
         coverageReporter: {
             type: 'in-memory',
         },
+
         remapCoverageReporter: {
             'text-summary': null,
             lcovonly: './coverage/lcov.info',
@@ -76,9 +86,6 @@ module.exports = function(config) {
             cobertura: './coverage/cobertura.xml',
             json: './coverage/coverage.json'
         },
-        autoWatch: true,
-        singleRun: false,
-        plugins: karmaPlugins,
     };
 
     if (process.env.TRAVIS) {
