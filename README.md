@@ -3,7 +3,8 @@
 [![Build Status](https://travis-ci.com/JJWesterkamp/rx-postmessenger.svg?branch=master)](https://travis-ci.com/JJWesterkamp/rx-postmessenger)
 [![Coverage Status](https://coveralls.io/repos/github/JJWesterkamp/rx-postmessenger/badge.svg?branch=master)](https://coveralls.io/github/JJWesterkamp/rx-postmessenger?branch=master)
 
-Minimal [RxJS](https://github.com/ReactiveX/RxJS) wrapper around the [`Window # postMessage`](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage) API for both passive (request-response) and active (notification) streams across frame windows.
+Minimal [RxJS](https://github.com/ReactiveX/RxJS) adapter for the [`Window # postMessage`](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage) API for request-response streams and notification streams across frame windows.
+
 
 ## In short
 

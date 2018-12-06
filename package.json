@@ -3,7 +3,7 @@
   "version": "1.0.3",
   "author": "Jeffrey Westerkamp",
   "repository": "git+https://github.com/JJWesterkamp/rx-postmessenger.git",
-  "description": "Minimal RxJS wrapper around the window.postMessage API for both passive (request-response) and active (notification) streams across frame windows.",
+  "description": "Minimal RxJS adapter for the window.postMessage API for request-response streams and notification streams across frame windows.",
   "keywords": [
     "RxJS",
     "Browser",
