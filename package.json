@@ -32,7 +32,7 @@
     "lint:test": "tslint -c tslint.json 'test/**/*.ts' --fix",
     "lint:declaration": "tslint -c tslint.json '*.d.ts' --fix",
     "prebuild": "npm run clean:dist",
-    "prepublish": "npm-run-all lint test:ci build",
+    "prepublishOnly": "npm-run-all lint test:ci build",
     "test": "karma start karma.conf.js",
     "test:ci": "karma start --single-run --no-auto-watch karma.conf.js"
   },
