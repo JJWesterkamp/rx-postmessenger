@@ -1,11 +1,10 @@
 import { assert, expect } from 'chai';
 import RxPostMessenger from '../../src';
 import { Messenger } from '../../src/Messenger';
-// noinspection TypeScriptPreferShortImport
 import { Observable } from '../../src/vendor/rxjs';
 import { createIFrame } from '../helpers/iframe.spec-helper';
 
-describe('[UNIT] Entrypoint', () => {
+describe('Index (Static) module', () => {
 
     describe('#getObservable()', () => {
         it('Should return the default observable implementation if not overridden', () => {
@@ -27,11 +26,6 @@ describe('[UNIT] Entrypoint', () => {
             () => void (0),
         ];
 
-        it('Should accept any type of argument', () => {
-            // Todo: how to test
-            expect(RxPostMessenger.useObservable).to.not.throw();
-        });
-
         it('Should set -- then expose -- any argument as Observable implementation', () => {
             for (const testValue of tests) {
                 RxPostMessenger.useObservable(testValue as typeof Observable);
@@ -51,8 +45,10 @@ describe('[UNIT] Entrypoint', () => {
 
         it('Should construct a messenger from given arguments when valid', () => {
             expect(messenger).to.be.instanceOf(Messenger);
-            expect(messenger.remoteWindow).to.equal(remoteWindow);
-            expect(messenger.remoteOrigin).to.equal(remoteOrigin);
+            // @ts-ignore
+            expect(messenger.adapter.targetWindow).to.equal(remoteWindow);
+            // @ts-ignore
+            expect(messenger.adapter.targetOrigin).to.equal(remoteOrigin);
         });
 
         it('Should throw an error if given remote window equals the local window', () => {

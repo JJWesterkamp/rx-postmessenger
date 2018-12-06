@@ -9,7 +9,7 @@ import { Observable } from './vendor/rxjs';
 // -----------------------------------------------------------------------------
 // Interface imports
 // -----------------------------------------------------------------------------
-import { AnyMessage, IMessageObject, INotificationObject, IRequestObject, IResponseObject, MappedMessage, MessageType } from './interface/message-objects';
+import { AnyMessage, INotificationObject, IRequestObject, IResponseObject, MappedMessage, MessageType } from './interface/message-objects';
 
 // noinspection ES6UnusedImports
 import PublicInterface from '../rx-postmessenger';
@@ -19,6 +19,7 @@ import IMessenger = PublicInterface.Messenger;
 import IRequest   = PublicInterface.Request;
 import TypeLens   = PublicInterface.TypeLens;
 import { IMessageValidator } from './interface/message-validator';
+import { IPostmessageAdapter } from './interface/postmessage-adapter';
 
 /**
  * @class RxPostmessenger
@@ -41,10 +42,9 @@ export class Messenger<MAP extends IEventMap = any> implements IMessenger {
     public readonly responses$: Observable<IResponseObject>;
 
     public constructor(
-        public readonly remoteWindow: Window,
-        public readonly remoteOrigin: string,
         protected readonly messageFactory: IMessageFactory,
         protected readonly messageValidator: IMessageValidator,
+        protected readonly adapter: IPostmessageAdapter,
     ) {
         this.inboundMessages$ = getObservable()
             .fromEvent<MessageEvent>(window, 'message')
@@ -76,9 +76,13 @@ export class Messenger<MAP extends IEventMap = any> implements IMessenger {
         RES_PL extends TypeLens.Out.Request.ResponsePayload<MAP, CH>
 
     >(channel: CH, payload: REQ_PL): Observable<RES_PL> {
+
         const request: IRequestObject<REQ_PL> = this.messageFactory.makeRequest(channel, payload);
+
         const responseObservable: Observable<RES_PL> = this.createResponseObservable(request.id);
-        this.postMessage<IRequestObject<REQ_PL>>(request);
+
+        this.adapter.postMessage(request);
+
         return responseObservable;
     }
 
@@ -97,7 +101,7 @@ export class Messenger<MAP extends IEventMap = any> implements IMessenger {
 
     >(channel: CH, payload: PL): this {
 
-        this.postMessage<INotificationObject<PL>>(
+        this.adapter.postMessage(
             this.messageFactory.makeNotification(channel, payload),
         );
 
@@ -163,7 +167,7 @@ export class Messenger<MAP extends IEventMap = any> implements IMessenger {
      */
     protected respond<T>(requestId: string, channel: string, payload: T): this {
 
-        this.postMessage<IResponseObject<T>>(
+        this.adapter.postMessage<IResponseObject<T>>(
             this.messageFactory.makeResponse(requestId, channel, payload),
         );
 
@@ -183,17 +187,6 @@ export class Messenger<MAP extends IEventMap = any> implements IMessenger {
             .filter((response): response is IResponseObject<T> => response.requestId === requestId)
             .pluck<IResponseObject<T>, T>('payload')
             .take(1);
-    }
-
-    /**
-     * Performs a postMessage call with given data to this.remoteWindow, provided that its
-     * location remoteOrigin matches this.remoteOrigin.
-     *
-     * @param {IMessageObject} data
-     * @private
-     */
-    protected postMessage<T extends AnyMessage>(data: T): void {
-        this.remoteWindow.postMessage(data, this.remoteOrigin);
     }
 
     /**

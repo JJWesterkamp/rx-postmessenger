@@ -6,6 +6,7 @@ import { Observable } from './vendor/rxjs';
 // Public interface imports
 // -------------------------------------------------------------------------------------
 
+// noinspection ES6UnusedImports
 import PublicInterface from '../rx-postmessenger.d';
 
 import IEventMap  = PublicInterface.EventMap;
@@ -13,6 +14,7 @@ import IMessenger = PublicInterface.Messenger;
 import IStatic    = PublicInterface.Static;
 import { MessageFactory } from './MessageFactory';
 import { MessageValidator } from './MessageValidator';
+import { PostmessageAdapter } from './PostmessageAdapter';
 
 // -------------------------------------------------------------------------------------
 // Private data / exports for internal wiring
@@ -50,12 +52,11 @@ export function connect<MAP extends IEventMap = any>(remoteWindow: Window, remot
     }
 
     return new Messenger(
-        remoteWindow,
-        remoteOrigin,
         new MessageFactory(
             new MessageIDGenerator(),
         ),
         new MessageValidator(remoteWindow, remoteOrigin),
+        new PostmessageAdapter(remoteWindow, remoteOrigin),
     );
 }
 

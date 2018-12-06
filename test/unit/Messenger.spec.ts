@@ -4,9 +4,11 @@ import sinon = require('sinon');
 import { MessageFactory } from '../../src/MessageFactory';
 import { MessageValidator } from '../../src/MessageValidator';
 import { Messenger } from '../../src/Messenger';
+import { PostmessageAdapter } from '../../src/PostmessageAdapter';
 import { createIFrame } from '../helpers/iframe.spec-helper';
 import { DEFAULT_TEST_PAYLOAD, makeValidNotification, makeValidRequest, makeValidResponse } from '../helpers/message-objects.spec-helper';
 import { MessageIDGeneratorMock } from '../mocks/MessageIDGenerator.mock';
+import { PostmessageAdapterMock } from '../mocks/PostmessageAdapter.mock';
 
 describe('[UNIT] Messenger', () => {
 
@@ -22,10 +24,9 @@ describe('[UNIT] Messenger', () => {
             remoteWindow = iframe.contentWindow as Window;
 
             messenger = new Messenger(
-                remoteWindow,
-                '*',
                 new MessageFactory(new MessageIDGeneratorMock()),
-                new MessageValidator(window, '*'),
+                new MessageValidator(window, window.location.origin),
+                new PostmessageAdapterMock(),
             );
         });
 
@@ -60,10 +61,9 @@ describe('[UNIT] Messenger', () => {
             remoteWindow = iframe.contentWindow as Window;
 
             messenger = new Messenger(
-                remoteWindow,
-                '*',
                 new MessageFactory(new MessageIDGeneratorMock()),
                 new MessageValidator(window, '*'),
+                new PostmessageAdapter(remoteWindow, '*'), // Todo: replace with mock
             );
         });
 
@@ -98,6 +98,7 @@ describe('[UNIT] Messenger', () => {
 
             const channel = 'test-request-channel';
 
+            // Todo: move to a window integration test
             it('Should send requests to the remote window', (done) => {
                 remoteWindow.addEventListener('message', (message) => {
                     expect(message.data.type).to.equal('request');
@@ -113,6 +114,10 @@ describe('[UNIT] Messenger', () => {
             it('Should return an Observable', () => {
                 expect(messenger.request('test-request-channel', DEFAULT_TEST_PAYLOAD)).to.be.instanceOf(Observable);
             });
+
+            describe('=> Observable', () => {
+                // ...
+            });
         });
     });
 
@@ -126,10 +131,9 @@ describe('[UNIT] Messenger', () => {
 
         beforeEach(() => {
             messenger = new Messenger(
-                window,
-                window.location.origin,
                 new MessageFactory(new MessageIDGeneratorMock()),
                 new MessageValidator(window, window.location.origin),
+                new PostmessageAdapterMock(),
             );
         });
 

@@ -48,9 +48,10 @@ describe('[UNIT] RxPostmessengerRequest', () => {
         it('Should abort if request is already handled', () => {
             const payload = { someData: 'test-payload' };
             request.respond(payload);
-            request.respond(payload);
-            assert(responseInjector.calledOnce);
             expect(request.isHandled).to.equal(true);
+            request.respond(payload);
+            request.respond(payload);
+            assert(responseInjector.calledOnceWith(payload));
         });
     });
 });
