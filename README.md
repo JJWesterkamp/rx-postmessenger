@@ -21,6 +21,8 @@ _If you're consuming the package in Typescript, see the [Typescript usage guide]
 | RxJS v5.x 	|           ✅          	|           ❌          	|
 | RxJS v6.x 	|           ❌          	|           ✅          	|
 
+_(RxPostmessenger v2 is officially in alpha stage, but presumably stable)_
+
 ## Installation
 
 ```bash
