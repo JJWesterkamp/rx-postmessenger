@@ -112,10 +112,10 @@ The notify method is `void`: notifications are _send_ and forget. Use [`request(
 The child project can request an Observable stream for a certain notification channel. In this case we're interested in `'price-changed'` events, but only the ones where the price increased. The ability to use RxJS operators can help us out:
 
 ```javascript
-parentMessenger.notifications('price-changed')
-    .filter(({ oldPrice, newPrice }) => newPrice > oldPrice)
-    .map(({ oldPrice, newPrice }) => newPrice - oldPrice)
-    .subscribe((increase) => console.log(`Price increased with €${increase}!`));
+parentMessenger.notifications('price-changed').pipe(
+    filter(({ oldPrice, newPrice }) => newPrice > oldPrice),
+    map(({ oldPrice, newPrice }) => newPrice - oldPrice),
+).subscribe((increase) => console.log(`Price increased with €${increase}!`));
 
 // > 'Price increased with €2!'
 ```
@@ -141,9 +141,9 @@ const greetingResponse$ = childMessenger.request('greeting', {
 We can then subscribe to the greeting response stream. Provided that the greeting says something nice, we'll log it for everyone to see:
 
 ```javascript
-greetingResponse$
-    .filter((greeting) => isNiceGreeting(greeting))
-    .subscribe(console.log);
+greetingResponse$.pipe(
+    filter((greeting) => isNiceGreeting(greeting)),
+).subscribe(console.log);
 
 // > 'Hi parent!'
 ```
