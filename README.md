@@ -34,7 +34,6 @@ $ npm install rx-postmessenger --save
 |Method|Description|
 |:-|:-|
 |[`connect()`](#connecting-2-window-objects)|Connect `Window` objects by creating messenger instances.|
-|[`useObservable()`](#using-a-different-rxobservable-implementation)|Use a different `Rx.Observable` implementation (Primarily useful for UMD bundle consumers.)|
 
 **`Messenger` Instance methods**
 
@@ -86,28 +85,6 @@ const parentMessenger = RxPostmessenger.connect(
     'http://parent-project.com'
 );
 ```
-
-#### Using a different `Rx.Observable` implementation
-
-> ```typescript
-> RxPostmessenger.useObservable(impl: typeof Rx.Observable): void
-> ```
-
-This package comes with a UMD bundle that packs a minimal RxJS build to create observable objects from. For UMD bundle consumers the static interface provides a method `useObservable` that accepts one argument of `typeof Rx.Observable`:
-
-```javascript
-RxPostmessenger.useObservable(MyObservable);
-const messenger = RxPostmessenger.connect( /* ... */ );
-```
-Any messenger created afterwards will have observable object properties constructed from the given observable implementation. This allows you to use your own RxJS build, with your required subset of operators etc. The [RxJS imports file of this package][rxjs-imports] shows what subset of operators is included by default.
-
-**Notes:**
-
-- `useObservable` does not perform any type validation on the given argument at this point. Failing to provide an actual RxJS Observable implementation when calling `useObservable`will break any `Messenger` instance that is created afterwards.
-- Make sure to call `useObservable` before instantiating `Messenger` instances.
-- If you're using either the CommonJS or ES Module build, this method is possibly irrelevant to you, since both your application and this package will import the exact same RxJS installation. By importing your required operators, they should automatically be also available on obervables created by this package.
-
----
 
 ### `Messenger` Instance methods
 
