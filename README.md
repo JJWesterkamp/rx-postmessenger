@@ -10,10 +10,6 @@ Minimal [RxJS](https://github.com/ReactiveX/RxJS) adapter for the [`Window # pos
 
 An RxPostmessenger class instance establishes one end of a connection between 2 window objects, using the `Window # postMessage` API. Each instance targets _one single_ `Window` object. It also only accepts incoming messages from that specific window object while it's serving documents from _one single_ origin.
 
-**Typescript users**
-
-_If you're consuming the package in Typescript, see the [Typescript usage guide](https://github.com/JJWesterkamp/rx-postmessenger/tree/master/docs/usage-with-typescript.md) for additional features._
-
 ## RxJS Interoperability
 
 |           	| RxPostmessenger v1.x 	| RxPostmessenger v2.x 	|
