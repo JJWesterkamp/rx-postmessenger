@@ -2,9 +2,9 @@
 // Concrete imports
 // -----------------------------------------------------------------------------
 
-import { getObservable } from './index';
+import { fromEvent, Observable } from 'rxjs';
+import { filter, map, pluck, take } from 'rxjs/operators';
 import { RxPostmessengerRequest } from './RxPostmessengerRequest';
-import { Observable } from './vendor/rxjs';
 
 // -----------------------------------------------------------------------------
 // Interface imports
@@ -46,10 +46,10 @@ export class Messenger implements IMessenger {
         protected readonly messageValidator: IMessageValidator,
         protected readonly adapter: IPostmessageAdapter,
     ) {
-        this.inboundMessages$ = getObservable()
-            .fromEvent<MessageEvent>(window, 'message')
-            .filter((message) => this.messageValidator.validate(message))
-            .pluck('data');
+        this.inboundMessages$ = fromEvent<MessageEvent>(window, 'message').pipe(
+            filter((message) => this.messageValidator.validate(message)),
+            pluck('data'),
+        );
 
         this.requests$      = this.messagesOfType('request');
         this.responses$     = this.messagesOfType('response');
@@ -87,14 +87,15 @@ export class Messenger implements IMessenger {
      */
     public requests<T = any, U = any>(channel: string): Observable<IRequest<T, U>> {
 
-        return this.requests$
-            .filter((request): request is IRequestObject<T> => request.channel === channel)
-            .map((request): IRequest<T, U> => new RxPostmessengerRequest<T, U>(
+        return this.requests$.pipe(
+            filter((request): request is IRequestObject<T> => request.channel === channel),
+            map((request): IRequest<T, U> => new RxPostmessengerRequest<T, U>(
                 request.id,
                 request.channel,
                 request.payload,
                 (payload: U) => this.respond(request.id, channel, payload),
-            ));
+            )),
+        );
     }
 
     /**
@@ -107,9 +108,10 @@ export class Messenger implements IMessenger {
      */
     public notifications<T = any>(channel: string): Observable<T> {
 
-        return this.notifications$
-            .filter((notification): notification is INotificationObject<T> => notification.channel === channel)
-            .pluck('payload');
+        return this.notifications$.pipe(
+            filter((notification): notification is INotificationObject<T> => notification.channel === channel),
+            pluck('payload'),
+        );
     }
 
     // ------------------------------------------------------------------------------------------------
@@ -143,10 +145,11 @@ export class Messenger implements IMessenger {
      * @private
      */
     protected createResponseObservable<T>(requestId: string): Observable<T> {
-        return this.responses$
-            .filter((response): response is IResponseObject<T> => response.requestId === requestId)
-            .pluck<IResponseObject<T>, T>('payload')
-            .take(1);
+        return this.responses$.pipe(
+            filter((response): response is IResponseObject<T> => response.requestId === requestId),
+            pluck<IResponseObject<T>, T>('payload'),
+            take(1),
+        );
     }
 
     /**
@@ -161,7 +164,8 @@ export class Messenger implements IMessenger {
      * @private
      */
     protected messagesOfType<T extends MessageType>(type: T): Observable<MappedMessage<T>> {
-        return this.inboundMessages$
-            .filter((message): message is MappedMessage<T> => message.type === type);
+        return this.inboundMessages$.pipe(
+            filter((message): message is MappedMessage<T> => message.type === type),
+        );
     }
 }

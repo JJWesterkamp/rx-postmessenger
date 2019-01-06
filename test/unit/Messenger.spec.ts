@@ -1,5 +1,6 @@
 import { assert, expect } from 'chai';
 import { Observable } from 'rxjs';
+import { take } from 'rxjs/operators';
 import sinon = require('sinon');
 import { MessageFactory } from '../../src/MessageFactory';
 import { MessageValidator } from '../../src/MessageValidator';
@@ -152,7 +153,7 @@ describe('[UNIT] Messenger', () => {
                 it('Should emit request payloads', (done) => {
                     const requestObject = makeValidRequest('1');
 
-                    messenger.requests(requestObject.channel).take(1).subscribe((request) => {
+                    messenger.requests(requestObject.channel).pipe(take(1)).subscribe((request) => {
                         expect(request.channel).to.equal(requestObject.channel, 'Request channel mismatch');
                         expect(request.payload).to.equal(requestObject.payload, 'Request payload mismatch');
                         done();
@@ -166,7 +167,7 @@ describe('[UNIT] Messenger', () => {
                     const notification = makeValidNotification('2');
 
                     const listener = sinon.fake();
-                    const request$ = messenger.requests(request.channel).take(1);
+                    const request$ = messenger.requests(request.channel).pipe(take(1));
 
                     request$.subscribe({ next: listener, complete: () => {
                         expect(listener.firstCall.args[0].id).to.equal('1');
@@ -182,7 +183,7 @@ describe('[UNIT] Messenger', () => {
                     const response = makeValidResponse('2', '3');
 
                     const listener = sinon.fake();
-                    const request$ = messenger.requests(request.channel).take(1);
+                    const request$ = messenger.requests(request.channel).pipe(take(1));
 
                     request$.subscribe({ next: listener, complete: () => {
                             expect(listener.firstCall.args[0].id).to.equal('1');
@@ -210,7 +211,7 @@ describe('[UNIT] Messenger', () => {
                 it('Should emit notification payloads', (done) => {
                     const notificationObject = makeValidNotification();
 
-                    messenger.notifications(notificationObject.channel).take(1).subscribe((payload) => {
+                    messenger.notifications(notificationObject.channel).pipe(take(1)).subscribe((payload) => {
                         expect(payload).to.equal(notificationObject.payload, 'Notification payload mismatch');
                         done();
                     });
@@ -227,7 +228,7 @@ describe('[UNIT] Messenger', () => {
                     const response = makeValidResponse('2', '3', nonExpectedPayload);
 
                     const listener = sinon.fake();
-                    const notification$ = messenger.notifications(notification.channel).take(1);
+                    const notification$ = messenger.notifications(notification.channel).pipe(take(1));
 
                     notification$.subscribe({ next: listener, complete: () => {
                         expect(listener.callCount).to.equal(1);
@@ -248,7 +249,7 @@ describe('[UNIT] Messenger', () => {
                     const request = makeValidRequest('2', nonExpectedPayload);
 
                     const listener = sinon.fake();
-                    const notification$ = messenger.notifications(notification.channel).take(1);
+                    const notification$ = messenger.notifications(notification.channel).pipe(take(1));
 
                     notification$.subscribe({ next: listener, complete: () => {
                             expect(listener.firstCall.args[0]).to.equal(expectedPayload);

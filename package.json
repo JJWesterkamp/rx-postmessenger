@@ -37,7 +37,7 @@
     "test:ci": "karma start --single-run --no-auto-watch karma.conf.js"
   },
   "dependencies": {
-    "rxjs": "^5.5.2"
+    "rxjs": "^6"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",

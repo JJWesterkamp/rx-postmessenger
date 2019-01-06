@@ -1,38 +1,9 @@
 import { assert, expect } from 'chai';
 import RxPostMessenger from '../../src';
 import { Messenger } from '../../src/Messenger';
-import { Observable } from '../../src/vendor/rxjs';
 import { createIFrame } from '../helpers/iframe.spec-helper';
 
 describe('Index (Static) module', () => {
-
-    describe('#getObservable()', () => {
-        it('Should return the default observable implementation if not overridden', () => {
-            expect(RxPostMessenger.getObservable()).to.equal(Observable);
-        });
-    });
-
-    describe('#useObservable()', () => {
-
-        afterEach(() => {
-            RxPostMessenger.useObservable(Observable);
-        });
-
-        const tests = [
-            'test-string',
-            0,
-            {},
-            [],
-            () => void (0),
-        ];
-
-        it('Should set -- then expose -- any argument as Observable implementation', () => {
-            for (const testValue of tests) {
-                RxPostMessenger.useObservable(testValue as typeof Observable);
-                expect(RxPostMessenger.getObservable()).to.equal(testValue);
-            }
-        });
-    });
 
     describe('#connect()', () => {
 

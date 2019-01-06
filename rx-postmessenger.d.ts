@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 declare const RxPostmessenger: RxPostmessenger.Static;
 export default RxPostmessenger;
@@ -9,19 +9,6 @@ export as namespace RxPostmessenger;
 declare namespace RxPostmessenger {
 
     interface Static {
-
-        /**
-         * RELEVANT FOR UMD BUNDLE CONSUMERS
-         *
-         * Performs a runtime re-assignment of the reference to the Observable implementation. When consuming the
-         * UMD bundle, a minimal Rx.Observable subset is embedded within the bundle. To override that reference
-         * with your own implementation (with your own selection of operators) you can pass that implementation here.
-         *
-         * NOTE: This should be done before you call RxPostmessenger.connect() for the first time.
-         */
-        useObservable<T extends typeof Observable>(implementation: T): void;
-        getObservable(): typeof Observable;
-
         /**
          * Create a new messenger for given window object. The remoteOrigin URL is used both to give to window.postMessage
          * calls on remoteWindow, and to filter inbound-message-events on the local window object.
