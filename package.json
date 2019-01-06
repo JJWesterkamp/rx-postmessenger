@@ -37,12 +37,12 @@
     "test:ci": "karma start --single-run --no-auto-watch karma.conf.js"
   },
   "dependencies": {
-    "@types/chai": "^4.1.7",
-    "@types/mocha": "^5.2.5",
-    "@types/sinon": "^5.0.7",
     "rxjs": "^5.5.2"
   },
   "devDependencies": {
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.5",
+    "@types/sinon": "^5.0.7",
     "@types/webpack": "^4.4.19",
     "@types/webpack-env": "^1.13.6",
     "chai": "^4.2.0",
