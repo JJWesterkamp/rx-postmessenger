@@ -1,36 +1,19 @@
-// -----------------------------------------------------------------------
-// Public interface imports
-// -----------------------------------------------------------------------
+import { IRequest } from './interface/public-interface';
 
-import PublicInterface from '../rx-postmessenger.d';
+export class RxPostmessengerRequest<T, U> implements IRequest<T, U> {
 
-import IRequest        = PublicInterface.Request;
-import IEventMap       = PublicInterface.EventMap;
-import RequestContract = PublicInterface.RequestContract;
-import RequestTypes    = PublicInterface.TypeLens.In.Request;
-
-// -----------------------------------------------------------------------
-// Type mapping shortcuts
-// -----------------------------------------------------------------------
-
-import RequestChannel  = RequestTypes.Channel;
-import RequestPayload  = RequestTypes.RequestPayload;
-import ResponsePayload = RequestTypes.ResponsePayload;
-
-export class RxPostmessengerRequest<MAP extends IEventMap, CH extends RequestChannel<MAP>> implements IRequest<MAP, CH> {
-
-    public readonly channel: CH;
-    public readonly payload: RequestPayload<MAP, CH>;
+    public readonly channel: string;
+    public readonly payload: T;
     public readonly isHandled: boolean = false;
     public readonly id: string;
 
-    private readonly _injectResponse: <T extends ResponsePayload<MAP, CH>>(data: T) => void;
+    private readonly _injectResponse: (data: U) => void;
 
     constructor(
         id: string,
-        channel: CH,
-        payload: RequestPayload<MAP, CH>,
-        responseInjector: (data: ResponsePayload<MAP, CH>) => void,
+        channel: string,
+        payload: T,
+        responseInjector: (data: U) => void,
     ) {
         Object.defineProperties(this, {
             _injectResponse: { value: responseInjector },
@@ -40,7 +23,7 @@ export class RxPostmessengerRequest<MAP extends IEventMap, CH extends RequestCha
         });
     }
 
-    public respond(data: ResponsePayload<MAP, CH>): void {
+    public respond(data: U): void {
         if (this.isHandled) {
             return;
         }
