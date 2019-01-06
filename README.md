@@ -14,6 +14,13 @@ An RxPostmessenger class instance establishes one end of a connection between 2 
 
 _If you're consuming the package in Typescript, see the [Typescript usage guide](https://github.com/JJWesterkamp/rx-postmessenger/tree/master/docs/usage-with-typescript.md) for additional features._
 
+## RxJS Interoperability
+
+|           	| RxPostmessenger v1.x 	| RxPostmessenger v2.x 	|
+|-----------	|:--------------------:	|:--------------------:	|
+| RxJS v5.x 	|           ✅          	|           ❌          	|
+| RxJS v6.x 	|           ❌          	|           ✅          	|
+
 ## Installation
 
 ```bash
