@@ -26,7 +26,7 @@ declare namespace RxPostmessenger {
         /**
          * Send a notification over given channel with given payload.
          */
-        notify<T>(channel: string, payload: T | null): void;
+        notify<T>(channel: string, payload?: T): void;
 
         /**
          * Send a request over given channel with given payload. Returns an observable that will emit the response

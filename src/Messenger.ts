@@ -32,15 +32,26 @@ export class Messenger implements IMessenger {
      */
     public readonly inboundMessages$: Observable<AnyMessage>;
 
-    /** Filtered subset of inboundMessages$, emitting all messages of type 'notification' */
+    /**
+     * Filtered subset of inboundMessages$, emitting all messages of type 'notification'
+     */
     public readonly notifications$: Observable<INotificationObject>;
 
-    /** Filtered subset of inboundMessages$, emitting all messages of type 'request' */
+    /**
+     * Filtered subset of inboundMessages$, emitting all messages of type 'request'
+     */
     public readonly requests$: Observable<IRequestObject>;
 
-    /** Filtered subset of inboundMessages$, emitting all messages of type 'response' */
+    /**
+     * Filtered subset of inboundMessages$, emitting all messages of type 'response'
+     */
     public readonly responses$: Observable<IResponseObject>;
 
+    /**
+     * @param {IMessageFactory}     messageFactory   - Factory instance for scalar message objects.
+     * @param {IMessageValidator}   messageValidator - Validator instance for incoming messages.
+     * @param {IPostmessageAdapter} adapter          - Adapter for interacting with the postMessage API
+     */
     public constructor(
         protected readonly messageFactory: IMessageFactory,
         protected readonly messageValidator: IMessageValidator,
@@ -58,6 +69,14 @@ export class Messenger implements IMessenger {
         this.inboundMessages$.subscribe(({ id }) => this.messageFactory.invalidateID(id));
     }
 
+    /**
+     *
+     * Send a request over given channel with given payload. Returns an observable that will
+     * emit the response and then complete.
+     *
+     * @param {string} channel   The channel name of the request.
+     * @param {*}      [payload] The payload to send along with the request.
+     */
     public request<T = any, U = any>(channel: string, payload?: T): Observable<U> {
 
         const request: IRequestObject<T | undefined> = this.messageFactory.makeRequest(channel, payload);
@@ -68,20 +87,24 @@ export class Messenger implements IMessenger {
         return responseObservable;
     }
 
-    public notify<T>(channel: string, payload: T | null): this {
+    /**
+     * Send a notification over given channel with given payload.
+     *
+     * @param {string} channel   - The channel name of the notification.
+     * @param {*}      [payload] - The payload to send along with the notification.
+     */
+    public notify<T>(channel: string, payload?: T): void {
 
         this.adapter.postMessage(
             this.messageFactory.makeNotification(channel, payload),
         );
-
-        return this;
     }
 
     /**
-     * Returns an Observable that emits the subset of inbound notification messages where their channel equals given
-     * channel name.
+     * Returns an Observable that emits the subset of inbound notification messages where their
+     * channel equals given channel name.
      *
-     * @param {string} channel
+     * @param {string} channel - The request channel name to listen to.
      * @return {Observable<object>}
      * @public
      */
@@ -99,10 +122,10 @@ export class Messenger implements IMessenger {
     }
 
     /**
-     * Returns an Observable that emits the subset of inbound notification messages where their channel equals given
-     * channel name.
+     * Returns an Observable that emits the subset of inbound notification messages where their
+     * channel equals given channel name.
      *
-     * @param {string} channel
+     * @param {string} channel - The notification channel name to listen to.
      * @return {Observable<*>}
      * @public
      */
@@ -114,18 +137,14 @@ export class Messenger implements IMessenger {
         );
     }
 
-    // ------------------------------------------------------------------------------------------------
-    // Private runtime
-    // ------------------------------------------------------------------------------------------------
-
     /**
      * Sends a response through given channel to the remote window, carrying given payload.
      *
-     * @param {string} requestId
-     * @param channel
-     * @param {*} payload
+     * @param {string} requestId - The request ID of the original request
+     * @param {string} channel   - The request-channel name to send the response over
+     * @param {*}      payload   - The response payload
      * @return {Messenger}
-     * @private
+     * @protected
      */
     protected respond<T>(requestId: string, channel: string, payload: T): this {
 
@@ -142,7 +161,7 @@ export class Messenger implements IMessenger {
      *
      * @param {string} requestId
      * @return {Observable<object>}
-     * @private
+     * @protected
      */
     protected createResponseObservable<T>(requestId: string): Observable<T> {
         return this.responses$.pipe(
@@ -161,7 +180,7 @@ export class Messenger implements IMessenger {
      *
      * @param {string} type
      * @return {Observable<object>}
-     * @private
+     * @protected
      */
     protected messagesOfType<T extends MessageType>(type: T): Observable<MappedMessage<T>> {
         return this.inboundMessages$.pipe(

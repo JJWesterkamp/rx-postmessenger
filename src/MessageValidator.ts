@@ -25,7 +25,6 @@ export class MessageValidator implements IMessageValidator {
             && this.isWellFormedMessage(message.data);
     }
 
-    // noinspection JSMethodCanBeStatic
     /**
      * Tests whether the data sent through postMessage is a well-formed message
      * object. This serves as runtime data format validation. If messages do not
