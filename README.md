@@ -8,7 +8,9 @@ Minimal [RxJS](https://github.com/ReactiveX/RxJS) adapter for the [`Window # pos
 
 ## In short
 
-An RxPostmessenger class instance establishes one end of a connection between 2 window objects, using the `Window # postMessage` API. Each instance targets _one single_ `Window` object. It also only accepts incoming messages from that specific window object while it's serving documents from _one single_ origin.
+An RxPostmessenger class instance establishes one end of a connection between 2 window objects, using the `Window # postMessage` API. Each instance provides methods to initiate outgoing messages and handle incoming messages, both categorized by channel name.
+
+Each instance targets _one single_ `Window` object. It propagates incoming `MessageEvent`s only from that specific window object while it's serving documents from _one single_ origin.
 
 ## RxJS Interoperability
 
@@ -16,8 +18,6 @@ An RxPostmessenger class instance establishes one end of a connection between 2 
 |-----------	|:--------------------:	|:--------------------:	|
 | RxJS v5.x 	|           ✅          	|           ❌          	|
 | RxJS v6.x 	|           ❌          	|           ✅          	|
-
-_(RxPostmessenger v2 is officially in alpha stage, but presumably stable)_
 
 ## Installation
 
@@ -66,21 +66,21 @@ import RxPostmessenger from 'rx-postmessenger';
 
 Both ends of the connection should implement this package. One in a _parent_ project (that implements the iframe), and one in a _child_ project (that's being served by the iframe). Creating a new messenger is straightforward:
 
-_At parent window - `http://parent-project.com`_
+_At parent window - `https://parent-project.com`_
 
 ```javascript
 const childMessenger = RxPostmessenger.connect(
     someIFrame.contentWindow,
-    'http://child-project.com'
+    'https://child-project.com'
 );
 ```
 
-_At child window - `http://child-project.com`_
+_At child window - `https://child-project.com`_
 
 ```javascript
 const parentMessenger = RxPostmessenger.connect(
     window.parent,
-    'http://parent-project.com'
+    'https://parent-project.com'
 );
 ```
 
@@ -88,10 +88,13 @@ const parentMessenger = RxPostmessenger.connect(
 
 #### Sending notifications
 > ```typescript
-> Messenger.notify(channel: string, payload: any): void
+> Messenger.notify<T>(channel: string, payload?: T): void
 > ```
 
-The messenger instances give you a way to send notifications to the other `Window` through the `notify()` method. Consider an example where we want to notify a child window of price changes:
+The messenger instances give you a way to send notifications to the other `Window` through the `notify()` method. 
+The notify method is void -- notifications are fire-and-forget. 
+Use [`request()`](#sending-requests) instead if you require data back.
+Consider an example where we want to notify a child window of price changes:
 
 ```javascript
 childMessenger.notify('price-changed', {
@@ -100,14 +103,14 @@ childMessenger.notify('price-changed', {
 });
 ```
 
-The notify method is `void`: notifications are _send_ and forget. Use [`request()`](#sending-requests) instead if you require data back.
-
 #### Listening for inbound notifications
 > ```typescript
-> Messenger.notifications(channel: string): Observable<any>
+> Messenger.notifications<T = any>(channel: string): Observable<T>
 > ```
 
-The child project can request an Observable stream for a certain notification channel. In this case we're interested in `'price-changed'` events, but only the ones where the price increased. The ability to use RxJS operators can help us out:
+The child project can request an Observable stream for a certain notification channel. 
+In this case we're interested in `'price-changed'` events, but only the ones where the price increased. 
+The ability to use RxJS operators can help us out:
 
 ```javascript
 parentMessenger.notifications('price-changed').pipe(
@@ -121,14 +124,17 @@ parentMessenger.notifications('price-changed').pipe(
 #### Sending requests
 
 > ```typescript
-> Messenger.request(channel: string, payload?: any): Observable<any>
+> Messenger.request<T = any, U = any>(channel: string, payload?: T): Observable<U>
 > ```
 
-RxPostmessenger also supports request - response communication. At the requester side a request is initiated by calling the `request()` method with 1 or 2 arguments. The first is a request alias (actually just another channel) of our choice.
+RxPostmessenger also supports request - response communication. 
+At the requester side a request is initiated by calling the `request()` method with 1 or 2 arguments. 
+The first is a request alias (actually just another channel) of our choice.
 
 _A notification-channel and a request-channel can both have the same channel name without any problem._
 
-An observable is returned that emits the response when arrived, and then completes. Let's request a greeting from our child window, and tell it we only understand `'en'`:
+An observable is returned that emits the response when arrived, and then completes. 
+Let's request a greeting from the child window, and tell it to localize the response to `'en'`:
 
 ```javascript
 const greetingResponse$ = childMessenger.request('greeting', {
@@ -136,7 +142,8 @@ const greetingResponse$ = childMessenger.request('greeting', {
 });
 ```
 
-We can then subscribe to the greeting response stream. Provided that the greeting says something nice, we'll log it for everyone to see:
+We can then subscribe to the greeting response stream.
+Provided that the greeting says something nice, we'll log it for everyone to see:
 
 ```javascript
 greetingResponse$.pipe(
@@ -148,10 +155,13 @@ greetingResponse$.pipe(
 
 #### Listening for inbound requests
 > ```typescript
-> Messenger.requests(channel: string): Observable<RxPostmessenger.Request>
+> Messenger.requests<T = any, U = any>(channel: string): Observable<RxPostmessenger.Request<T, U>>
 > ```
 
-No greeting would ever be received by `parentMessenger` when the child project does not listen for requests to handle and respond to. Let's not be rude and create a request stream for `'greeting'` requests, and subscribe to it. We'll pass the `RxPostmessenger.Request` objects that the subscription receives into a function `handleGreetingRequest()`:
+No greeting would ever be received by `parentMessenger` when the child project does not listen 
+for requests to handle and respond to. Let's not be rude and create a request stream for 
+`'greeting'` requests, and subscribe to it. We'll pass the `RxPostmessenger.Request` objects 
+that the subscription receives into a function `handleGreetingRequest()`:
 
 ```javascript
 parentMessenger
@@ -166,10 +176,12 @@ parentMessenger
 #### Sending request responses
 
 > ```typescript
-> RxPostmessenger.Request.respond(payload: any): void
+> RxPostmessenger.Request<T, U>respond(payload: U): void
 > ```
 
-The `requests` method returns an observable of `RxPostmessenger.Request` objects. They provide a single method `respond` that accepts one argument: the response payload. Let's use the method on the requests we give to `handleGreetingRequest`:
+The `requests` method returns an observable of `RxPostmessenger.Request` objects. 
+They provide a single method `respond` that accepts one argument: the response payload. 
+Let's use the method on the requests we give to `handleGreetingRequest`:
 
 ```javascript
 const handleGreetingRequest = (request) => {
