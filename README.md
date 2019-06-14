@@ -176,7 +176,7 @@ parentMessenger
 #### Sending request responses
 
 > ```typescript
-> RxPostmessenger.Request<T, U>respond(payload: U): void
+> RxPostmessenger.Request<T, U> ~ respond(payload: U): void
 > ```
 
 The `requests` method returns an observable of `RxPostmessenger.Request` objects. 
