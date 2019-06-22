@@ -91,9 +91,7 @@ General development, no notable changes
 ### Added
 - Method to override the used RxJS Observable implementation allowing for custom sets of prototype methods.
 
-## 0.1.6 (2018-12-01)
-⚠️ this release has been unpublished from npm due to issues.
-
+## 0.1.6 (2018-12-01) [YANKED]
 ## [0.1.5] (2017-11-29)
 
 ### Changed
