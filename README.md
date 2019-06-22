@@ -3,8 +3,7 @@
 [![Build Status](https://travis-ci.com/JJWesterkamp/rx-postmessenger.svg?branch=master)](https://travis-ci.com/JJWesterkamp/rx-postmessenger)
 [![Coverage Status](https://coveralls.io/repos/github/JJWesterkamp/rx-postmessenger/badge.svg?branch=master)](https://coveralls.io/github/JJWesterkamp/rx-postmessenger?branch=master)
 
-Minimal [RxJS](https://github.com/ReactiveX/RxJS) adapter for the [`Window # postMessage`](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage) API for request-response streams and notification streams across frame windows.
-
+Minimal [RxJS][rxgh] adapter for the [`Window # postMessage`][postmessage] API for request-response streams and notification streams across frame windows.
 
 ## In short
 
@@ -19,6 +18,7 @@ Each instance targets _one single_ `Window` object. It propagates incoming `Mess
 | RxJS v5.x 	|           ✅          	|           ❌          	|
 | RxJS v6.x 	|           ❌          	|           ✅          	|
 
+[View changelog.][changelog]
 ## Installation
 
 ```bash
@@ -201,3 +201,6 @@ const handleGreetingRequest = (request) => {
 ```
 
 [rxjs-imports]: https://github.com/JJWesterkamp/rx-postmessenger/tree/master/src/vendor/rxjs/index.ts
+[changelog]: https://github.com/JJWesterkamp/rx-postmessenger/tree/master/CHANGELOG.md
+[postmessage]: https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage
+[rxgh]: https://github.com/ReactiveX/RxJS
