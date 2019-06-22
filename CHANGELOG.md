@@ -5,6 +5,7 @@ All notable changes to `rx-postmessenger` will be documented in this file. The f
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- Updated all npm dev-dependencies latest versions, fixing vulnerability issues reported by Github.
 
 ## [2.0.0] (2019-05-27)
 ### Changed
