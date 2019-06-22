@@ -5,6 +5,8 @@ All notable changes to `rx-postmessenger` will be documented in this file. The f
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [2.0.1] (2019-06-22)
 - Updated all npm dev-dependencies latest versions, fixing vulnerability issues reported by Github.
 
 ## [2.0.0] (2019-05-27)
@@ -131,7 +133,8 @@ General development, no notable changes
 - Bade messenger class
 - Project setup (builds, configuration etc.)
 
-[Unreleased]: https://github.com/PXLWidgets/php-composer-version/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/PXLWidgets/php-composer-version/compare/v2.0.1...HEAD
+[2.0.1]: https://github.com/JJWesterkamp/rx-postmessenger/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/JJWesterkamp/rx-postmessenger/compare/v2.0.0-alpha.1...v2.0.0
 [2.0.0-alpha.1]: https://github.com/JJWesterkamp/rx-postmessenger/compare/v1.0.4...v2.0.0-alpha.1
 [1.0.4]: https://github.com/JJWesterkamp/rx-postmessenger/compare/v1.0.3...v1.0.4
