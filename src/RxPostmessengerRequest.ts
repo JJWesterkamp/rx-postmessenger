@@ -1,6 +1,6 @@
-import { IRequest } from './interface/public-interface';
+import { Request } from '../rx-postmessenger'
 
-export class RxPostmessengerRequest<T, U> implements IRequest<T, U> {
+export class RxPostmessengerRequest<T, U> implements Request<T, U> {
 
     public readonly channel: string;
     public readonly payload: T;

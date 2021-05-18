@@ -1,9 +1,9 @@
-import { AnyMessage } from './interface/message-objects';
-import { IMessageValidator, IOwnMessageEvent } from './interface/message-validator';
+import type { AnyMessage, IMessageValidator, IOwnMessageEvent } from './types'
 
 export class MessageValidator implements IMessageValidator {
 
-    constructor(protected acceptedSource: Window, protected acceptedOrigin: string) { }
+    constructor(protected acceptedSource: Window, protected acceptedOrigin: string) {
+    }
 
     /**
      * Validates the identity of the message's sender and the format of the message's data.
@@ -22,7 +22,7 @@ export class MessageValidator implements IMessageValidator {
         return message instanceof MessageEvent
             && message.origin === this.acceptedOrigin
             && message.source === this.acceptedSource
-            && this.isWellFormedMessage(message.data);
+            && this.isWellFormedMessage(message.data)
     }
 
     /**
@@ -37,6 +37,6 @@ export class MessageValidator implements IMessageValidator {
         return (typeof message.id === 'string')
             && (['request', 'response', 'notification'].indexOf(message.type) >= 0)
             && (typeof message.channel === 'string')
-            && (message.type !== 'response' || (typeof message.requestId === 'string'));
+            && (message.type !== 'response' || (typeof message.requestId === 'string'))
     }
 }

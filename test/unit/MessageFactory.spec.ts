@@ -1,93 +1,92 @@
-import { expect } from 'chai';
-import { INotificationObject, IRequestObject, IResponseObject } from '../../src/interface/message-objects';
-import { MessageFactory } from '../../src/MessageFactory';
-import { DEFAULT_TEST_PAYLOAD } from '../helpers/message-objects.spec-helper';
-import { MessageIDGeneratorMock } from '../mocks/MessageIDGenerator.mock';
+import type { INotificationObject, IRequestObject, IResponseObject } from '../../src/types'
+import { MessageFactory } from '../../src/MessageFactory'
+import { DEFAULT_TEST_PAYLOAD } from '../helpers/message-objects.spec-helper'
+import { MessageIDGeneratorMock } from '../mocks/MessageIDGenerator.mock'
 
 describe('[UNIT] MessageFactory', () => {
 
-    const channel = 'test-channel';
-    const payload = DEFAULT_TEST_PAYLOAD;
+    const channel = 'test-channel'
+    const payload = DEFAULT_TEST_PAYLOAD
 
-    let factory: MessageFactory;
+    let factory: MessageFactory
 
-    beforeEach(() => factory = new MessageFactory(new MessageIDGeneratorMock()));
+    beforeEach(() => factory = new MessageFactory(new MessageIDGeneratorMock()))
 
     describe('#invalidateID()', () => {
         it('Should invalidate given value', () => {
-            factory.invalidateID('1');
-            expect(factory.makeRequest(channel, payload).id).to.equal('2');
-        });
-    });
+            factory.invalidateID('1')
+            expect(factory.makeRequest(channel, payload).id).toEqual('2')
+        })
+    })
 
     describe('#makeRequest()', () => {
-        let request: IRequestObject;
+        let request: IRequestObject
 
-        beforeEach(() => request = factory.makeRequest(channel, payload));
+        beforeEach(() => request = factory.makeRequest(channel, payload))
 
         it('Should implement all required properties', () => {
-            expect(request).to.have.property('id');
-            expect(request).to.have.property('type');
-            expect(request).to.have.property('channel');
-            expect(request).to.have.property('payload');
-        });
+            expect(request).toHaveProperty('id')
+            expect(request).toHaveProperty('type')
+            expect(request).toHaveProperty('channel')
+            expect(request).toHaveProperty('payload')
+        })
 
         it('Should implement given arguments on the object', () => {
-            expect(request.channel).to.equal(channel, 'Channel value mismatch');
-            expect(request.payload).to.equal(payload, 'Payload value mismatch');
-        });
+            expect(request.channel).toEqual(channel)
+            expect(request.payload).toEqual(payload)
+        })
 
         it('should mark the returned object as request', () => {
-            expect(request.type).to.equal('request');
-        });
-    });
+            expect(request.type).toEqual('request')
+        })
+    })
 
     describe('#makeResponse()', () => {
 
-        const requestId = '1';
+        const requestId = '1'
 
-        let response: IResponseObject;
+        let response: IResponseObject
 
-        beforeEach(() => response = factory.makeResponse(requestId, channel, payload));
+        beforeEach(() => response = factory.makeResponse(requestId, channel, payload))
 
         it('Should implement all required properties', () => {
-            expect(response).to.have.property('id');
-            expect(response).to.have.property('requestId');
-            expect(response).to.have.property('type');
-            expect(response).to.have.property('channel');
-            expect(response).to.have.property('payload');
-        });
+            expect(response).toHaveProperty('id')
+            expect(response).toHaveProperty('requestId')
+            expect(response).toHaveProperty('type')
+            expect(response).toHaveProperty('channel')
+            expect(response).toHaveProperty('payload')
+        })
 
         it('Should implement given arguments on the object', () => {
-            expect(response.requestId).to.equal(requestId, 'Request ID value mismatch');
-            expect(response.channel).to.equal(channel, 'Channel value mismatch');
-            expect(response.payload).to.equal(payload, 'Payload value mismatch');
-        });
+            expect(response.requestId).toEqual(requestId)
+            expect(response.channel).toEqual(channel)
+            expect(response.payload).toEqual(payload)
+        })
 
         it('should mark the returned object as response', () => {
-            expect(response.type).to.equal('response');
-        });
-    });
+            expect(response.type).toEqual('response')
+        })
+    })
 
     describe('#makeNotification()', () => {
-        let notification: INotificationObject;
+        let notification: INotificationObject
 
-        beforeEach(() => notification = factory.makeNotification(channel, payload));
+        beforeEach(() => notification = factory.makeNotification(channel, payload))
 
         it('Should implement all required properties on the returned object', () => {
-            expect(notification).to.have.property('id');
-            expect(notification).to.have.property('type');
-            expect(notification).to.have.property('channel');
-            expect(notification).to.have.property('payload');
-        });
+            expect(notification).toHaveProperty('id')
+            expect(notification).toHaveProperty('type')
+            expect(notification).toHaveProperty('channel')
+            expect(notification).toHaveProperty('payload')
+        })
 
         it('Should implement given arguments on the returned object', () => {
-            expect(notification.channel).to.equal(channel, 'Channel value mismatch');
-            expect(notification.payload).to.equal(payload, 'Payload value mismatch');
-        });
+            expect(notification.channel).toEqual(channel)
+            expect(notification.payload).toEqual(payload)
+        })
 
         it('should mark the returned object as notification', () => {
-            expect(notification.type).to.equal('notification');
-        });
-    });
-});
+            expect(notification.type).toEqual('notification')
+        })
+    })
+})

@@ -1,47 +1,40 @@
-import { assert, expect } from 'chai';
-import sinon = require('sinon');
-import { SinonSpy } from 'sinon';
-import { PostmessageAdapter } from '../../src/PostmessageAdapter';
-import { makeValidNotification } from '../helpers/message-objects.spec-helper';
+import { PostmessageAdapter } from '../../src/PostmessageAdapter'
+import { makeValidNotification } from '../helpers/message-objects.spec-helper'
 
-const createWindowMock = (listener: SinonSpy) => ({
+const createWindowMock = (listener: jest.Mock) => ({
     postMessage(data: any, origin: string) {
-        listener(data, origin);
+        listener(data, origin)
     },
-} as Window);
+} as Window)
 
 describe('[UNIT] PostmessageAdapter', () => {
-
-    const targetOrigin = 'about:blank';
-
-    let adapter: PostmessageAdapter;
-    let listener: SinonSpy;
-    let targetWindow: Window;
+    const targetOrigin = 'about:blank'
+    let adapter: PostmessageAdapter
+    let listener: jest.Mock
+    let targetWindow: Window
 
     describe('#postMessage()', () => {
-
         beforeEach(() => {
-
-            listener = sinon.fake();
-            targetWindow = createWindowMock(listener);
+            listener = jest.fn()
+            targetWindow = createWindowMock(listener)
 
             adapter = new PostmessageAdapter(
                 targetWindow,
                 targetOrigin,
-            );
-        });
+            )
+        })
 
         it('Should call postMessage() on the target window', () => {
-            const data = makeValidNotification();
-            adapter.postMessage(data);
-            assert(listener.calledOnce, `Not called once as expected, but called ${listener.callCount} times instead`);
-        });
+            const data = makeValidNotification()
+            adapter.postMessage(data)
+            expect(listener).toBeCalledTimes(1)
+        })
 
-        it('Should correctly apply the given payload and origin-restriction', (done) => {
-            const data = makeValidNotification();
-            adapter.postMessage(data);
-            assert.isTrue(listener.calledOnceWith(data, targetOrigin));
-            done();
-        });
-    });
-});
+        it('Should correctly apply the given payload and origin-restriction', () => {
+            const data = makeValidNotification()
+            adapter.postMessage(data)
+            expect(listener).toBeCalledTimes(1)
+            expect(listener).toBeCalledWith(data, targetOrigin)
+        })
+    })
+})

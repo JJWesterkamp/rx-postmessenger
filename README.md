@@ -200,6 +200,11 @@ const handleGreetingRequest = (request) => {
 };
 ```
 
+## License
+
+The MIT License (MIT). See [license file] for more information.
+
+[license file]: https://github.com/JJWesterkamp/rx-postmessenger/blob/master/LICENSE
 [rxjs-imports]: https://github.com/JJWesterkamp/rx-postmessenger/tree/master/src/vendor/rxjs/index.ts
 [changelog]: https://github.com/JJWesterkamp/rx-postmessenger/tree/master/CHANGELOG.md
 [postmessage]: https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage

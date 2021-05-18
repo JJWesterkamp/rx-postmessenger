@@ -15,21 +15,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.0.0-alpha.1] (2019-01-06)
 ### BREAKING CHANGES
-- **Removed EventMap feature** 
-    
+- **Removed EventMap feature**
+
     This proved to be unmaintainable in terms of type-mapping in private implementations
     and also made the package less 'portable'. Payload type constraints are from now on
-    enforced directly on Messenger method calls. 
-     
+    enforced directly on Messenger method calls.
+
 - **RxJS v6**
 
     Upgraded the RxJS dependency from v5 to v6.
-    
+
 - **Removed `Static.useObservable()` and `Static.getObservable()`**
- 
+
     These methods are obsolete as of RxJS v6, as the Observable operators are no longer
     provided through prototype patching, but explicitly supplied with `Observable.pipe()`.
- 
+
 
 ## [1.0.4] (2019-01-06)
 ### Added
@@ -124,7 +124,7 @@ General development, no notable changes
 
 ### Fixed
 - Wrong value for `"main""` entry in package.json.
- 
+
 ## [0.1.0] (2017-11-26, initial release)
 
 ### Added

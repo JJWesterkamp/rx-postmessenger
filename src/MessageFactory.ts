@@ -1,6 +1,10 @@
-import { IMessageIDGenerator } from './interface/id-generator';
-import { IMessageFactory } from './interface/message-factory';
-import { INotificationObject, IRequestObject, IResponseObject } from './interface/message-objects';
+import type {
+    IMessageFactory,
+    IMessageIDGenerator,
+    INotificationObject,
+    IRequestObject,
+    IResponseObject,
+} from './types'
 
 export class MessageFactory implements IMessageFactory {
 

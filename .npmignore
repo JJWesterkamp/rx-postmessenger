@@ -4,6 +4,7 @@ webpack.config.js
 yarn.lock
 node_modules
 src
+docs
 test
-tslint.json
 coverage
+yarn-error.log
