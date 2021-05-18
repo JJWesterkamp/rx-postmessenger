@@ -1,4 +1,4 @@
-import { INotificationObject, IRequestObject, IResponseObject } from '../../src/interface/message-objects';
+import type { INotificationObject, IRequestObject, IResponseObject } from '../../src/types'
 
 export const DEFAULT_TEST_PAYLOAD: any = 'DEFAULT-TEST-PAYLOAD';
 
