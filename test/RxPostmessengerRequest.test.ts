@@ -1,7 +1,7 @@
-import { RxPostmessengerRequest } from '../../src/RxPostmessengerRequest'
-import { DEFAULT_TEST_PAYLOAD } from '../helpers/message-objects.spec-helper'
+import { RxPostmessengerRequest } from '../src/RxPostmessengerRequest'
+import { DEFAULT_TEST_PAYLOAD } from './helpers/message-objects.spec-helper'
 
-describe('[UNIT] RxPostmessengerRequest', () => {
+describe('RxPostmessengerRequest', () => {
 
     const id = '1'
     const channel = 'test-channel'

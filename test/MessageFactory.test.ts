@@ -1,9 +1,9 @@
-import type { INotificationObject, IRequestObject, IResponseObject } from '../../src/types'
-import { MessageFactory } from '../../src/MessageFactory'
-import { DEFAULT_TEST_PAYLOAD } from '../helpers/message-objects.spec-helper'
-import { MessageIDGeneratorMock } from '../mocks/MessageIDGenerator.mock'
+import type { INotificationObject, IRequestObject, IResponseObject } from '../src/types'
+import { MessageFactory } from '../src/MessageFactory'
+import { DEFAULT_TEST_PAYLOAD } from './helpers/message-objects.spec-helper'
+import { MessageIDGeneratorMock } from './mocks/MessageIDGenerator.mock'
 
-describe('[UNIT] MessageFactory', () => {
+describe('MessageFactory', () => {
 
     const channel = 'test-channel'
     const payload = DEFAULT_TEST_PAYLOAD

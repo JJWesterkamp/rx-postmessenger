@@ -1,22 +1,22 @@
 import { Observable } from 'rxjs'
 import { first, take } from 'rxjs/operators'
-import { MessageFactory } from '../../src/MessageFactory'
-import { MessageValidator } from '../../src/MessageValidator'
-import { Messenger } from '../../src/Messenger'
-import { PostmessageAdapter } from '../../src/PostmessageAdapter'
-import { createIFrame } from '../helpers/iframe.spec-helper'
-import { MessageIDGeneratorMock } from '../mocks/MessageIDGenerator.mock'
-import { PostmessageAdapterMock } from '../mocks/PostmessageAdapter.mock'
+import { MessageFactory } from '../src/MessageFactory'
+import { MessageValidator } from '../src/MessageValidator'
+import { Messenger } from '../src/Messenger'
+import { PostmessageAdapter } from '../src/PostmessageAdapter'
+import { createIFrame } from './helpers/iframe.spec-helper'
+import { MessageIDGeneratorMock } from './mocks/MessageIDGenerator.mock'
+import { PostmessageAdapterMock } from './mocks/PostmessageAdapter.mock'
 import {
     DEFAULT_TEST_PAYLOAD,
     makeValidNotification,
     makeValidRequest,
     makeValidResponse,
-} from '../helpers/message-objects.spec-helper'
+} from './helpers/message-objects.spec-helper'
 
 const delay = () => new Promise((resolve) => setTimeout(resolve, 100))
 
-describe('[UNIT] Messenger', () => {
+describe('Messenger', () => {
     describe('#constructor()', () => {
         let iframe: HTMLIFrameElement
         let messenger: Messenger

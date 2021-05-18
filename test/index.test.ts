@@ -1,8 +1,8 @@
-import RxPostMessenger from '../../src'
-import { Messenger } from '../../src/Messenger'
-import { createIFrame } from '../helpers/iframe.spec-helper'
+import RxPostMessenger from '../src'
+import { Messenger } from '../src/Messenger'
+import { createIFrame } from './helpers/iframe.spec-helper'
 
-describe('Index (Static) module', () => {
+describe('Entrypoint', () => {
 
     describe('#connect()', () => {
 

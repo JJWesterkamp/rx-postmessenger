@@ -1,7 +1,7 @@
-import { MessageValidator } from '../../src/MessageValidator'
-import { makeValidNotification, makeValidRequest, makeValidResponse } from '../helpers/message-objects.spec-helper'
+import { MessageValidator } from '../src/MessageValidator'
+import { makeValidNotification, makeValidRequest, makeValidResponse } from './helpers/message-objects.spec-helper'
 
-describe('[UNIT] MessageValidator', () => {
+describe('MessageValidator', () => {
 
     const remoteURL = 'https://remote-window.test'
     const remoteSource = window

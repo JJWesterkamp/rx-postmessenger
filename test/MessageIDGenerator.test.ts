@@ -1,7 +1,7 @@
-import { MessageIDGenerator } from '../../src/MessageIDGenerator'
-import { GUIDGeneratorMock } from '../mocks/functions/GUIDGenerator.mock'
+import { MessageIDGenerator } from '../src/MessageIDGenerator'
+import { GUIDGeneratorMock } from './mocks/GUIDGenerator.mock'
 
-describe('[Unit] MessageIDGenerator', () => {
+describe('MessageIDGenerator', () => {
 
     describe('#generateID()', () => {
 

@@ -1,5 +1,5 @@
-import { PostmessageAdapter } from '../../src/PostmessageAdapter'
-import { makeValidNotification } from '../helpers/message-objects.spec-helper'
+import { PostmessageAdapter } from '../src/PostmessageAdapter'
+import { makeValidNotification } from './helpers/message-objects.spec-helper'
 
 const createWindowMock = (listener: jest.Mock) => ({
     postMessage(data: any, origin: string) {
@@ -7,7 +7,7 @@ const createWindowMock = (listener: jest.Mock) => ({
     },
 } as Window)
 
-describe('[UNIT] PostmessageAdapter', () => {
+describe('PostmessageAdapter', () => {
     const targetOrigin = 'about:blank'
     let adapter: PostmessageAdapter
     let listener: jest.Mock
