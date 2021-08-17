@@ -1,0 +1,345 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>rx-postmessenger</title>
+	<meta name="description" content="Documentation for rx-postmessenger">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+	<script async src="assets/js/search.js" id="search-script"></script>
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.json" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">rx-postmessenger</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<h1>rx-postmessenger</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<a href="#rx-postmessenger" id="rx-postmessenger" style="color: inherit; text-decoration: none;">
+					<h1>rx-postmessenger</h1>
+				</a>
+				<p><a href="https://badge.fury.io/js/rx-postmessenger"><img src="https://badge.fury.io/js/rx-postmessenger.svg" alt="npm version"></a>
+					<a href="https://travis-ci.com/JJWesterkamp/rx-postmessenger"><img src="https://travis-ci.com/JJWesterkamp/rx-postmessenger.svg?branch=master" alt="Build Status"></a>
+				<a href="https://coveralls.io/github/JJWesterkamp/rx-postmessenger?branch=master"><img src="https://coveralls.io/repos/github/JJWesterkamp/rx-postmessenger/badge.svg?branch=master" alt="Coverage Status"></a></p>
+				<p>Minimal <a href="https://github.com/ReactiveX/RxJS">RxJS</a> adapter for the <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage"><code>Window # postMessage</code></a> API for request-response streams and notification streams across frame windows.</p>
+				<a href="#in-short" id="in-short" style="color: inherit; text-decoration: none;">
+					<h2>In short</h2>
+				</a>
+				<p>An RxPostmessenger class instance establishes one end of a connection between 2 window objects, using the <code>Window # postMessage</code> API. Each instance provides methods to initiate outgoing messages and handle incoming messages, both categorized by channel name.</p>
+				<p>Each instance targets <em>one single</em> <code>Window</code> object. It propagates incoming <code>MessageEvent</code>s only from that specific window object while it&#39;s serving documents from <em>one single</em> origin.</p>
+				<a href="#rxjs-interoperability" id="rxjs-interoperability" style="color: inherit; text-decoration: none;">
+					<h2>RxJS Interoperability</h2>
+				</a>
+				<table>
+					<thead>
+						<tr>
+							<th></th>
+							<th align="center">RxPostmessenger v1.x</th>
+							<th align="center">RxPostmessenger v2.x</th>
+							<th align="center">RxPostmessenger v3.x</th>
+						</tr>
+					</thead>
+					<tbody><tr>
+							<td>RxJS v5.x</td>
+							<td align="center">✅</td>
+							<td align="center">❌</td>
+							<td align="center">❌</td>
+						</tr>
+						<tr>
+							<td>RxJS v6.x</td>
+							<td align="center">❌</td>
+							<td align="center">✅</td>
+							<td align="center">✅</td>
+						</tr>
+						<tr>
+							<td>RxJS v7.x</td>
+							<td align="center">❌</td>
+							<td align="center">❌</td>
+							<td align="center">✅</td>
+						</tr>
+				</tbody></table>
+				<p><a href="https://github.com/JJWesterkamp/rx-postmessenger/tree/master/CHANGELOG.md">View changelog.</a></p>
+				<a href="#installation" id="installation" style="color: inherit; text-decoration: none;">
+					<h2>Installation</h2>
+				</a>
+				<pre><code class="language-bash"><span style="color: #D8DEE9FF">$ npm install rx-postmessenger --save</span>
+</code></pre>
+				<a href="#contents--api" id="contents--api" style="color: inherit; text-decoration: none;">
+					<h2>Contents / API</h2>
+				</a>
+				<p><strong>Static methods</strong></p>
+				<table>
+					<thead>
+						<tr>
+							<th align="left">Method</th>
+							<th align="left">Description</th>
+						</tr>
+					</thead>
+					<tbody><tr>
+							<td align="left"><a href="#connecting-2-window-objects"><code>connect()</code></a></td>
+							<td align="left">Connect <code>Window</code> objects by creating messenger instances.</td>
+						</tr>
+				</tbody></table>
+				<p><strong><code>Messenger</code> Instance methods</strong></p>
+				<table>
+					<thead>
+						<tr>
+							<th align="left">Method</th>
+							<th align="left">Description</th>
+						</tr>
+					</thead>
+					<tbody><tr>
+							<td align="left"><a href="#sending-notifications"><code>notify()</code></a></td>
+							<td align="left">Send notifications to the connected window.</td>
+						</tr>
+						<tr>
+							<td align="left"><a href="#listening-for-inbound-notifications"><code>notifications()</code></a></td>
+							<td align="left">Listen for inbound notifications.</td>
+						</tr>
+						<tr>
+							<td align="left"><a href="#sending-requests"><code>request()</code></a></td>
+							<td align="left">Send requests to the connected window.</td>
+						</tr>
+						<tr>
+							<td align="left"><a href="#listening-for-inbound-requests"><code>requests()</code></a></td>
+							<td align="left">Listen for inbound requests.</td>
+						</tr>
+				</tbody></table>
+				<p><strong><code>Request</code> Instance methods</strong></p>
+				<table>
+					<thead>
+						<tr>
+							<th align="left">Method</th>
+							<th align="left">Description</th>
+						</tr>
+					</thead>
+					<tbody><tr>
+							<td align="left"><a href="#sending-request-responses"><code>respond()</code></a></td>
+							<td align="left">Respond to the request with a certain payload.</td>
+						</tr>
+				</tbody></table>
+				<hr>
+				<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
+					<h2>Usage</h2>
+				</a>
+				<pre><code class="language-javascript"><span style="color: #81A1C1">import</span><span style="color: #D8DEE9FF"> </span><span style="color: #8FBCBB">RxPostmessenger</span><span style="color: #D8DEE9FF"> </span><span style="color: #81A1C1">from</span><span style="color: #D8DEE9FF"> </span><span style="color: #ECEFF4">&#039;</span><span style="color: #A3BE8C">rx-postmessenger</span><span style="color: #ECEFF4">&#039;</span><span style="color: #81A1C1">;</span>
+</code></pre>
+				<a href="#static-methods" id="static-methods" style="color: inherit; text-decoration: none;">
+					<h3>Static methods</h3>
+				</a>
+				<a href="#connecting-2-window-objects" id="connecting-2-window-objects" style="color: inherit; text-decoration: none;">
+					<h4>Connecting 2 Window objects</h4>
+				</a>
+				<blockquote>
+					<pre><code class="language-typescript"><span style="color: #D8DEE9">RxPostmessenger</span><span style="color: #ECEFF4">.</span><span style="color: #88C0D0">connect</span><span style="color: #D8DEE9FF">(</span><span style="color: #D8DEE9">otherWindow</span><span style="color: #D8DEE9FF">: </span><span style="color: #D8DEE9">Window</span><span style="color: #ECEFF4">,</span><span style="color: #D8DEE9FF"> </span><span style="color: #D8DEE9">origin</span><span style="color: #D8DEE9FF">: </span><span style="color: #D8DEE9">string</span><span style="color: #D8DEE9FF">): </span><span style="color: #D8DEE9">RxPostmessenger</span><span style="color: #ECEFF4">.</span><span style="color: #D8DEE9">Messenger</span>
+</code></pre>
+				</blockquote>
+				<p>Both ends of the connection should implement this package. One in a <em>parent</em> project (that implements the iframe), and one in a <em>child</em> project (that&#39;s being served by the iframe). Creating a new messenger is straightforward:</p>
+				<p><em>At parent window - <code>https://parent-project.com</code></em></p>
+				<pre><code class="language-javascript"><span style="color: #81A1C1">const</span><span style="color: #D8DEE9FF"> </span><span style="color: #D8DEE9">childMessenger</span><span style="color: #D8DEE9FF"> </span><span style="color: #81A1C1">=</span><span style="color: #D8DEE9FF"> </span><span style="color: #D8DEE9">RxPostmessenger</span><span style="color: #ECEFF4">.</span><span style="color: #88C0D0">connect</span><span style="color: #D8DEE9FF">(</span>
+<span style="color: #D8DEE9FF">    </span><span style="color: #D8DEE9">someIFrame</span><span style="color: #ECEFF4">.</span><span style="color: #D8DEE9">contentWindow</span><span style="color: #ECEFF4">,</span>
+<span style="color: #D8DEE9FF">    </span><span style="color: #ECEFF4">&#039;</span><span style="color: #A3BE8C">https://child-project.com</span><span style="color: #ECEFF4">&#039;</span>
+<span style="color: #D8DEE9FF">)</span><span style="color: #81A1C1">;</span>
+</code></pre>
+				<p><em>At child window - <code>https://child-project.com</code></em></p>
+				<pre><code class="language-javascript"><span style="color: #81A1C1">const</span><span style="color: #D8DEE9FF"> </span><span style="color: #D8DEE9">parentMessenger</span><span style="color: #D8DEE9FF"> </span><span style="color: #81A1C1">=</span><span style="color: #D8DEE9FF"> </span><span style="color: #D8DEE9">RxPostmessenger</span><span style="color: #ECEFF4">.</span><span style="color: #88C0D0">connect</span><span style="color: #D8DEE9FF">(</span>
+<span style="color: #D8DEE9FF">    </span><span style="color: #D8DEE9">window</span><span style="color: #ECEFF4">.</span><span style="color: #D8DEE9">parent</span><span style="color: #ECEFF4">,</span>
+<span style="color: #D8DEE9FF">    </span><span style="color: #ECEFF4">&#039;</span><span style="color: #A3BE8C">https://parent-project.com</span><span style="color: #ECEFF4">&#039;</span>
+<span style="color: #D8DEE9FF">)</span><span style="color: #81A1C1">;</span>
+</code></pre>
+				<a href="#messenger-instance-methods" id="messenger-instance-methods" style="color: inherit; text-decoration: none;">
+					<h3><code>Messenger</code> Instance methods</h3>
+				</a>
+				<a href="#sending-notifications" id="sending-notifications" style="color: inherit; text-decoration: none;">
+					<h4>Sending notifications</h4>
+				</a>
+				<blockquote>
+					<pre><code class="language-typescript"><span style="color: #D8DEE9">Messenger</span><span style="color: #ECEFF4">.</span><span style="color: #88C0D0">notify</span><span style="color: #ECEFF4">&lt;</span><span style="color: #8FBCBB">T</span><span style="color: #ECEFF4">&gt;</span><span style="color: #D8DEE9FF">(</span><span style="color: #D8DEE9">channel</span><span style="color: #D8DEE9FF">: </span><span style="color: #D8DEE9">string</span><span style="color: #ECEFF4">,</span><span style="color: #D8DEE9FF"> </span><span style="color: #D8DEE9">payload</span><span style="color: #81A1C1">?:</span><span style="color: #D8DEE9FF"> </span><span style="color: #D8DEE9">T</span><span style="color: #D8DEE9FF">): </span><span style="color: #81A1C1">void</span>
+</code></pre>
+				</blockquote>
+				<p>The messenger instances give you a way to send notifications to the other <code>Window</code> through the <code>notify()</code> method.
+					The notify method is void -- notifications are fire-and-forget.
+					Use <a href="#sending-requests"><code>request()</code></a> instead if you require data back.
+				Consider an example where we want to notify a child window of price changes:</p>
+				<pre><code class="language-javascript"><span style="color: #D8DEE9">childMessenger</span><span style="color: #ECEFF4">.</span><span style="color: #88C0D0">notify</span><span style="color: #D8DEE9FF">(</span><span style="color: #ECEFF4">&#039;</span><span style="color: #A3BE8C">price-changed</span><span style="color: #ECEFF4">&#039;</span><span style="color: #ECEFF4">,</span><span style="color: #D8DEE9FF"> </span><span style="color: #ECEFF4">{</span>
+<span style="color: #D8DEE9FF">    </span><span style="color: #88C0D0">oldPrice</span><span style="color: #ECEFF4">:</span><span style="color: #D8DEE9FF"> </span><span style="color: #B48EAD">12.50</span><span style="color: #ECEFF4">,</span>
+<span style="color: #D8DEE9FF">    </span><span style="color: #88C0D0">newPrice</span><span style="color: #ECEFF4">:</span><span style="color: #D8DEE9FF"> </span><span style="color: #B48EAD">14.50</span><span style="color: #ECEFF4">,</span>
+<span style="color: #ECEFF4">}</span><span style="color: #D8DEE9FF">)</span><span style="color: #81A1C1">;</span>
+</code></pre>
+				<a href="#listening-for-inbound-notifications" id="listening-for-inbound-notifications" style="color: inherit; text-decoration: none;">
+					<h4>Listening for inbound notifications</h4>
+				</a>
+				<blockquote>
+					<pre><code class="language-typescript"><span style="color: #D8DEE9">Messenger</span><span style="color: #ECEFF4">.</span><span style="color: #D8DEE9">notifications</span><span style="color: #ECEFF4">&lt;</span><span style="color: #8FBCBB">T</span><span style="color: #D8DEE9FF"> </span><span style="color: #81A1C1">=</span><span style="color: #D8DEE9FF"> </span><span style="color: #8FBCBB">any</span><span style="color: #ECEFF4">&gt;(</span><span style="color: #D8DEE9">channel</span><span style="color: #81A1C1">:</span><span style="color: #D8DEE9FF"> </span><span style="color: #8FBCBB">string</span><span style="color: #ECEFF4">)</span><span style="color: #81A1C1">:</span><span style="color: #D8DEE9FF"> </span><span style="color: #8FBCBB">Observable</span><span style="color: #ECEFF4">&lt;</span><span style="color: #8FBCBB">T</span><span style="color: #ECEFF4">&gt;</span>
+</code></pre>
+				</blockquote>
+				<p>The child project can request an Observable stream for a certain notification channel.
+					In this case we&#39;re interested in <code>&#39;price-changed&#39;</code> events, but only the ones where the price increased.
+				The ability to use RxJS operators can help us out:</p>
+				<pre><code class="language-javascript"><span style="color: #D8DEE9">parentMessenger</span><span style="color: #ECEFF4">.</span><span style="color: #88C0D0">notifications</span><span style="color: #D8DEE9FF">(</span><span style="color: #ECEFF4">&#039;</span><span style="color: #A3BE8C">price-changed</span><span style="color: #ECEFF4">&#039;</span><span style="color: #D8DEE9FF">)</span><span style="color: #ECEFF4">.</span><span style="color: #88C0D0">pipe</span><span style="color: #D8DEE9FF">(</span>
+<span style="color: #D8DEE9FF">    </span><span style="color: #88C0D0">filter</span><span style="color: #D8DEE9FF">(</span><span style="color: #ECEFF4">({</span><span style="color: #D8DEE9FF"> </span><span style="color: #D8DEE9">oldPrice</span><span style="color: #ECEFF4">,</span><span style="color: #D8DEE9FF"> </span><span style="color: #D8DEE9">newPrice</span><span style="color: #D8DEE9FF"> </span><span style="color: #ECEFF4">})</span><span style="color: #D8DEE9FF"> </span><span style="color: #81A1C1">=&gt;</span><span style="color: #D8DEE9FF"> </span><span style="color: #D8DEE9">newPrice</span><span style="color: #D8DEE9FF"> </span><span style="color: #81A1C1">&gt;</span><span style="color: #D8DEE9FF"> </span><span style="color: #D8DEE9">oldPrice</span><span style="color: #D8DEE9FF">)</span><span style="color: #ECEFF4">,</span>
+<span style="color: #D8DEE9FF">    </span><span style="color: #88C0D0">map</span><span style="color: #D8DEE9FF">(</span><span style="color: #ECEFF4">({</span><span style="color: #D8DEE9FF"> </span><span style="color: #D8DEE9">oldPrice</span><span style="color: #ECEFF4">,</span><span style="color: #D8DEE9FF"> </span><span style="color: #D8DEE9">newPrice</span><span style="color: #D8DEE9FF"> </span><span style="color: #ECEFF4">})</span><span style="color: #D8DEE9FF"> </span><span style="color: #81A1C1">=&gt;</span><span style="color: #D8DEE9FF"> </span><span style="color: #D8DEE9">newPrice</span><span style="color: #D8DEE9FF"> </span><span style="color: #81A1C1">-</span><span style="color: #D8DEE9FF"> </span><span style="color: #D8DEE9">oldPrice</span><span style="color: #D8DEE9FF">)</span><span style="color: #ECEFF4">,</span>
+<span style="color: #D8DEE9FF">)</span><span style="color: #ECEFF4">.</span><span style="color: #88C0D0">subscribe</span><span style="color: #D8DEE9FF">(</span><span style="color: #ECEFF4">(</span><span style="color: #D8DEE9">increase</span><span style="color: #ECEFF4">)</span><span style="color: #D8DEE9FF"> </span><span style="color: #81A1C1">=&gt;</span><span style="color: #D8DEE9FF"> </span><span style="color: #D8DEE9">console</span><span style="color: #ECEFF4">.</span><span style="color: #88C0D0">log</span><span style="color: #D8DEE9FF">(</span><span style="color: #ECEFF4">`</span><span style="color: #A3BE8C">Price increased with €</span><span style="color: #81A1C1">${</span><span style="color: #D8DEE9">increase</span><span style="color: #81A1C1">}</span><span style="color: #A3BE8C">!</span><span style="color: #ECEFF4">`</span><span style="color: #D8DEE9FF">))</span><span style="color: #81A1C1">;</span>
+
+<span style="color: #616E88">// &gt; &#039;Price increased with €2!&#039;</span>
+</code></pre>
+				<a href="#sending-requests" id="sending-requests" style="color: inherit; text-decoration: none;">
+					<h4>Sending requests</h4>
+				</a>
+				<blockquote>
+					<pre><code class="language-typescript"><span style="color: #D8DEE9">Messenger</span><span style="color: #ECEFF4">.</span><span style="color: #D8DEE9">request</span><span style="color: #ECEFF4">&lt;</span><span style="color: #8FBCBB">T</span><span style="color: #D8DEE9FF"> </span><span style="color: #81A1C1">=</span><span style="color: #D8DEE9FF"> </span><span style="color: #8FBCBB">any</span><span style="color: #ECEFF4">,</span><span style="color: #D8DEE9FF"> </span><span style="color: #8FBCBB">U</span><span style="color: #D8DEE9FF"> </span><span style="color: #81A1C1">=</span><span style="color: #D8DEE9FF"> </span><span style="color: #8FBCBB">any</span><span style="color: #ECEFF4">&gt;(</span><span style="color: #D8DEE9">channel</span><span style="color: #81A1C1">:</span><span style="color: #D8DEE9FF"> </span><span style="color: #8FBCBB">string</span><span style="color: #ECEFF4">,</span><span style="color: #D8DEE9FF"> </span><span style="color: #D8DEE9">payload</span><span style="color: #81A1C1">?:</span><span style="color: #D8DEE9FF"> </span><span style="color: #8FBCBB">T</span><span style="color: #ECEFF4">)</span><span style="color: #81A1C1">:</span><span style="color: #D8DEE9FF"> </span><span style="color: #8FBCBB">Observable</span><span style="color: #ECEFF4">&lt;</span><span style="color: #8FBCBB">U</span><span style="color: #ECEFF4">&gt;</span>
+</code></pre>
+				</blockquote>
+				<p>RxPostmessenger also supports request - response communication.
+					At the requester side a request is initiated by calling the <code>request()</code> method with 1 or 2 arguments.
+				The first is a request alias (actually just another channel) of our choice.</p>
+				<p><em>A notification-channel and a request-channel can both have the same channel name without any problem.</em></p>
+				<p>An observable is returned that emits the response when arrived, and then completes.
+				Let&#39;s request a greeting from the child window, and tell it to localize the response to <code>&#39;en&#39;</code>:</p>
+				<pre><code class="language-javascript"><span style="color: #81A1C1">const</span><span style="color: #D8DEE9FF"> </span><span style="color: #D8DEE9">greetingResponse$</span><span style="color: #D8DEE9FF"> </span><span style="color: #81A1C1">=</span><span style="color: #D8DEE9FF"> </span><span style="color: #D8DEE9">childMessenger</span><span style="color: #ECEFF4">.</span><span style="color: #88C0D0">request</span><span style="color: #D8DEE9FF">(</span><span style="color: #ECEFF4">&#039;</span><span style="color: #A3BE8C">greeting</span><span style="color: #ECEFF4">&#039;</span><span style="color: #ECEFF4">,</span><span style="color: #D8DEE9FF"> </span><span style="color: #ECEFF4">{</span>
+<span style="color: #D8DEE9FF">    </span><span style="color: #88C0D0">language</span><span style="color: #ECEFF4">:</span><span style="color: #D8DEE9FF"> </span><span style="color: #ECEFF4">&#039;</span><span style="color: #A3BE8C">en</span><span style="color: #ECEFF4">&#039;</span><span style="color: #ECEFF4">,</span>
+<span style="color: #ECEFF4">}</span><span style="color: #D8DEE9FF">)</span><span style="color: #81A1C1">;</span>
+</code></pre>
+				<p>We can then subscribe to the greeting response stream.
+				Provided that the greeting says something nice, we&#39;ll log it for everyone to see:</p>
+				<pre><code class="language-javascript"><span style="color: #D8DEE9">greetingResponse$</span><span style="color: #ECEFF4">.</span><span style="color: #88C0D0">pipe</span><span style="color: #D8DEE9FF">(</span>
+<span style="color: #D8DEE9FF">    </span><span style="color: #88C0D0">filter</span><span style="color: #D8DEE9FF">(</span><span style="color: #ECEFF4">(</span><span style="color: #D8DEE9">greeting</span><span style="color: #ECEFF4">)</span><span style="color: #D8DEE9FF"> </span><span style="color: #81A1C1">=&gt;</span><span style="color: #D8DEE9FF"> </span><span style="color: #88C0D0">isNiceGreeting</span><span style="color: #D8DEE9FF">(</span><span style="color: #D8DEE9">greeting</span><span style="color: #D8DEE9FF">))</span><span style="color: #ECEFF4">,</span>
+<span style="color: #D8DEE9FF">)</span><span style="color: #ECEFF4">.</span><span style="color: #88C0D0">subscribe</span><span style="color: #D8DEE9FF">(</span><span style="color: #D8DEE9">console</span><span style="color: #ECEFF4">.</span><span style="color: #D8DEE9">log</span><span style="color: #D8DEE9FF">)</span><span style="color: #81A1C1">;</span>
+
+<span style="color: #616E88">// &gt; &#039;Hi parent!&#039;</span>
+</code></pre>
+				<a href="#listening-for-inbound-requests" id="listening-for-inbound-requests" style="color: inherit; text-decoration: none;">
+					<h4>Listening for inbound requests</h4>
+				</a>
+				<blockquote>
+					<pre><code class="language-typescript"><span style="color: #D8DEE9">Messenger</span><span style="color: #ECEFF4">.</span><span style="color: #D8DEE9">requests</span><span style="color: #ECEFF4">&lt;</span><span style="color: #8FBCBB">T</span><span style="color: #D8DEE9FF"> </span><span style="color: #81A1C1">=</span><span style="color: #D8DEE9FF"> </span><span style="color: #8FBCBB">any</span><span style="color: #ECEFF4">,</span><span style="color: #D8DEE9FF"> </span><span style="color: #8FBCBB">U</span><span style="color: #D8DEE9FF"> </span><span style="color: #81A1C1">=</span><span style="color: #D8DEE9FF"> </span><span style="color: #8FBCBB">any</span><span style="color: #ECEFF4">&gt;(</span><span style="color: #D8DEE9">channel</span><span style="color: #81A1C1">:</span><span style="color: #D8DEE9FF"> </span><span style="color: #8FBCBB">string</span><span style="color: #ECEFF4">)</span><span style="color: #81A1C1">:</span><span style="color: #D8DEE9FF"> </span><span style="color: #8FBCBB">Observable</span><span style="color: #ECEFF4">&lt;</span><span style="color: #8FBCBB">RxPostmessenger</span><span style="color: #ECEFF4">.</span><span style="color: #8FBCBB">Request</span><span style="color: #ECEFF4">&lt;</span><span style="color: #8FBCBB">T</span><span style="color: #ECEFF4">,</span><span style="color: #D8DEE9FF"> </span><span style="color: #8FBCBB">U</span><span style="color: #ECEFF4">&gt;&gt;</span>
+</code></pre>
+				</blockquote>
+				<p>No greeting would ever be received by <code>parentMessenger</code> when the child project does not listen
+					for requests to handle and respond to. Let&#39;s not be rude and create a request stream for
+					<code>&#39;greeting&#39;</code> requests, and subscribe to it. We&#39;ll pass the <code>RxPostmessenger.Request</code> objects
+				that the subscription receives into a function <code>handleGreetingRequest()</code>:</p>
+				<pre><code class="language-javascript"><span style="color: #D8DEE9">parentMessenger</span>
+<span style="color: #D8DEE9FF">    </span><span style="color: #ECEFF4">.</span><span style="color: #88C0D0">requests</span><span style="color: #D8DEE9FF">(</span><span style="color: #ECEFF4">&#039;</span><span style="color: #A3BE8C">greeting</span><span style="color: #ECEFF4">&#039;</span><span style="color: #D8DEE9FF">)</span>
+<span style="color: #D8DEE9FF">    </span><span style="color: #ECEFF4">.</span><span style="color: #88C0D0">subscribe</span><span style="color: #D8DEE9FF">(</span><span style="color: #D8DEE9">handleGreetingRequest</span><span style="color: #D8DEE9FF">)</span><span style="color: #81A1C1">;</span>
+</code></pre>
+				<hr>
+				<a href="#request-instance-methods" id="request-instance-methods" style="color: inherit; text-decoration: none;">
+					<h3><code>Request</code> instance methods</h3>
+				</a>
+				<a href="#sending-request-responses" id="sending-request-responses" style="color: inherit; text-decoration: none;">
+					<h4>Sending request responses</h4>
+				</a>
+				<blockquote>
+					<pre><code class="language-typescript"><span style="color: #D8DEE9">RxPostmessenger</span><span style="color: #ECEFF4">.</span><span style="color: #D8DEE9">Request</span><span style="color: #81A1C1">&lt;</span><span style="color: #D8DEE9">T</span><span style="color: #ECEFF4">,</span><span style="color: #D8DEE9FF"> </span><span style="color: #D8DEE9">U</span><span style="color: #81A1C1">&gt;</span><span style="color: #D8DEE9FF"> </span><span style="color: #81A1C1">~</span><span style="color: #D8DEE9FF"> </span><span style="color: #88C0D0">respond</span><span style="color: #D8DEE9FF">(</span><span style="color: #D8DEE9">payload</span><span style="color: #D8DEE9FF">: </span><span style="color: #D8DEE9">U</span><span style="color: #D8DEE9FF">): </span><span style="color: #81A1C1">void</span>
+</code></pre>
+				</blockquote>
+				<p>The <code>requests</code> method returns an observable of <code>RxPostmessenger.Request</code> objects.
+					They provide a single method <code>respond</code> that accepts one argument: the response payload.
+				Let&#39;s use the method on the requests we give to <code>handleGreetingRequest</code>:</p>
+				<pre><code class="language-javascript"><span style="color: #81A1C1">const</span><span style="color: #D8DEE9FF"> </span><span style="color: #88C0D0">handleGreetingRequest</span><span style="color: #D8DEE9FF"> </span><span style="color: #81A1C1">=</span><span style="color: #D8DEE9FF"> </span><span style="color: #ECEFF4">(</span><span style="color: #D8DEE9">request</span><span style="color: #ECEFF4">)</span><span style="color: #D8DEE9FF"> </span><span style="color: #81A1C1">=&gt;</span><span style="color: #D8DEE9FF"> </span><span style="color: #ECEFF4">{</span>
+
+<span style="color: #ECEFF4">    </span><span style="color: #616E88">// The data that was sent along with the request</span>
+<span style="color: #D8DEE9FF">    </span><span style="color: #81A1C1">const</span><span style="color: #D8DEE9FF"> </span><span style="color: #D8DEE9">requestPayload</span><span style="color: #D8DEE9FF"> </span><span style="color: #81A1C1">=</span><span style="color: #D8DEE9FF"> </span><span style="color: #D8DEE9">request</span><span style="color: #ECEFF4">.</span><span style="color: #D8DEE9">payload</span><span style="color: #81A1C1">;</span>
+
+<span style="color: #ECEFF4">    </span><span style="color: #616E88">// A hypothetical greeting translator</span>
+<span style="color: #D8DEE9FF">    </span><span style="color: #81A1C1">const</span><span style="color: #D8DEE9FF"> </span><span style="color: #D8DEE9">localizedGreeting</span><span style="color: #D8DEE9FF"> </span><span style="color: #81A1C1">=</span><span style="color: #D8DEE9FF"> </span><span style="color: #88C0D0">translateGreeting</span><span style="color: #D8DEE9FF">(</span>
+<span style="color: #D8DEE9FF">        </span><span style="color: #ECEFF4">&#039;</span><span style="color: #A3BE8C">Hi parent!</span><span style="color: #ECEFF4">&#039;</span><span style="color: #ECEFF4">,</span>
+<span style="color: #D8DEE9FF">        </span><span style="color: #D8DEE9">requestPayload</span><span style="color: #ECEFF4">.</span><span style="color: #D8DEE9">language</span>
+<span style="color: #D8DEE9FF">    )</span><span style="color: #81A1C1">;</span>
+
+<span style="color: #ECEFF4">    </span><span style="color: #616E88">// Eventually respond to the request with some data (payload)</span>
+<span style="color: #D8DEE9FF">    </span><span style="color: #D8DEE9">request</span><span style="color: #ECEFF4">.</span><span style="color: #88C0D0">respond</span><span style="color: #D8DEE9FF">(</span><span style="color: #D8DEE9">localizedGreeting</span><span style="color: #D8DEE9FF">)</span><span style="color: #81A1C1">;</span>
+<span style="color: #ECEFF4">}</span><span style="color: #81A1C1">;</span>
+</code></pre>
+				<a href="#license" id="license" style="color: inherit; text-decoration: none;">
+					<h2>License</h2>
+				</a>
+				<p>The MIT License (MIT). See <a href="https://github.com/JJWesterkamp/rx-postmessenger/blob/master/LICENSE">license file</a> for more information.</p>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class=" ">
+						<a href="modules.html">Exports</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/Messenger.html" class="tsd-kind-icon">Messenger</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-has-type-parameter">
+						<a href="interfaces/Request.html" class="tsd-kind-icon">Request</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/Static.html" class="tsd-kind-icon">Static</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="modules.html#default" class="tsd-kind-icon">default</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer>
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+</body>
+</html>

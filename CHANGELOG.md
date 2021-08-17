@@ -6,8 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.0] (2021-08-17)
+
+### BREAKING CHANGES
+- Made RxJS a peer dependency
+> I'm not entirely sure if this is breaking from a user point-of-view, but I made this a
+> major release just to be sure.
+
 ### Changed
 - Added support for RxJS 7
+- Many internal changes: dependencies, test suite, etc.
 
 ## [2.0.1] (2019-06-22)
 - Updated all npm dev-dependencies latest versions, fixing vulnerability issues reported by Github.
@@ -134,7 +142,8 @@ General development, no notable changes
 - Bade messenger class
 - Project setup (builds, configuration etc.)
 
-[Unreleased]: https://github.com/PXLWidgets/php-composer-version/compare/v2.0.1...HEAD
+[Unreleased]: https://github.com/PXLWidgets/php-composer-version/compare/v3.0.0...HEAD
+[3.0.0]: https://github.com/JJWesterkamp/rx-postmessenger/compare/v2.0.0...v3.0.0
 [2.0.1]: https://github.com/JJWesterkamp/rx-postmessenger/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/JJWesterkamp/rx-postmessenger/compare/v2.0.0-alpha.1...v2.0.0
 [2.0.0-alpha.1]: https://github.com/JJWesterkamp/rx-postmessenger/compare/v1.0.4...v2.0.0-alpha.1
