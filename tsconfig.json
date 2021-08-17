@@ -1,23 +1,20 @@
 {
     "compilerOptions": {
+        "esModuleInterop": true,
         "moduleResolution": "node",
         "lib": ["es2015", "dom"],
         "target": "es5",
-        "module":"commonjs",
+        "module": "es2015",
         "noImplicitAny": true,
         "noImplicitReturns": true,
         "noImplicitThis": true,
-        "suppressImplicitAnyIndexErrors": true,
         "sourceMap": true,
-        "strictNullChecks": true,
-        "strictFunctionTypes": true,
+        "strict": true,
         "declaration": true,
-        "outDir": "cjs",
-        "keyofStringsOnly": true
+        "outDir": "cjs"
     },
-    "include":[
-        "src/**/*.ts",
-        "src/**/*.d.ts"
+    "include": [
+        "src/**/*.ts"
     ],
     "exclude": [
         "node_modules",

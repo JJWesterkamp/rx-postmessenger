@@ -1,3 +1,17 @@
+export interface IMessageIDGenerator {
+
+    /**
+     * Get a new unique ID value for message objects.
+     */
+    generateID(): string;
+
+    /**
+     * Invalidates an ID value - marks it a used. This is a required
+     * feature for syncing the used ID values
+     */
+    invalidateID(id: string): void;
+}
+
 /**
  * The IMessageObject interface defines the format for data property values of MessageEvent objects.
  * This interface describes the actual format of data sent with postMessage that is required for
@@ -48,3 +62,24 @@ export interface IMessageTypeMap<T = any> {
 
 export type MessageType = keyof IMessageTypeMap;
 export type MappedMessage<T extends MessageType> = IMessageTypeMap[T];
+
+export interface IMessageFactory {
+    invalidateID(id: string): void;
+    makeRequest<T>(channel: string, payload: T): IRequestObject<T>;
+    makeResponse<T>(requestId: string, channel: string, payload: T): IResponseObject<T>;
+    makeNotification<T>(channel: string, payload: T): INotificationObject<T>;
+}
+
+export interface IOwnMessageEvent<T> extends MessageEvent {
+    readonly data: T;
+}
+
+export interface IMessageValidator {
+    validate(message: MessageEvent): message is IOwnMessageEvent<AnyMessage>;
+}
+
+export interface IPostmessageAdapter {
+    readonly targetWindow: Window;
+    readonly targetOrigin: string;
+    postMessage<T extends AnyMessage>(data: T): void;
+}

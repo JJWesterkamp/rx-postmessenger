@@ -1,8 +1,16 @@
 const { resolve } = require('path');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
     mode: "production",
+    target: ['web', 'es5'],
+    optimization: {
+        minimize: true,
+        minimizer: [new TerserPlugin({
+          include: /\.min\.js$/,
+          extractComments: false,
+        })]
+    },
     entry: {
         "rx-postmessenger": "./src/index.ts",
         "rx-postmessenger.min": "./src/index.ts",
@@ -10,28 +18,22 @@ module.exports = {
     output: {
         path: resolve(__dirname, 'umd'),
         filename: '[name].js',
-        library: 'RxPostmessenger',
-        libraryTarget: 'umd',
-    },
-    optimization: {
-        minimizer: [
-            new UglifyJsPlugin({
-                test: /\.min\.js$/,
-                sourceMap: true,
-            }),
-        ],
+        library: {
+            name: 'RxPostmessenger',
+            type: 'umd',
+            export: 'default',
+        },
     },
 
     devtool: "source-map",
     resolve: {
         extensions: [".ts", ".js"]
     },
-
     module: {
         rules: [
             {
                 test: /\.ts$/,
-                loaders: ["ts-loader"],
+                use: 'ts-loader',
                 exclude: /node_modules/,
             }
         ],
