@@ -1,5 +1,6 @@
 const { resolve } = require('path');
 const TerserPlugin = require('terser-webpack-plugin');
+const webpack = require('webpack');
 
 module.exports = {
     mode: "production",
@@ -37,5 +38,13 @@ module.exports = {
                 exclude: /node_modules/,
             }
         ],
-    }
+    },
+    plugins: [
+        new webpack.BannerPlugin([
+            `rx-postmessenger`,
+            `https://jjwesterkamp.github.io/rx-postmessenger`,
+            `(c) 2021 Jeffrey Westerkamp`,
+            `This software may be freely distributed under the MIT license.`,
+        ].join('\n')),
+    ]
 };
