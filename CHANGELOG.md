@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Fixed
+### Fixed 
 - Excluded some development config files from npm releases.
 
 ## [3.0.0] (2021-08-17)
@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Added support for RxJS 7.
 - Many internal changes: dependencies, test suite, folder/file structure, and more.
+- Huge improvements in minified UMD bundle size.
 
 ## [2.0.1] (2019-06-22)
 - Updated all npm dev-dependencies latest versions, fixing vulnerability issues reported by Github.
