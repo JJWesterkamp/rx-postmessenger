@@ -143,7 +143,7 @@ General development, no notable changes
 - Project setup (builds, configuration etc.)
 
 [Unreleased]: https://github.com/PXLWidgets/php-composer-version/compare/v3.0.0...HEAD
-[3.0.0]: https://github.com/JJWesterkamp/rx-postmessenger/compare/v2.0.0...v3.0.0
+[3.0.0]: https://github.com/JJWesterkamp/rx-postmessenger/compare/v2.0.1...v3.0.0
 [2.0.1]: https://github.com/JJWesterkamp/rx-postmessenger/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/JJWesterkamp/rx-postmessenger/compare/v2.0.0-alpha.1...v2.0.0
 [2.0.0-alpha.1]: https://github.com/JJWesterkamp/rx-postmessenger/compare/v1.0.4...v2.0.0-alpha.1
