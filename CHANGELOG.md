@@ -9,13 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [3.0.0] (2021-08-17)
 
 ### BREAKING CHANGES
-- Made RxJS a peer dependency
-> I'm not entirely sure if this is breaking from a user point-of-view, but I made this a
-> major release just to be sure.
+- Replaced the `namespace` structure in the TS declaration file with individual type exports. 
+- Made RxJS a peer dependency.
+  > I'm not entirely sure if this is breaking from a user point-of-view, 
+  > but I made this a major release just to be sure.
 
 ### Changed
-- Added support for RxJS 7
-- Many internal changes: dependencies, test suite, etc.
+- Added support for RxJS 7.
+- Many internal changes: dependencies, test suite, folder/file structure, and more.
 
 ## [2.0.1] (2019-06-22)
 - Updated all npm dev-dependencies latest versions, fixing vulnerability issues reported by Github.
