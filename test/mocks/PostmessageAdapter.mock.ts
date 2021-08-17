@@ -1,16 +1,16 @@
-import type { AnyMessage, IPostmessageAdapter } from '../../src/types'
+import type { IPostmessageAdapter } from '../../src/types'
 
 export class PostmessageAdapterMock implements IPostmessageAdapter {
 
-    public readonly targetWindow: Window = window
-    public readonly targetOrigin: string = '*'
+    public readonly targetWindow: Window
+    public readonly iframe: HTMLIFrameElement
+    public readonly postMessage = jest.fn()
 
-    public spies: Array<(data: any) => void> = []
-
-    public postMessage<T extends AnyMessage>(data: T): void {
-
-        for (const spy of this.spies) {
-            spy(data)
-        }
+    constructor(
+        public readonly targetOrigin: string = '*'
+    ) {
+        this.iframe = document.createElement('iframe')
+        this.iframe.src = targetOrigin
+        this.targetWindow = this.iframe.contentWindow!
     }
 }

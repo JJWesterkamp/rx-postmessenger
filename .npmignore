@@ -1,6 +1,7 @@
 .*
 tsconfig.json
 webpack.config.js
+package-lock.json
 yarn.lock
 node_modules
 src

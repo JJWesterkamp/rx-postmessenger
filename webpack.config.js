@@ -3,7 +3,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
     mode: "production",
-    target: 'es5',
+    target: ['web', 'es5'],
     optimization: {
         minimize: true,
         minimizer: [new TerserPlugin({

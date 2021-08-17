@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Added support for RxJS 7
+
 ## [2.0.1] (2019-06-22)
 - Updated all npm dev-dependencies latest versions, fixing vulnerability issues reported by Github.
 

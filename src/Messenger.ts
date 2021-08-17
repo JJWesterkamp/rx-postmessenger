@@ -11,7 +11,7 @@ import type {
     IPostmessageAdapter,
 } from './types'
 
-import { fromEvent, Observable } from 'rxjs'
+import { fromEvent, Observable, share } from 'rxjs'
 import { filter, map, pluck, take } from 'rxjs/operators'
 import { RxPostmessengerRequest } from './RxPostmessengerRequest'
 
@@ -52,13 +52,14 @@ export class Messenger implements IMessenger {
         this.inboundMessages$ = fromEvent<MessageEvent>(window, 'message').pipe(
             filter((message) => this.messageValidator.validate(message)),
             pluck('data'),
+            share(),
         )
 
         this.requests$      = this.messagesOfType('request')
         this.responses$     = this.messagesOfType('response')
         this.notifications$ = this.messagesOfType('notification')
 
-        this.inboundMessages$.subscribe(({id}) => this.messageFactory.invalidateID(id))
+        this.inboundMessages$.subscribe(({ id }) => this.messageFactory.invalidateID(id))
     }
 
     public request<T = any, U = any>(channel: string, payload?: T): Observable<U> {
