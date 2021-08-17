@@ -9,3 +9,5 @@ docs
 test
 coverage
 yarn-error.log
+jest.config.ts
+typedoc.json

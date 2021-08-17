@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Excluded some development config files from npm releases.
+
 ## [3.0.0] (2021-08-17)
 
 ### BREAKING CHANGES
