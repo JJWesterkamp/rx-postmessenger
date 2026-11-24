@@ -206,7 +206,7 @@ The MIT License (MIT). See [license file] for more information.
 
 ## Development
 
-Use Node.js 24 (`nvm use`) and install dependencies with `npm ci`.
+Use Node.js 24.15+ (`nvm use`) and install dependencies with `npm ci`.
 
 - `npm run build` compiles `src` with `tsconfig.app.json` into `dist`, including declarations.
 - `npm run dev` watches the library sources.

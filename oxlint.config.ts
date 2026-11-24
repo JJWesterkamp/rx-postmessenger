@@ -35,6 +35,7 @@ export default defineConfig({
     'no-magic-numbers': 'off',
     'no-ternary': 'off',
     'no-underscore-dangle': 'error',
+    'one-var': ['error', 'never'],
     'sort-imports': 'off',
     'sort-keys': 'off',
     'typescript/method-signature-style': 'off',

@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### BREAKING CHANGES
+
+- Ship ESM only, targeting ES2022. CommonJS and UMD bundles are no longer provided.
+- Require Node.js 22.22.2, 24.15.0, or a newer supported release for development tooling; use Node.js 24 for development and CI.
+
+### Added
+
+- Oxc formatting and type-aware linting with `oxfmt`, `oxlint`, and `oxlint-tsgolint`.
+- Workflow coverage summaries and 100% minimum statement, branch, function, and line coverage.
+
+### Changed
+
+- Update development dependencies to their latest releases, including TypeScript 7, Vitest 5, and jsdom 31.
+- Split TypeScript app and spec configurations.
+- Replace webpack builds with plain TSC output and generated declarations in `dist`.
+- Replace Jest with Vitest using explicit imports.
+- Replace TravisCI with GitHub Actions for static analysis, coverage tests, and a non-blocking production dependency audit.
+
+### Removed
+
+- TypeDoc tooling and generated API documentation.
+- Coveralls integration in favor of GitHub Actions summaries and coverage artifacts.
+
 ### Fixed
 
 - Excluded some development config files from npm releases.
@@ -186,7 +209,7 @@ General development, no notable changes
 - Bade messenger class
 - Project setup (builds, configuration etc.)
 
-[Unreleased]: https://github.com/PXLWidgets/php-composer-version/compare/v3.0.0...HEAD
+[Unreleased]: https://github.com/JJWesterkamp/rx-postmessenger/compare/v3.0.0...HEAD
 [3.0.0]: https://github.com/JJWesterkamp/rx-postmessenger/compare/v2.0.1...v3.0.0
 [2.0.1]: https://github.com/JJWesterkamp/rx-postmessenger/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/JJWesterkamp/rx-postmessenger/compare/v2.0.0-alpha.1...v2.0.0
