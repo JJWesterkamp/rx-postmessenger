@@ -1,8 +1,7 @@
 # rx-postmessenger
 
 [![npm version](https://badge.fury.io/js/rx-postmessenger.svg)](https://badge.fury.io/js/rx-postmessenger)
-[![Build Status](https://travis-ci.com/JJWesterkamp/rx-postmessenger.svg?branch=master)](https://travis-ci.com/JJWesterkamp/rx-postmessenger)
-[![Coverage Status](https://coveralls.io/repos/github/JJWesterkamp/rx-postmessenger/badge.svg?branch=master)](https://coveralls.io/github/JJWesterkamp/rx-postmessenger?branch=master)
+[![CI](https://github.com/JJWesterkamp/rx-postmessenger/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/JJWesterkamp/rx-postmessenger/actions/workflows/ci.yml)
 
 Minimal [RxJS][rxgh] adapter for the [`Window # postMessage`][postmessage] API for request-response streams and notification streams across frame windows.
 
@@ -218,3 +217,7 @@ Use Node.js 24 (`nvm use`) and install dependencies with `npm ci`.
 - `npm run test:watch` watches tests; `npm run test:coverage` generates coverage reports.
 
 The package ships ESM only, with generated types exposed through the package exports.
+
+CI runs on GitHub Actions for pushes and pull requests in three stages:
+static analysis (formatting, lint, types, and build), coverage tests with artifacts retained
+for one week, and a non-blocking production dependency audit.
