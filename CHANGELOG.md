@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.0.0] (2026-11-24)
+
 ### BREAKING CHANGES
 
 - Ship ESM only, targeting ES2022. CommonJS and UMD bundles are no longer provided.
@@ -209,7 +211,8 @@ General development, no notable changes
 - Bade messenger class
 - Project setup (builds, configuration etc.)
 
-[Unreleased]: https://github.com/JJWesterkamp/rx-postmessenger/compare/v3.0.0...HEAD
+[Unreleased]: https://github.com/JJWesterkamp/rx-postmessenger/compare/v4.0.0...HEAD
+[4.0.0]: https://github.com/JJWesterkamp/rx-postmessenger/compare/v3.0.0...v4.0.0
 [3.0.0]: https://github.com/JJWesterkamp/rx-postmessenger/compare/v2.0.1...v3.0.0
 [2.0.1]: https://github.com/JJWesterkamp/rx-postmessenger/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/JJWesterkamp/rx-postmessenger/compare/v2.0.0-alpha.1...v2.0.0
