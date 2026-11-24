@@ -1,6 +1,0 @@
-{
-    "out": "docs",
-    "theme": "./node_modules/@jjwesterkamp/typedoc-theme",
-    "highlightTheme": "nord",
-    "hideGenerator": true
-}
