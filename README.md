@@ -221,3 +221,6 @@ The package ships ESM only, with generated types exposed through the package exp
 CI runs on GitHub Actions for pushes and pull requests in three stages:
 static analysis (formatting, lint, types, and build), coverage tests with artifacts retained
 for one week, and a non-blocking production dependency audit.
+
+Vitest requires 100% statement, branch, function, and line coverage. CI publishes a
+coverage table in the workflow summary, including when tests or coverage thresholds fail.
