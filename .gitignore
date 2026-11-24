@@ -1,7 +1,5 @@
 node_modules
-esm
-cjs
-umd
+dist
 .idea
 .vscode
 coverage

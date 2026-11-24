@@ -1,0 +1,91 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static-analysis:
+    name: Static Analysis / ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Oxfmt
+            script: fmt
+          - name: Oxlint
+            script: lint
+          - name: TypeScript
+            script: check
+          - name: Build
+            script: build
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci --prefer-offline --no-audit --no-fund
+      - run: npm run ${{ matrix.script }}
+
+  tests:
+    name: Tests / Vitest
+    needs: static-analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci --prefer-offline --no-audit --no-fund
+      - run: npm run test:coverage
+      - name: Summarize coverage
+        if: always()
+        run: |
+          node --input-type=module <<'NODE'
+          import { appendFileSync, existsSync, readFileSync } from 'node:fs'
+
+          const reportPath = 'coverage/coverage-summary.json'
+          let summary = '## Coverage\n\n'
+
+          if (existsSync(reportPath)) {
+            const { total } = JSON.parse(readFileSync(reportPath, 'utf8'))
+            summary += '| Metric | Coverage | Covered / Total |\n'
+            summary += '| --- | ---: | ---: |\n'
+            for (const metric of ['statements', 'branches', 'functions', 'lines']) {
+              const { pct, covered, total: count } = total[metric]
+              summary += `| ${metric} | ${pct}% | ${covered} / ${count} |\n`
+            }
+          } else {
+            summary += 'Coverage report unavailable. Check the test step logs.\n'
+          }
+
+          appendFileSync(process.env.GITHUB_STEP_SUMMARY, summary)
+          NODE
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage
+          path: coverage/
+          retention-days: 7
+
+  security:
+    name: Security / NPM Audit
+    needs: tests
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci --prefer-offline --no-audit --no-fund
+      - run: npm audit --omit=dev

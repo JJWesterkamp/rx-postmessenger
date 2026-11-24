@@ -1,25 +1,23 @@
-import type { IMessageIDGenerator } from '../../src/types'
+import type { IMessageIDGenerator } from '../../src/types.js'
 
 export class MessageIDGeneratorMock implements IMessageIDGenerator {
+  private readonly usedIDValues: string[] = []
+  private nextValue = 1
 
-    private usedIDValues: string[] = []
-    private nextValue = 1
+  public generateID(): string {
+    let nextNumber
+    let nextString
 
-    public generateID(): string {
+    do {
+      nextNumber = this.nextValue++
+      nextString = nextNumber.toString()
+    } while (this.usedIDValues.indexOf(nextString) >= 0)
 
-        let nextNumber
-        let nextString
+    this.invalidateID(nextString)
+    return nextString
+  }
 
-        do {
-            nextNumber = this.nextValue++
-            nextString = nextNumber.toString()
-        } while (this.usedIDValues.indexOf(nextString) >= 0)
-
-        this.invalidateID(nextString)
-        return nextString
-    }
-
-    public invalidateID(id: string): void {
-        this.usedIDValues.push(id)
-    }
+  public invalidateID(id: string): void {
+    this.usedIDValues.push(id)
+  }
 }

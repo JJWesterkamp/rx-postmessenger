@@ -1,26 +1,25 @@
-import { Request } from '../rx-postmessenger'
+import type { Request } from './public-api.js'
 
 export class RxPostmessengerRequest<T, U> implements Request<T, U> {
-    private _isHandled: boolean = false
+  private handled: boolean = false
 
-    constructor(
-        public readonly id: string,
-        public readonly channel: string,
-        public readonly payload: T,
-        private readonly _injectResponse: (data: U) => void,
-    ) {
+  constructor(
+    public readonly id: string,
+    public readonly channel: string,
+    public readonly payload: T,
+    private readonly injectResponse: (data: U) => void,
+  ) {}
+
+  public get isHandled() {
+    return this.handled
+  }
+
+  public respond(data: U): void {
+    if (this.handled) {
+      return
     }
 
-    public get isHandled() {
-        return this._isHandled
-    }
-
-    public respond(data: U): void {
-        if (this._isHandled) {
-            return
-        }
-
-        this._injectResponse(data)
-        this._isHandled = true
-    }
+    this.injectResponse(data)
+    this.handled = true
+  }
 }
