@@ -2,13 +2,7 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "noEmit": true,
-    "types": [
-      "node"
-    ]
+    "types": ["node"]
   },
-  "include": [
-    "src/**/*.ts",
-    "test/**/*.ts",
-    "vitest.config.ts"
-  ]
+  "include": ["src/**/*.ts", "test/**/*.ts", "vitest.config.ts", "oxlint.config.ts", "oxfmt.config.ts"]
 }

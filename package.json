@@ -36,6 +36,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "fmt": "oxfmt --check",
+    "lint": "oxlint",
+    "lint:fix": "oxfmt && oxlint --fix",
     "coveralls": "cat ./coverage/lcov.info | coveralls"
   },
   "peerDependencies": {
@@ -48,6 +51,9 @@
     "rxjs": "^7.8.2",
     "typescript": "^7.0.2",
     "vitest": "^4.1.10",
+    "oxfmt": "0.57.0",
+    "oxlint": "1.72.0",
+    "oxlint-tsgolint": "0.24.0",
     "coveralls": "^3.1.1"
   },
   "type": "module",
