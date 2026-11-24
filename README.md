@@ -13,11 +13,11 @@ Each instance targets _one single_ `Window` object. It propagates incoming `Mess
 
 ## RxJS Interoperability
 
-|           | RxPostmessenger v1.x | RxPostmessenger v2.x | RxPostmessenger v3.x |
-| --------- | :------------------: | :------------------: | :------------------: |
-| RxJS v5.x |          ✅          |          ❌          |          ❌          |
-| RxJS v6.x |          ❌          |          ✅          |          ✅          |
-| RxJS v7.x |          ❌          |          ❌          |          ✅          |
+|           | RxPostmessenger v1.x | RxPostmessenger v2.x | RxPostmessenger v3.x | RxPostmessenger v4.x |
+| --------- | :------------------: | :------------------: | :------------------: | :------------------: |
+| RxJS v5.x |          ✅          |          ❌          |          ❌          |          ❌          |
+| RxJS v6.x |          ❌          |          ✅          |          ❌          |          ❌          |
+| RxJS v7.x |          ❌          |          ❌          |          ✅          |          ✅          |
 
 [View changelog.][changelog]
 

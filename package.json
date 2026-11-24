@@ -40,7 +40,7 @@
     "lint:fix": "oxfmt && oxlint --fix"
   },
   "peerDependencies": {
-    "rxjs": "6.x || 7.x"
+    "rxjs": "^7.2.0"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",

@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Incorrect peer dependency range for rxjs
+  > this package in reality required `^7.2` all the way back since `v3.0.0`
+
 ## [4.0.0] (2026-11-24)
 
 ### BREAKING CHANGES
