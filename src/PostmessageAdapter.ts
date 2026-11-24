@@ -1,14 +1,12 @@
-import type { AnyMessage, IPostmessageAdapter } from './types'
+import type { AnyMessage, IPostmessageAdapter } from './types.js'
 
 export class PostmessageAdapter implements IPostmessageAdapter {
+  constructor(
+    public readonly targetWindow: Window,
+    public readonly targetOrigin: string,
+  ) {}
 
-    constructor(
-        public readonly targetWindow: Window,
-        public readonly targetOrigin: string,
-    ) {
-    }
-
-    public postMessage<T extends AnyMessage>(data: T): void {
-        this.targetWindow.postMessage(data, this.targetOrigin)
-    }
+  public postMessage<T extends AnyMessage>(data: T): void {
+    this.targetWindow.postMessage(data, this.targetOrigin)
+  }
 }

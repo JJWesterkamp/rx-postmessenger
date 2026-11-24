@@ -211,3 +211,15 @@ The MIT License (MIT). See [license file] for more information.
 [changelog]: https://github.com/JJWesterkamp/rx-postmessenger/tree/master/CHANGELOG.md
 [postmessage]: https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage
 [rxgh]: https://github.com/ReactiveX/RxJS
+
+## Development
+
+Use Node.js 24 (`nvm use`) and install dependencies with `npm ci`.
+
+- `npm run build` compiles `src` with `tsconfig.app.json` into `dist`, including declarations.
+- `npm run dev` watches the library sources.
+- `npm run check` checks both the app and spec TypeScript configs without emitting files.
+- `npm test` runs the browser API tests in Vitest with jsdom.
+- `npm run test:watch` watches tests; `npm run test:coverage` generates coverage reports.
+
+The package ships ESM only, with generated types exposed through the package exports.

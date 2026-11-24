@@ -1,25 +1,22 @@
 {
-    "compilerOptions": {
-        "esModuleInterop": true,
-        "moduleResolution": "node",
-        "lib": ["es2015", "dom"],
-        "target": "es5",
-        "module": "es2015",
-        "noImplicitAny": true,
-        "noImplicitReturns": true,
-        "noImplicitThis": true,
-        "sourceMap": true,
-        "strict": true,
-        "declaration": true,
-        "outDir": "cjs"
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "noImplicitReturns": true,
+    "verbatimModuleSyntax": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
     },
-    "include": [
-        "src/**/*.ts"
-    ],
-    "exclude": [
-        "node_modules",
-        "cjs",
-        "umd",
-        "esm"
-    ]
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ]
 }
